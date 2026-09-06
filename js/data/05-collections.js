@@ -30,6 +30,7 @@ S("Коллекции (Java Collections Framework)", "Одна из самых �
     G("Утилиты", ["Collections.sort/reverse/shuffle/synchronizedList/emptyList", "Comparator и Collections.max/min"])
   ]),
   T("Выбор правильной коллекции", "Практический навык, который проверяют почти на любом собеседовании.", [
-    G("Критерии выбора", ["Частое чтение по индексу → ArrayList; частые вставки в начало/середину → LinkedList/ArrayDeque", "Нужна уникальность без порядка → HashSet; с порядком вставки → LinkedHashSet; отсортированный → TreeSet", "Быстрый доступ по ключу → HashMap; сортировка по ключу → TreeMap; порядок вставки/LRU → LinkedHashMap"])
+    G("Критерии выбора", ["Частое чтение по индексу → ArrayList; частые вставки в начало/середину → LinkedList/ArrayDeque", "Нужна уникальность без порядка → HashSet; с порядком вставки → LinkedHashSet; отсортированный → TreeSet", "Быстрый доступ по ключу → HashMap; сортировка по ключу → TreeMap; порядок вставки/LRU → LinkedHashMap"]),
+    G("Сводная таблица сложности операций", ["ArrayList: get O(1), add в конец амортизированно O(1), add/remove в середине O(n)", "LinkedList: get по индексу O(n), add/remove на концах O(1) (как Deque)", "ArrayDeque: add/remove с обоих концов O(1), быстрее LinkedList как стек/очередь за счёт циклического массива без накладных расходов на узлы", "HashMap/HashSet: get/put/contains — в среднем O(1), в худшем (много коллизий в одном бакете до treeify) O(log n)", "TreeMap/TreeSet: get/put/contains — O(log n) всегда, за счёт красно-чёрного дерева", "PriorityQueue: добавление/извлечение минимума/максимума — O(log n), просмотр вершины (peek) — O(1)"])
   ])
 ]);
