@@ -1,0 +1,11 @@
+# Скомпилированные артефакты
+**/build/
+**/.gradle/
+**/__pycache__/
+**/*.class
+**/*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
