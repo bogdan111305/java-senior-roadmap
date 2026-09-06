@@ -1,0 +1,1242 @@
+<title>Java Senior Roadmap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#eef2ef;
+  --surface:#ffffff;
+  --surface-2:#f4f7f5;
+  --text:#16211c;
+  --text-soft:#54655c;
+  --text-faint:#8a988f;
+  --border:#d7ded9;
+  --accent:#177a5c;
+  --accent-ink:#ffffff;
+  --accent-soft:#e2f2ea;
+  --accent-2:#a8560f;
+  --accent-2-soft:#faeadb;
+  --danger:#b3261e;
+  --shadow: 0 1px 2px rgba(20,30,25,0.04), 0 8px 24px -12px rgba(20,30,25,0.12);
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1512;
+    --surface:#161f1a;
+    --surface-2:#1b2620;
+    --text:#e8ede9;
+    --text-soft:#a3b3a8;
+    --text-faint:#647268;
+    --border:#2b3831;
+    --accent:#52d9a0;
+    --accent-ink:#08211a;
+    --accent-soft:#173229;
+    --accent-2:#f0a860;
+    --accent-2-soft:#2e2415;
+    --danger:#ff8079;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 30px -14px rgba(0,0,0,0.55);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1512;
+  --surface:#161f1a;
+  --surface-2:#1b2620;
+  --text:#e8ede9;
+  --text-soft:#a3b3a8;
+  --text-faint:#647268;
+  --border:#2b3831;
+  --accent:#52d9a0;
+  --accent-ink:#08211a;
+  --accent-soft:#173229;
+  --accent-2:#f0a860;
+  --accent-2-soft:#2e2415;
+  --danger:#ff8079;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 30px -14px rgba(0,0,0,0.55);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"IBM Plex Serif", Georgia, serif; text-wrap:balance; margin:0;}
+code, .mono{font-family:"IBM Plex Mono", ui-monospace, monospace;}
+a{color:inherit;}
+.app{display:flex; min-height:100vh;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  width:300px; flex:0 0 300px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:22px 18px 24px;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:baseline; gap:8px; margin-bottom:4px;}
+.brand-mark{font-family:"IBM Plex Mono"; font-size:12px; font-weight:600; letter-spacing:.08em; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:6px;}
+.brand h1{font-size:19px; font-weight:600; letter-spacing:-.01em;}
+.brand-sub{color:var(--text-soft); font-size:12.5px; margin:6px 0 20px;}
+
+.ring-wrap{display:flex; align-items:center; gap:14px; padding:14px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:18px;}
+.ring-wrap svg{flex:0 0 auto;}
+.ring-stat-num{font-family:"IBM Plex Mono"; font-size:20px; font-weight:600;}
+.ring-stat-label{font-size:11.5px; color:var(--text-soft); margin-top:2px;}
+
+.side-search{position:relative; margin-bottom:14px;}
+.side-search input{
+  width:100%; padding:9px 12px 9px 32px; border-radius:10px; border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text); font-size:13.5px; font-family:inherit;
+}
+.side-search input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+.side-search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:.55;}
+
+.side-actions{display:flex; gap:6px; margin-bottom:16px;}
+.btn-mini{
+  flex:1; font-family:inherit; font-size:12px; padding:7px 6px; border-radius:8px;
+  border:1px solid var(--border); background:var(--surface); color:var(--text-soft); cursor:pointer;
+}
+.btn-mini:hover{border-color:var(--accent); color:var(--accent);}
+
+.nav-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px;}
+.nav-item{
+  display:flex; align-items:center; gap:9px; padding:7px 8px; border-radius:9px; cursor:pointer;
+  font-size:12.5px; color:var(--text-soft); border:1px solid transparent;
+}
+.nav-item:hover{background:var(--surface-2);}
+.nav-idx{font-family:"IBM Plex Mono"; font-size:10.5px; color:var(--text-faint); flex:0 0 20px;}
+.nav-title{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.nav-bar{width:34px; height:5px; border-radius:3px; background:var(--border); flex:0 0 auto; overflow:hidden;}
+.nav-bar > span{display:block; height:100%; background:var(--accent);}
+
+.theme-row{display:flex; gap:6px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border);}
+.theme-row button{
+  flex:1; font-family:inherit; font-size:12px; padding:7px 4px; border-radius:8px;
+  border:1px solid var(--border); background:var(--surface); color:var(--text-soft); cursor:pointer;
+}
+.theme-row button.active{border-color:var(--accent); color:var(--accent); background:var(--accent-soft);}
+
+/* ---------- Main ---------- */
+.main{flex:1; min-width:0; padding:40px clamp(20px,4vw,56px) 90px;}
+.hero{max-width:920px; margin-bottom:30px;}
+.eyebrow{font-family:"IBM Plex Mono"; font-size:12px; letter-spacing:.08em; color:var(--accent); text-transform:uppercase; margin-bottom:10px;}
+.hero h2{font-size:clamp(26px,3.4vw,36px); margin-bottom:12px;}
+.hero p{color:var(--text-soft); font-size:15px; max-width:68ch; margin:0 0 6px;}
+
+.howto{
+  max-width:920px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px 20px; margin-bottom:34px; box-shadow:var(--shadow);
+}
+.howto h3{font-size:14px; font-family:"IBM Plex Sans"; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+.howto ol{margin:0; padding-left:20px; color:var(--text-soft); font-size:13.5px; display:flex; flex-direction:column; gap:5px;}
+.howto strong{color:var(--text); font-weight:600;}
+
+.toolbar{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin-bottom:22px; padding:12px 14px; background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; position:sticky; top:14px; z-index:5; box-shadow:var(--shadow);
+}
+.toolbar .side-search{margin:0; flex:1; min-width:200px;}
+.toolbar-stat{font-family:"IBM Plex Mono"; font-size:12.5px; color:var(--text-soft); white-space:nowrap;}
+.toolbar-stat b{color:var(--accent); font-weight:600;}
+
+section.topic-section{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:14px; overflow:hidden; box-shadow:var(--shadow); scroll-margin-top:70px;
+}
+.sec-head{
+  display:flex; align-items:center; gap:14px; padding:16px 18px; cursor:pointer; user-select:none;
+}
+.sec-num{
+  font-family:"IBM Plex Mono"; font-size:12px; font-weight:600; color:var(--accent);
+  background:var(--accent-soft); border-radius:8px; padding:4px 8px; flex:0 0 auto; min-width:34px; text-align:center;
+}
+.sec-titles{flex:1; min-width:0;}
+.sec-titles h3{font-size:16.5px; font-weight:600; font-family:"IBM Plex Sans";}
+.sec-titles p{margin:3px 0 0; font-size:12.5px; color:var(--text-soft);}
+.sec-meta{display:flex; align-items:center; gap:12px; flex:0 0 auto;}
+.sec-progress{width:86px;}
+.sec-progress-track{height:6px; border-radius:3px; background:var(--border); overflow:hidden;}
+.sec-progress-track > span{display:block; height:100%; background:var(--accent);}
+.sec-progress-label{font-family:"IBM Plex Mono"; font-size:11px; color:var(--text-faint); margin-top:4px; text-align:right;}
+.chevron{transition:transform .18s ease; color:var(--text-faint); flex:0 0 auto;}
+.topic-section.open .chevron{transform:rotate(180deg);}
+.sec-body{display:none; border-top:1px solid var(--border);}
+.topic-section.open .sec-body{display:block;}
+
+.topic-row{
+  display:flex; gap:12px; padding:16px 18px; border-top:1px solid var(--border);
+}
+.topic-row:first-child{border-top:none;}
+.topic-row.hidden{display:none;}
+.topic-check{
+  flex:0 0 auto; width:20px; height:20px; margin-top:2px; border-radius:6px; border:1.6px solid var(--border);
+  background:var(--surface-2); cursor:pointer; display:flex; align-items:center; justify-content:center; appearance:none; -webkit-appearance:none;
+}
+.topic-check:checked{background:var(--accent); border-color:var(--accent);}
+.topic-check:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.topic-main{flex:1; min-width:0;}
+.topic-title-row{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
+.topic-title{font-weight:600; font-size:14.5px; cursor:pointer;}
+.topic-row.done .topic-title{color:var(--text-soft); text-decoration:line-through; text-decoration-color:var(--border); text-decoration-thickness:1.5px;}
+.topic-desc{color:var(--text-soft); font-size:13px; margin:4px 0 12px;}
+
+.group-list{display:flex; flex-direction:column; gap:11px;}
+.group-block{padding-left:14px; border-left:2px solid var(--border);}
+.group-h{
+  font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; letter-spacing:.03em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:5px;
+}
+.group-items{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px;}
+.group-items li{font-size:13px; color:var(--text-soft); padding-left:13px; position:relative; line-height:1.55;}
+.group-items li::before{content:"–"; position:absolute; left:0; color:var(--text-faint);}
+.group-items li b, .group-items li code{color:var(--text); font-weight:600; font-family:"IBM Plex Mono"; font-size:12.3px; background:var(--surface-2); padding:0 4px; border-radius:4px;}
+
+.qbox{
+  margin-top:12px; padding:9px 12px; background:var(--accent-2-soft); border-left:3px solid var(--accent-2);
+  border-radius:8px; font-size:12.5px; color:var(--text);
+}
+.qbox b{color:var(--accent-2); font-family:"IBM Plex Mono"; font-weight:600; font-size:11px; letter-spacing:.02em; display:block; margin-bottom:3px; text-transform:uppercase;}
+
+.empty-state{display:none; text-align:center; padding:60px 20px; color:var(--text-soft);}
+.empty-state.show{display:block;}
+
+.footer-note{max-width:920px; margin-top:36px; color:var(--text-faint); font-size:12.5px; line-height:1.7;}
+
+.modal-backdrop{
+  position:fixed; inset:0; background:rgba(10,15,12,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+}
+.modal-backdrop.show{display:flex;}
+.modal{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px;
+  width:100%; max-width:520px; box-shadow:var(--shadow);
+}
+.modal h4{font-size:15px; font-weight:600; margin-bottom:8px; font-family:"IBM Plex Sans";}
+.modal p{color:var(--text-soft); font-size:13px; margin:0 0 10px;}
+.modal textarea{
+  width:100%; height:140px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2);
+  color:var(--text); font-family:"IBM Plex Mono"; font-size:12px; padding:10px; resize:vertical;
+}
+.modal-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:12px;}
+.modal-actions button{
+  font-family:inherit; font-size:13px; padding:8px 14px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); cursor:pointer;
+}
+.modal-actions button.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+
+@media (max-width: 860px){
+  .sidebar{display:none;}
+  .main{padding:24px 16px 70px;}
+  .toolbar{position:static;}
+}
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">JV</span>
+      <h1>Java&nbsp;→&nbsp;Senior</h1>
+    </div>
+    <p class="brand-sub">Полная карта подготовки: с нуля до собеседований на senior-позицию, с детализацией до уровня конкретных методов, классов и механизмов.</p>
+
+    <div class="ring-wrap">
+      <svg width="52" height="52" viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border)" stroke-width="6"/>
+        <circle id="ring-progress" cx="26" cy="26" r="22" fill="none" stroke="var(--accent)" stroke-width="6"
+          stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2" transform="rotate(-90 26 26)"/>
+      </svg>
+      <div>
+        <div class="ring-stat-num"><span id="stat-pct">0</span>%</div>
+        <div class="ring-stat-label"><span id="stat-done">0</span> из <span id="stat-total">0</span> тем изучено</div>
+      </div>
+    </div>
+
+    <div class="side-search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search-input" type="text" placeholder="Поиск: HashMap, N+1, offset…">
+    </div>
+
+    <div class="side-actions">
+      <button class="btn-mini" id="btn-expand-all">Развернуть всё</button>
+      <button class="btn-mini" id="btn-collapse-all">Свернуть всё</button>
+    </div>
+
+    <ul class="nav-list" id="nav-list"></ul>
+
+    <div class="side-actions" style="margin-top:16px;">
+      <button class="btn-mini" id="btn-export">Экспорт прогресса</button>
+      <button class="btn-mini" id="btn-import">Импорт</button>
+    </div>
+    <div class="side-actions">
+      <button class="btn-mini" id="btn-reset" style="color:var(--danger);">Сбросить прогресс</button>
+    </div>
+
+    <div class="theme-row">
+      <button data-theme-btn="system" class="active">Системная</button>
+      <button data-theme-btn="light">Светлая</button>
+      <button data-theme-btn="dark">Тёмная</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="hero">
+      <div class="eyebrow">Дорожная карта · Java Backend Developer</div>
+      <h2>От «Hello, World» до собеседования на Senior</h2>
+      <p>Каждая тема раскрыта до конкретных механизмов, методов, классов и параметров — не просто «HashMap», а как устроены его бакеты, treeify-порог и resize; не просто «Kafka», а offset, consumer group rebalance и exactly-once. Используйте формулировки из подпунктов как готовые запросы, чтобы разобрать тему глубже.</p>
+    </div>
+
+    <div class="howto">
+      <h3>Как пользоваться картой</h3>
+      <ol>
+        <li><strong>Порядок изучения:</strong> разделы 1–11 — ядро языка и платформы (обязательный минимум для любого уровня), 12–17 — инженерная практика (паттерны, тесты, БД, Spring), 18–20 — архитектура и инфраструктура, 21–24 — продвинутые темы senior-уровня, 25–26 — soft skills и ресурсы.</li>
+        <li><strong>Структура каждой темы:</strong> заголовок (чек-бокс) → краткое описание → несколько именованных групп подпунктов → внутри каждой группы — конкретные факты, методы и термины для разбора. Это и есть «подпункты к подпунктам».</li>
+        <li><strong>Как использовать в диалоге со мной:</strong> берите формулировку подпункта дословно — например «treeify-порог HashMap» или «идемпотентный продюсер Kafka» — и просите разобрать подробно, с примерами кода, сравнением или практическими задачами.</li>
+        <li><strong>Отмечайте темы</strong> галочкой по мере изучения — прогресс сохраняется в этом браузере автоматически (localStorage).</li>
+        <li>Блоки «Частый вопрос на собеседовании» — ориентир: если не можете ответить сходу, тема ещё не закрыта.</li>
+      </ol>
+    </div>
+
+    <div class="toolbar">
+      <div class="side-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search-input-main" type="text" placeholder="Найти по слову: HashMap, N+1, consumer group, volatile…">
+      </div>
+      <div class="toolbar-stat"><b id="toolbar-visible">0</b> тем показано</div>
+      <div class="toolbar-stat">Разделов: <b>26</b></div>
+    </div>
+
+    <div id="sections-root"></div>
+    <div class="empty-state" id="empty-state">Ничего не найдено. Попробуйте другой запрос.</div>
+
+    <p class="footer-note">Карта охватывает язык Java, платформу JVM, экосистему (Spring, Hibernate/JPA, Redis, Kafka/RabbitMQ, тестирование), архитектуру распределённых систем, DevOps-минимум, алгоритмы и soft skills для technical и behavioral интервью. Каждый подпункт — это готовая точка входа для более глубокого разбора.</p>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="export-modal">
+  <div class="modal">
+    <h4>Экспорт прогресса</h4>
+    <p>Скопируйте этот текст и сохраните — на другом устройстве вставьте его через «Импорт».</p>
+    <textarea id="export-text" readonly></textarea>
+    <div class="modal-actions">
+      <button id="export-copy">Скопировать</button>
+      <button class="primary" id="export-close">Готово</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="import-modal">
+  <div class="modal">
+    <h4>Импорт прогресса</h4>
+    <p>Вставьте ранее экспортированный текст.</p>
+    <textarea id="import-text" placeholder="Вставьте сюда…"></textarea>
+    <div class="modal-actions">
+      <button id="import-cancel">Отмена</button>
+      <button class="primary" id="import-apply">Применить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [];
+function S(title, subtitle, topics){ SECTIONS.push({title, subtitle, topics}); }
+function G(h, items){ return {h, items}; }
+function T(title, desc, groups, q){ return {title, desc, groups, q}; }
+
+/* ============================================================ 1 ============================================================ */
+S("Компьютерные основы и фундамент", "База, без которой не стоит начинать Java — если вы совсем с нуля", [
+  T("Как устроен компьютер и операционная система", "Понимание того, что происходит с программой на уровне железа и ОС.", [
+    G("Процессы и потоки", ["Процесс — изолированное адресное пространство, поток — единица выполнения внутри процесса", "Контекстное переключение (context switch) и его цена", "Состояния процесса: running/ready/waiting/terminated"]),
+    G("Память и адресация", ["Виртуальная память и таблицы страниц (page tables)", "Сегментация vs страничная организация", "Куча (heap) vs стек (stack) процесса"]),
+    G("Файловая система и планировщик", ["inode, права доступа (rwx), файловые дескрипторы", "Планировщик задач ОС: вытесняющая многозадачность, приоритеты", "Системные вызовы (syscall) как граница между приложением и ядром"])
+  ]),
+  T("Системы счисления и кодировки", "Пригодится для понимания типов данных, битовых операций и работы со строками.", [
+    G("Системы счисления", ["Двоичная, восьмеричная, шестнадцатеричная запись чисел", "Перевод между системами счисления", "Дополнительный код (two's complement) для отрицательных чисел"]),
+    G("Кодировки текста", ["ASCII — 7 бит, только латиница", "Unicode — универсальная таблица символов (code points)", "UTF-8 (переменная длина) vs UTF-16 (используется внутри Java char/String)", "Проблемы mojibake при несовпадении кодировок"])
+  ]),
+  T("Основы сетей", "Минимум, без которого не понять ни HTTP, ни архитектуру микросервисов.", [
+    G("Модели и транспорт", ["Модель OSI (7 уровней) и практичный стек TCP/IP (4 уровня)", "TCP: установление соединения (3-way handshake), гарантия доставки и порядка", "UDP: без гарантий, ниже задержка — где применяется (стриминг, DNS, игры)"]),
+    G("HTTP и адресация", ["Методы, статус-коды, заголовки — базовое покрытие в разделе 17", "DNS: рекурсивный и итеративный резолвинг, A/AAAA/CNAME/MX записи", "Порты и сокеты, well-known порты (80, 443, 22, 5432, 6379, 9092)"])
+  ], "Чем отличается TCP от UDP? Что происходит с момента ввода URL в браузере до отрисовки страницы?"),
+  T("Git и работа с кодовой базой", "Ежедневный рабочий инструмент любого разработчика.", [
+    G("Базовые операции", ["init / clone / add / commit / push / pull / fetch", "Просмотр истории: log, diff, blame"]),
+    G("Ветвление и слияние", ["merge vs rebase — когда что применять и разница в истории", "Разрешение конфликтов слияния", "Git flow / trunk-based development / feature branches"]),
+    G("Продвинутые операции", ["cherry-pick — перенос отдельного коммита", "revert (новый коммит-откат) vs reset (переписывает историю)", "stash — временное сохранение незакоммиченных изменений", "interactive rebase: squash, fixup, reorder"])
+  ]),
+  T("Алгоритмическое мышление: введение", "Формирует базу перед погружением в структуры данных и сложность.", [
+    G("Основные понятия", ["Что такое алгоритм и зачем оценивать его сложность", "Нотация O(), Ω(), Θ() — верхняя, нижняя и точная оценка", "Декомпозиция задачи на подзадачи, псевдокод"])
+  ])
+]);
+
+/* ============================================================ 2 ============================================================ */
+S("Java Core: синтаксис и базовые конструкции", "Основы языка — то, с чего начинается любое собеседование", [
+  T("Установка окружения и первая программа", "JDK, компиляция и запуск, структура проекта в IDE.", [
+    G("Инструменты", ["JDK (компилятор + JRE + инструменты) vs JRE (только запуск) vs JVM (исполнение байткода)", "JAVA_HOME и переменная PATH", "javac Main.java и java Main из командной строки", "Однофайловый запуск java Main.java без явной компиляции (Java 11+)"]),
+    G("IDE и проект", ["Структура Maven/Gradle проекта: src/main/java, src/test/java", "Модуль, classpath, .class файлы и байткод"])
+  ]),
+  T("Переменные и типы данных", "Примитивы, обёртки и автобоксинг — частая тема для вопросов на подвох.", [
+    G("Примитивы", ["byte(1б)/short(2б)/int(4б)/long(8б) — целые со знаком", "float(4б)/double(8б) — числа с плавающей точкой, IEEE 754", "char (2 байта, UTF-16 code unit), boolean"]),
+    G("Обёртки и автобоксинг", ["Integer/Long/Double и т.д. — неизменяемые объекты-обёртки", "Autoboxing/unboxing — неявное преобразование примитив ↔ обёртка", "Integer cache: -128…127 кэшируются, за пределами — новые объекты (== ломается)", "NullPointerException при unboxing null-обёртки"]),
+    G("Приведение типов", ["Неявное расширение (int→long) vs явное сужение ((int) someLong)", "Переполнение (overflow) целых чисел без исключения", "var — вывод типа компилятором (Java 10+), не «динамическая типизация»"])
+  ], "Что произойдёт при переполнении int? Почему new Integer(200) == new Integer(200) — false, а Integer.valueOf(100) == Integer.valueOf(100) — true?"),
+  T("Операторы и управляющие конструкции", "Базовый синтаксис ветвления и циклов.", [
+    G("Операторы", ["Арифметические, логические (&&, || с коротким замыканием vs &, |)", "Битовые операторы: &, |, ^, ~, <<, >>, >>> (беззнаковый сдвиг)", "Тернарный оператор и его читаемость"]),
+    G("Ветвление и циклы", ["if/else, классический switch и switch expressions (Java 14+)", "for / while / do-while, for-each (использует Iterable)", "break/continue с метками для вложенных циклов"])
+  ]),
+  T("Массивы", "Фиксированная по размеру структура — основа для многих задач на интервью.", [
+    G("Устройство", ["Массив — объект в куче с фиксированной длиной (поле length)", "Одномерные и многомерные (массив массивов, не матрица)", "Массивы объектов хранят ссылки, массивы примитивов — значения напрямую"]),
+    G("API", ["Arrays.sort (Dual-Pivot Quicksort для примитивов, TimSort для объектов)", "Arrays.binarySearch, Arrays.copyOf/copyOfRange", "System.arraycopy — низкоуровневое быстрое копирование"])
+  ]),
+  T("Методы", "Сигнатуры, перегрузка, передача параметров.", [
+    G("Сигнатуры и перегрузка", ["Сигнатура = имя + типы параметров (без учёта возвращаемого типа)", "Overloading — выбор метода на этапе компиляции по типам аргументов", "Разрешение неоднозначности при overloading (наиболее специфичный тип)"]),
+    G("Передача параметров и рекурсия", ["Java всегда pass-by-value — для объектов передаётся значение ссылки", "Varargs (Type... args) — синтаксический сахар над массивом", "Рекурсия и StackOverflowError при отсутствии базового случая"])
+  ]),
+  T("Строки", "Одна из самых частых тем на собеседованиях начального и среднего уровня.", [
+    G("Immutability", ["String неизменяем: любая операция создаёт новый объект", "Причины immutability: безопасность (пути, аргументы), кэшируемость hashCode, потокобезопасность", "String pool в куче (с Java 7) и метод intern()"]),
+    G("Производительность", ["StringBuilder (не потокобезопасен) vs StringBuffer (synchronized методы)", "Конкатенация через + в цикле создаёт множество промежуточных объектов", "Компилятор сам заменяет простую конкатенацию на StringBuilder"]),
+    G("API", ["equals vs == для строк", "substring, split, replace, formatted/String.format", "Text blocks для многострочных литералов (Java 15+)"])
+  ], "Почему String неизменяемый? Что вернёт == для двух строк из пула и созданных через new String()?"),
+  T("Классы и объекты", "Базовый синтаксис ООП в Java.", [
+    G("Конструкторы", ["Конструктор по умолчанию генерируется, только если нет других конструкторов", "this() для вызова другого конструктора того же класса", "Порядок инициализации: статические блоки → поля/блоки экземпляра → тело конструктора"]),
+    G("Модификаторы и структура", ["private/protected/public/package-private (default)", "Пакеты как способ организации и модификатор доступа", "Файл может содержать один public класс, имя файла должно совпадать с ним"])
+  ]),
+  T("final и static", "Ключевые слова, влияющие на жизненный цикл и неизменяемость.", [
+    G("final", ["final переменная — присваивается один раз (не обязательно при объявлении)", "final метод — нельзя переопределить в наследнике", "final класс — нельзя унаследовать (например, String)"]),
+    G("static", ["static поле — одно на класс, а не на экземпляр", "static метод — не имеет доступа к this, не может быть переопределён (только скрыт)", "static-блок инициализации выполняется один раз при загрузке класса", "Утечки памяти при хранении больших коллекций в static-полях"])
+  ]),
+  T("Enum и аннотации", "Enum как полноценный класс, аннотации — метаданные времени компиляции/выполнения.", [
+    G("Enum", ["enum — класс с фиксированным набором экземпляров, может иметь поля, конструктор, методы", "values()/valueOf()/ordinal()/name()", "EnumMap (массив по ordinal) и EnumSet — эффективные коллекции для enum"]),
+    G("Аннотации", ["Встроенные: @Override, @Deprecated, @FunctionalInterface, @SuppressWarnings", "Мета-аннотации: @Retention (SOURCE/CLASS/RUNTIME), @Target, @Inherited", "Создание своих аннотаций и их обработка через рефлексию или annotation processor"])
+  ])
+]);
+
+/* ============================================================ 3 ============================================================ */
+S("Объектно-ориентированное программирование", "Фундаментальные принципы ООП и то, как они реализованы именно в Java", [
+  T("Инкапсуляция", "Сокрытие деталей реализации и защита инвариантов объекта.", [
+    G("Механизмы", ["private-поля + публичные методы доступа", "Иммутабельные объекты как максимальная форма инкапсуляции", "Защитное копирование (defensive copy) для изменяемых полей (Date, коллекции)"]),
+    G("Практика", ["Геттеры/сеттеры — не всегда нужны по умолчанию (анемичная модель — антипаттерн)", "Валидация инвариантов внутри конструктора/сеттера"])
+  ]),
+  T("Наследование", "Механизм повторного использования кода через иерархии классов.", [
+    G("Механика", ["extends и обязательный/неявный вызов super() первой строкой конструктора", "Переопределение методов: сигнатура должна совпадать, возвращаемый тип — ковариантен", "Java поддерживает только одиночное наследование классов (в отличие от интерфейсов)"]),
+    G("Проблемы", ["Fragile base class problem — изменение родителя ломает наследников", "Нарушение инкапсуляции при глубокой иерархии", "Вызов переопределяемого метода из конструктора родителя — источник багов"])
+  ]),
+  T("Полиморфизм", "Один из самых частых теоретических вопросов на собеседовании.", [
+    G("Виды", ["Статический (compile-time) — overloading, выбор по типам аргументов", "Динамический (runtime) — overriding, выбор по реальному типу объекта"]),
+    G("Механизм в JVM", ["Раннее связывание (static/private/final методы) vs позднее (virtual методы)", "vtable (таблица виртуальных методов) — как JVM находит нужную реализацию"])
+  ], "В чём разница между overloading и overriding? Как работает динамическая диспетчеризация методов в JVM?"),
+  T("Абстракция: abstract class vs interface", "Классический вопрос «когда что выбрать» на любом уровне собеседования.", [
+    G("Отличия", ["abstract class может иметь состояние (поля) и конструктор, interface — нет состояния экземпляра", "Класс может наследовать только один abstract class, но реализовывать много интерфейсов", "abstract class — для тесно связанной иерархии, interface — для контракта поведения"]),
+    G("Интерфейсы после Java 8", ["default-методы — реализация по умолчанию без нарушения обратной совместимости", "static-методы интерфейса", "private-методы интерфейса (Java 9+) для переиспользования кода default-методов", "Diamond problem при конфликте default-методов — решается явным переопределением"])
+  ]),
+  T("Композиция vs наследование", "Принцип, который отличает крепкий дизайн от хрупкого.", [
+    G("Принцип", ["«Предпочитайте композицию наследованию» (Effective Java)", "has-a (композиция) vs is-a (наследование) отношения", "Делегирование вызовов вложенному объекту вместо переопределения методов родителя"])
+  ]),
+  T("Контракт equals/hashCode/toString", "Нарушение контракта — классическая причина трудноуловимых багов.", [
+    G("Контракт equals", ["Рефлексивность: x.equals(x) == true", "Симметричность: x.equals(y) == y.equals(x)", "Транзитивность и согласованность с hashCode"]),
+    G("Почему hashCode обязателен", ["Равные объекты обязаны иметь одинаковый hashCode", "Нарушение контракта → объект «теряется» в HashMap/HashSet", "IDE-генерация vs Lombok @EqualsAndHashCode vs record (генерирует автоматически)"])
+  ], "Почему если переопределён equals, обязательно нужно переопределить hashCode? Что сломается, если этого не сделать?"),
+  T("Comparable и Comparator", "Два способа задать порядок сортировки объектов.", [
+    G("Comparable", ["Метод compareTo(T o), «естественный порядок» объекта", "Контракт: знак результата, согласованность с equals (желательно)"]),
+    G("Comparator", ["Внешний, не завязанный на класс порядок сортировки", "Comparator.comparing(keyExtractor).thenComparing(...).reversed()", "Collections.sort / List.sort / Stream.sorted с Comparator"])
+  ]),
+  T("Вложенные и анонимные классы", "Разные способы организации кода внутри классов.", [
+    G("Виды", ["Static nested class — не хранит ссылку на внешний объект", "Inner (non-static) class — хранит неявную ссылку Outer.this, требует экземпляр внешнего класса", "Local class — объявлен внутри метода", "Anonymous class — безымянный, создаётся и используется один раз"]),
+    G("Современная альтернатива", ["Лямбды заменяют анонимные классы для функциональных интерфейсов (компактнее, без this-ловушек)"])
+  ])
+]);
+
+/* ============================================================ 4 ============================================================ */
+S("Обработка исключений", "Как Java сигнализирует об ошибках и как правильно на это реагировать", [
+  T("Иерархия исключений", "Throwable, Error, Exception — что где ловить и почему.", [
+    G("Иерархия", ["Throwable → Error (не для перехвата: OutOfMemoryError, StackOverflowError) и Exception", "Checked (наследники Exception, кроме RuntimeException) — обязаны быть объявлены или обработаны", "Unchecked (RuntimeException и наследники) — NullPointerException, IllegalArgumentException, ClassCastException"]),
+    G("Проектирование", ["Checked — для восстановимых, ожидаемых ошибок (например, файл не найден)", "Unchecked — для программных ошибок и нарушений контракта метода"])
+  ]),
+  T("Механизм try-catch-finally", "Тонкости выполнения блоков — частая ловушка на собеседовании.", [
+    G("Порядок выполнения", ["finally выполняется всегда, кроме System.exit() и краха JVM", "return в finally «перекрывает» return/exception из try", "Несколько catch — порядок от более специфичного к более общему"]),
+    G("try-with-resources", ["Работает с любым AutoCloseable (close() вызывается автоматически)", "Ресурсы закрываются в порядке, обратном объявлению", "Подавленные исключения (suppressed) — если close() тоже бросил исключение, оно не теряется, а прикрепляется к основному"])
+  ], "Что вернёт метод, если return есть и в try, и в finally? Как try-with-resources закрывает несколько ресурсов и в каком порядке?"),
+  T("Свои исключения и best practices", "Проектирование иерархии исключений в реальных проектах.", [
+    G("Создание", ["Наследование от Exception (checked) или RuntimeException (unchecked)", "Конструкторы с message и cause (exception chaining через super(cause))"]),
+    G("Best practices", ["Антипаттерн: пустой catch-блок, глотающий ошибку", "Антипаттерн: catch (Exception e) слишком широко", "Логирование с сохранением стектрейса (не just e.getMessage())", "Не использовать исключения для управления обычным потоком выполнения"])
+  ]),
+  T("Исключения в многопоточном коде", "Особенности, которые не встречаются в однопоточном коде.", [
+    G("Механизмы", ["Thread.setUncaughtExceptionHandler — обработка необработанных исключений в потоке", "Исключение в задаче ExecutorService «прячется» до вызова Future.get()", "CompletableFuture — исключение распространяется по цепочке до exceptionally/handle"])
+  ])
+]);
+
+/* ============================================================ 5 ============================================================ */
+S("Коллекции (Java Collections Framework)", "Одна из самых объёмных и часто спрашиваемых тем — важно знать внутреннее устройство", [
+  T("Иерархия коллекций", "Общая карта интерфейсов JCF.", [
+    G("Структура", ["Collection → List / Set / Queue (и Deque)", "Map — отдельная параллельная иерархия (не наследует Collection)", "Iterable — базовый интерфейс для for-each, содержит iterator()"])
+  ]),
+  T("List: ArrayList, LinkedList, Vector", "Разное внутреннее устройство — разная сложность операций.", [
+    G("ArrayList", ["Внутри — динамический массив Object[]", "resize: при заполнении создаётся новый массив в 1.5x больше, данные копируются", "get(index) — O(1), add в конец — амортизированная O(1), add/remove в середине — O(n)"]),
+    G("LinkedList", ["Двусвязный список узлов (Node: prev, item, next)", "add/remove на концах — O(1), доступ по индексу — O(n)", "Реализует и List, и Deque одновременно"]),
+    G("Устаревшие варианты", ["Vector и Stack — synchronized-варианты, вытеснены ArrayDeque/concurrent-коллекциями"])
+  ]),
+  T("Set: HashSet, LinkedHashSet, TreeSet", "Разные гарантии порядка и сложности.", [
+    G("Реализации", ["HashSet построен поверх HashMap (элемент — ключ, значение — фиктивный объект-константа)", "LinkedHashSet — HashMap + двусвязный список для порядка вставки", "TreeSet — на основе TreeMap (красно-чёрное дерево), элементы отсортированы"]),
+    G("API TreeSet/NavigableSet", ["floor/ceiling/higher/lower — поиск ближайшего элемента", "first/last, headSet/tailSet/subSet"])
+  ]),
+  T("Map: HashMap изнутри", "Топ-1 вопрос на собеседованиях по Java любого уровня — знать досконально.", [
+    G("Внутреннее устройство", ["Массив бакетов Node<K,V>[] table, индекс = (n-1) & hash", "hash(key) дополнительно разбрасывает биты: h ^ (h >>> 16), чтобы уменьшить коллизии", "Коллизии внутри бакета — связный список узлов"]),
+    G("Resize и treeify (Java 8+)", ["Load factor по умолчанию 0.75: resize при size > capacity*0.75", "При resize capacity удваивается, все элементы переразмещаются (rehash)", "TREEIFY_THRESHOLD = 8 — при накоплении 8+ элементов в бакете и capacity ≥ 64 список превращается в красно-чёрное дерево (O(n)→O(log n))", "UNTREEIFY_THRESHOLD = 6 — обратное превращение дерева в список при уменьшении"]),
+    G("Родственные структуры", ["LinkedHashMap с accessOrder=true — LRU-порядок, основа для реализации LRU-кэша через removeEldestEntry", "TreeMap — сортированная карта на красно-чёрном дереве, O(log n) на операции", "Hashtable (legacy, synchronized) vs ConcurrentHashMap vs просто HashMap без синхронизации"]),
+    G("Полезные методы", ["compute/computeIfAbsent/computeIfPresent/merge — атомарные (в однопоточном смысле) модификации значения", "getOrDefault, putIfAbsent"])
+  ], "Как HashMap обрабатывает коллизии? Что изменилось в реализации HashMap в Java 8? Как реализовать LRU-кэш поверх LinkedHashMap?"),
+  T("Queue и Deque", "Очереди разных видов и их применение.", [
+    G("Реализации", ["PriorityQueue — бинарная куча (heap) на массиве, порядок по Comparator/natural order", "ArrayDeque — динамический циклический массив, быстрее LinkedList как стек/очередь", "BlockingQueue-реализации разбираются отдельно в разделе про многопоточность"])
+  ]),
+  T("Итераторы и модификация коллекций", "Частая причина рантайм-ошибок в реальном коде.", [
+    G("Fail-fast vs fail-safe", ["Fail-fast (ArrayList, HashMap) — modCount проверяется, ConcurrentModificationException при изменении во время итерации", "Fail-safe (CopyOnWriteArrayList, ConcurrentHashMap) — итератор работает со снимком или не бросает исключение"]),
+    G("Безопасная модификация", ["Iterator.remove() — единственный безопасный способ удалять во время итерации обычным итератором", "removeIf() как альтернатива в современном коде"])
+  ]),
+  T("Неизменяемые и утилитарные коллекции", "Современный подход к иммутабельности с Java 9+.", [
+    G("Иммутабельность", ["List.of/Set.of/Map.of (Java 9+) — по-настоящему неизменяемые, бросают UnsupportedOperationException", "Collections.unmodifiableList — лишь обёртка, исходная коллекция всё ещё может измениться", "Arrays.asList — фиксированный размер, но элементы изменяемы, backed by массив"]),
+    G("Утилиты", ["Collections.sort/reverse/shuffle/synchronizedList/emptyList", "Comparator и Collections.max/min"])
+  ]),
+  T("Выбор правильной коллекции", "Практический навык, который проверяют почти на любом собеседовании.", [
+    G("Критерии выбора", ["Частое чтение по индексу → ArrayList; частые вставки в начало/середину → LinkedList/ArrayDeque", "Нужна уникальность без порядка → HashSet; с порядком вставки → LinkedHashSet; отсортированный → TreeSet", "Быстрый доступ по ключу → HashMap; сортировка по ключу → TreeMap; порядок вставки/LRU → LinkedHashMap"])
+  ])
+]);
+
+/* ============================================================ 6 ============================================================ */
+S("Generics (обобщённое программирование)", "Типобезопасность на этапе компиляции и её ограничения", [
+  T("Основы generics", "Зачем нужны параметризованные типы.", [
+    G("Базовые понятия", ["Generic-классы (class Box<T>) и generic-методы (<T> T identity(T t))", "Type erasure — во время выполнения информация о параметре типа стирается до Object или границы", "Совместимость с legacy-кодом через raw types (List вместо List<String>)"])
+  ]),
+  T("Границы типов и wildcard", "Тонкая настройка того, какие типы допустимы.", [
+    G("Bounded types", ["<T extends Comparable<T>> — верхняя граница для класса/интерфейса", "Множественные границы: <T extends A & B>"]),
+    G("Wildcard", ["? extends Type — можно только читать (producer), запись запрещена (кроме null)", "? super Type — можно только писать (consumer), чтение только как Object", "Принцип PECS: Producer Extends, Consumer Super"])
+  ], "Почему нельзя создать List<T>[]? Объясните PECS на примере Collections.copy()."),
+  T("Ограничения и подводные камни generics", "То, что часто ломает голову новичкам и проверяется на интервью.", [
+    G("Ограничения", ["Нельзя напрямую создать generic-массив: new T[10] — ошибка компиляции", "Нельзя использовать примитивы как параметр типа (только обёртки: List<Integer>, не List<int>)", "instanceof и приведение типов с generic-параметром работают только до erasure"]),
+    G("Технические детали", ["Unchecked warnings при смешивании raw types и generics", "Bridge methods — синтетические методы, которые компилятор генерирует для сохранения полиморфизма после erasure"])
+  ])
+]);
+
+/* ============================================================ 7 ============================================================ */
+S("Функциональный стиль и Stream API (Java 8+)", "Изменил повседневный код на Java — обязателен для среднего и senior уровня", [
+  T("Лямбда-выражения и замыкания", "Синтаксическая база функционального стиля в Java.", [
+    G("Синтаксис", ["(args) -> expression или (args) -> { statements }", "Вывод типов параметров из контекста (target type)"]),
+    G("Замыкания", ["@FunctionalInterface — интерфейс ровно с одним абстрактным методом", "Effectively final — переменные внешнего скоупа, захватываемые лямбдой, не должны изменяться после захвата", "Method references: Class::staticMethod, obj::instanceMethod, Class::new"])
+  ]),
+  T("Стандартные функциональные интерфейсы", "Набор готовых интерфейсов из java.util.function.", [
+    G("Основные", ["Supplier<T> — get(), без аргументов", "Consumer<T> — accept(T), возвращает void", "Function<T,R> — apply(T) → R", "Predicate<T> — test(T) → boolean, комбинируется через and/or/negate"]),
+    G("Дополнительные", ["BiFunction, BiConsumer, BiPredicate — с двумя аргументами", "UnaryOperator<T>/BinaryOperator<T> — Function/BiFunction с одинаковым типом входа и выхода", "Примитивные специализации (IntFunction, ToIntFunction, IntPredicate) — избегают автобоксинга"])
+  ]),
+  T("Stream API", "Декларативная обработка коллекций.", [
+    G("Операции", ["Intermediate (ленивые, возвращают Stream): map, filter, sorted, distinct, flatMap, peek", "Terminal (запускают вычисление): collect, reduce, forEach, count, anyMatch/allMatch/noneMatch"]),
+    G("Особенности", ["Ленивые вычисления: pipeline не выполняется, пока не вызван terminal-метод", "Short-circuit операции (limit, findFirst, anyMatch) — не обходят весь поток", "Стрим одноразовый — повторное использование бросает IllegalStateException"])
+  ], "Чем map отличается от flatMap? Почему поток можно обойти только один раз?"),
+  T("Collectors", "Финальная агрегация данных из потока.", [
+    G("Базовые коллекторы", ["toList/toSet/toUnmodifiableList, toMap (с обработкой дублей ключей через merge-функцию)", "joining(delimiter, prefix, suffix)"]),
+    G("Группировка", ["groupingBy(classifier) и groupingBy(classifier, downstream-коллектор)", "partitioningBy — специальный случай группировки по boolean-предикату", "summarizingInt/averagingInt/counting как downstream-коллекторы"]),
+    G("Продвинутое", ["Свои коллекторы через Collector.of(supplier, accumulator, combiner, finisher)", "teeing (Java 12+) — объединение результатов двух коллекторов за один проход"])
+  ]),
+  T("Параллельные стримы", "Мощный, но опасный инструмент при неверном использовании.", [
+    G("Механизм", ["parallelStream() делит источник данных (Spliterator) и использует ForkJoinPool.commonPool()", "Число потоков по умолчанию = число ядер процессора минус один"]),
+    G("Риски", ["Накладные расходы на разбиение задачи могут превысить выигрыш на маленьких коллекциях", "Побочные эффекты (запись в общее изменяемое состояние) ломают корректность", "Блокирующие операции внутри parallelStream истощают общий пул для всего приложения"])
+  ]),
+  T("Optional", "Инструмент против NullPointerException — с частыми злоупотреблениями.", [
+    G("Назначение и API", ["Явно показывает возможное отсутствие значения в возвращаемом типе", "orElse (всегда вычисляет аргумент) vs orElseGet (ленивый Supplier) vs orElseThrow", "map/flatMap/filter/ifPresent/ifPresentOrElse на Optional"]),
+    G("Антипаттерны", ["Optional как поле класса или параметр метода — не по задумке дизайна", "Optional.get() без isPresent()-проверки — тот же риск, что и NPE", "Optional<Collection> вместо просто пустой коллекции"])
+  ])
+]);
+
+/* ============================================================ 8 ============================================================ */
+S("Многопоточность и Concurrency", "Одна из самых сложных и часто заваливаемых тем на senior-собеседованиях", [
+  T("Основы потоков", "Базовый API и жизненный цикл потока.", [
+    G("Создание", ["Thread (наследование) vs Runnable (композиция, предпочтительно) vs Callable (возвращает значение, бросает checked exception)", "start() запускает новый поток выполнения, run() — обычный синхронный вызов метода в текущем потоке"]),
+    G("Жизненный цикл", ["NEW → RUNNABLE → (BLOCKED/WAITING/TIMED_WAITING) → TERMINATED", "BLOCKED — ожидание монитора (synchronized), WAITING — wait()/join() без таймаута, TIMED_WAITING — с таймаутом (sleep, wait(ms))"])
+  ]),
+  T("Синхронизация: synchronized", "Базовый механизм взаимного исключения в Java.", [
+    G("Механика", ["synchronized-метод блокирует монитор объекта (this) или класса (для static)", "synchronized-блок позволяет указать произвольный объект-монитор", "Монитор объекта (intrinsic lock) — встроен в каждый объект Java (заголовок объекта в памяти)"]),
+    G("Свойства", ["Реентерабельность — поток может повторно захватить уже удерживаемый им же монитор", "Блокировка на this vs на классе (Class.class) — разные уровни изоляции"])
+  ]),
+  T("Java Memory Model и volatile", "Теория, без которой невозможно писать корректный многопоточный код.", [
+    G("Видимость и порядок", ["volatile гарантирует видимость записи другими потоками немедленно (запись идёт в основную память, не только в кэш ядра)", "happens-before: запись volatile happens-before последующего чтения того же volatile", "Reordering — JIT и процессор вправе переставлять независимые инструкции, если это не видно в однопоточном выполнении"]),
+    G("Атомарность vs видимость", ["volatile НЕ делает составные операции (i++) атомарными — нужен synchronized или AtomicInteger", "Разница между happens-before для volatile, synchronized (вход/выход из блока) и final-полей (безопасная публикация после конструктора)"])
+  ], "Чем volatile отличается от synchronized? Гарантирует ли volatile атомарность операции инкремента (i++)?"),
+  T("Взаимодействие потоков и deadlock", "Классические проблемы конкурентного выполнения.", [
+    G("wait/notify", ["Вызываются только внутри synchronized-блока на том же объекте-мониторе", "wait() освобождает монитор и переводит поток в WAITING, notify()/notifyAll() будят один/все ожидающие потоки", "Всегда проверять условие в цикле while, а не в if (spurious wakeup)"]),
+    G("Проблемы конкурентности", ["Deadlock: 4 условия Коффмана (взаимное исключение, удержание и ожидание, отсутствие вытеснения, циклическое ожидание) — избегается фиксированным порядком захвата блокировок", "Livelock — потоки активны, но не продвигаются (постоянно уступают друг другу)", "Starvation — поток с низким приоритетом бесконечно не получает ресурс"])
+  ]),
+  T("Пулы потоков: java.util.concurrent", "То, как многопоточность реально применяется в продакшене.", [
+    G("ExecutorService", ["Фабрики Executors: newFixedThreadPool, newCachedThreadPool, newSingleThreadExecutor (в проде часто избегают из-за скрытых дефолтов)", "submit() (возвращает Future) vs execute() (без результата)"]),
+    G("ThreadPoolExecutor", ["Параметры: corePoolSize, maximumPoolSize, keepAliveTime, workQueue, RejectedExecutionHandler", "Порядок роста пула: сначала до corePoolSize, затем очередь заполняется, затем рост до maximumPoolSize, затем — rejection policy", "RejectedExecutionHandler: AbortPolicy/CallerRunsPolicy/DiscardPolicy/DiscardOldestPolicy"]),
+    G("Завершение работы", ["shutdown() — не принимает новые задачи, доделывает текущие", "shutdownNow() — пытается прервать выполняющиеся задачи", "awaitTermination(timeout) — блокирующее ожидание завершения"])
+  ], "Как правильно рассчитать размер пула потоков для CPU-bound и для IO-bound задач?"),
+  T("Future и CompletableFuture", "Асинхронное программирование в Java.", [
+    G("Future", ["get() — блокирующий вызов, get(timeout) с TimeoutException", "cancel(mayInterruptIfRunning), isDone/isCancelled"]),
+    G("CompletableFuture", ["thenApply (синхронная трансформация) vs thenApplyAsync (в отдельном потоке)", "thenCompose — для объединения зависимых асинхронных вызовов (аналог flatMap)", "thenCombine — объединение двух независимых CompletableFuture", "allOf/anyOf — ожидание группы future"]),
+    G("Обработка ошибок", ["exceptionally(fn) — обработка исключения, возвращает fallback-значение", "handle((res, ex) -> …) — обрабатывает и успех, и ошибку", "whenComplete — побочный эффект без изменения результата"])
+  ]),
+  T("Concurrent-коллекции и атомарные переменные", "Потокобезопасные структуры данных без явных блокировок пользователем.", [
+    G("ConcurrentHashMap", ["До Java 8 — сегментная блокировка (16 сегментов по умолчанию)", "С Java 8 — блокировка на уровне бакета (synchronized на первом узле) + CAS для пустых бакетов", "size() — приближённое значение без полной блокировки всей карты"]),
+    G("Другие коллекции", ["CopyOnWriteArrayList — копирует весь массив при любой записи, эффективен при редких записях и частом чтении/итерации", "BlockingQueue: ArrayBlockingQueue (ограниченная, на массиве), LinkedBlockingQueue (опционально неограниченная)"]),
+    G("Atomic-классы", ["AtomicInteger/AtomicLong/AtomicReference — на основе CAS (Compare-And-Swap)", "CAS: сравнить текущее значение с ожидаемым и заменить атомарно на процессорном уровне (CMPXCHG)", "ABA-проблема и AtomicStampedReference как решение"])
+  ]),
+  T("Явные блокировки и примитивы синхронизации", "Более гибкая альтернатива synchronized.", [
+    G("Locks", ["ReentrantLock: явный lock()/unlock() в finally, поддержка tryLock() и fair-режима (в отличие от synchronized)", "ReadWriteLock — разделяет блокировку на чтение (много читателей) и запись (эксклюзивный писатель)", "StampedLock — добавляет оптимистичное чтение без блокировки вообще"]),
+    G("Координация потоков", ["CountDownLatch — одноразовое ожидание N событий (например, старт после инициализации)", "CyclicBarrier — многоразовая точка синхронизации для фиксированного числа потоков", "Semaphore — ограничение числа потоков, одновременно обращающихся к ресурсу", "Phaser — гибкая альтернатива CyclicBarrier с динамическим числом участников"])
+  ]),
+  T("ThreadLocal и Fork/Join", "Специализированные инструменты многопоточности.", [
+    G("ThreadLocal", ["Хранит собственную копию значения для каждого потока", "Типичное применение: SimpleDateFormat (не потокобезопасен), контекст запроса (MDC для логирования)", "Утечки памяти в пулах потоков — поток переиспользуется, а ThreadLocal не был удалён (remove())"]),
+    G("Fork/Join", ["ForkJoinPool и алгоритм work-stealing: свободный поток «ворует» задачи из очереди занятого", "RecursiveTask<V> (возвращает результат) и RecursiveAction (без результата)", "Порог разбиения задачи (threshold), ниже которого дальнейшее дробление не окупается"])
+  ]),
+  T("Виртуальные потоки (Project Loom, Java 21)", "Актуальная тема для собеседований 2024+.", [
+    G("Отличия от платформенных потоков", ["Платформенный поток 1:1 с ОС-потоком (дорогой, ограничен тысячами)", "Виртуальный поток — лёгкая сущность JVM, можно создавать миллионы, монтируется на carrier-поток только на время реальной работы"]),
+    G("Применение", ["Структурированная конкурентность (StructuredTaskScope) — управление жизненным циклом группы связанных задач как единым целым", "Выигрыш максимален для IO-bound нагрузки с блокирующими вызовами, минимален для CPU-bound задач", "Не стоит пуллить виртуальные потоки (в отличие от платформенных)"]),
+    G("Pinning и Scoped Values", ["Carrier thread pinning — виртуальный поток не отмонтируется от carrier-потока внутри synchronized-блока или native-вызова, что при блокировке съедает платформенный поток так же, как обычный (нужно заменять synchronized на ReentrantLock в горячих путях)", "При блокировке стек виртуального потока сериализуется в кучу — это следует учитывать, если в стеке в этот момент лежат чувствительные данные", "Scoped Values (JEP 446) — неизменяемый, безопасно передаваемый контекст выполнения для структурированной конкурентности, задуман как более лёгкая и безопасная альтернатива ThreadLocal в мире виртуальных потоков"])
+  ]),
+  T("Практические задачи на собеседовании", "Типовые live-coding задания по многопоточности.", [
+    G("Классика", ["Producer-Consumer через BlockingQueue", "Dining philosophers — иллюстрация deadlock и способов его избежать", "Свой потокобезопасный кэш/счётчик (через synchronized, Lock или Atomic)", "Простой rate limiter (token bucket / sliding window) на потоках"])
+  ])
+]);
+
+/* ============================================================ 9 ============================================================ */
+S("Внутреннее устройство JVM", "То, что отличает senior от разработчика, который «просто пишет код»", [
+  T("Архитектура JVM", "Общая карта компонентов виртуальной машины.", [
+    G("Компоненты", ["Class loader subsystem — загрузка, линковка, инициализация классов", "Runtime data areas — области памяти (следующая тема)", "Execution engine — интерпретатор байткода + JIT-компилятор + сборщик мусора", "JNI (Java Native Interface) — мост к нативному коду"])
+  ]),
+  T("Загрузка классов", "Как байткод попадает в память и становится доступен для выполнения.", [
+    G("Class loaders", ["Bootstrap classloader — загружает ядро JDK (java.lang.*), написан на C++", "Platform (ранее Extension) и Application classloader — загружают остальные классы", "Delegation model — сначала запрос уходит родителю, свой classloader ищет класс только если родитель не нашёл"]),
+    G("Этапы", ["Линковка: verification (проверка байткода) → preparation (выделение памяти под static, значения по умолчанию) → resolution (замена символьных ссылок реальными)", "Инициализация: выполнение static-блоков и присвоение значений static-полям, ленивая (при первом активном использовании класса)"])
+  ]),
+  T("Области памяти JVM", "Основа для понимания OutOfMemoryError и GC.", [
+    G("Heap", ["Young generation: Eden + два Survivor-пространства (S0/S1)", "Old (Tenured) generation — объекты, пережившие несколько сборок Young", "Объекты создаются в Eden, копируются между Survivor при Minor GC, попадают в Old после порога возраста (tenuring threshold)"]),
+    G("Не-heap области", ["Metaspace — метаданные классов, в нативной памяти (с Java 8, пришёл на смену PermGen)", "Stack — по одному на поток, фреймы вызова методов (локальные переменные, ссылка на объект, адрес возврата)", "PC register — указатель на текущую выполняемую инструкцию потока", "Native method stack — для вызовов через JNI"])
+  ]),
+  T("Сборка мусора (Garbage Collection)", "Одна из ключевых тем для собеседований на позиции с высокой нагрузкой.", [
+    G("Теория", ["Поколенческая гипотеза: большинство объектов умирают молодыми (weak generational hypothesis)", "Mark-Sweep-Compact — базовый алгоритм: пометить достижимые объекты, удалить недостижимые, уплотнить память", "Minor GC (только Young) vs Major/Full GC (весь heap, дольше пауза)"]),
+    G("Сборщики", ["Serial — однопоточный, для маленьких приложений", "Parallel (throughput collector) — многопоточный, оптимизирован под пропускную способность", "CMS (Concurrent Mark Sweep) — устарел и удалён, был low-pause", "G1 (Garbage First, default с Java 9) — делит heap на регионы, собирает сначала регионы с наибольшим мусором", "ZGC и Shenandoah — субмиллисекундные паузы даже на очень больших heap за счёт concurrent-компактации"]),
+    G("Настройка", ["Флаги: -Xms/-Xmx (начальный/максимальный heap), -XX:+UseG1GC, -XX:MaxGCPauseMillis", "Анализ GC-логов: частота и длительность пауз, объём освобождаемой памяти"])
+  ], "Как выбрать сборщик мусора для latency-sensitive сервиса? Почему G1 делит хип на регионы?"),
+  T("JIT-компиляция и оптимизации", "Почему Java не медленная, хотя выполняется на виртуальной машине.", [
+    G("Компиляция", ["Интерпретация байткода построчно на старте, JIT компилирует «горячий» код в машинный", "C1 (client compiler) — быстрая компиляция, менее агрессивные оптимизации", "C2 (server compiler) — медленнее компилирует, но сильнее оптимизирует", "Tiered compilation — постепенный переход от интерпретации через C1 к C2 по мере «нагрева» метода"]),
+    G("Оптимизации", ["Inlining — подстановка тела маленького метода вместо вызова", "Escape analysis — если объект не «убегает» из метода/потока, JVM может разместить его на стеке вместо кучи (scalar replacement)", "Devirtualization — превращение виртуального вызова в прямой, если известен единственный реализующий класс"])
+  ]),
+  T("Диагностика и профилирование", "Практические инструменты для реальных production-инцидентов.", [
+    G("Ошибки памяти", ["java.lang.OutOfMemoryError: Java heap space — не хватило heap", "OutOfMemoryError: Metaspace — переполнены метаданные классов (частая причина: утечка classloader'ов)", "OutOfMemoryError: GC overhead limit exceeded — GC работает почти постоянно, освобождая мало памяти"]),
+    G("Инструменты", ["Java Flight Recorder (JFR) + Mission Control — низкоуровневый профилировщик со малыми накладными расходами", "jstack — снимок стеков всех потоков (для поиска deadlock/зависаний)", "jmap -histo / heap dump + анализ в Eclipse MAT (поиск утечек через dominator tree)", "async-profiler — сэмплирующий профилировщик CPU/аллокаций с flame graph"])
+  ]),
+  T("Байткод, invokedynamic и Instrumentation API", "Уровень знаний, который отличает эксперта по JVM от просто опытного разработчика — пригодится для понимания, как устроены лямбды, ORM-прокси и APM-агенты.", [
+    G("Байткод", ["Структура .class файла: constant pool, поля, методы, атрибуты", "Опкоды (bytecode instructions) — стековая машина JVM, каждая инструкция работает с operand stack", "javap -c как способ посмотреть байткод скомпилированного класса"]),
+    G("invokedynamic и MethodHandle", ["invokedynamic (Java 7+) — инструкция с отложенной привязкой вызова, вычисляемой bootstrap-методом при первом обращении", "На invokedynamic и LambdaMetafactory построена компиляция лямбд — тело лямбды не превращается в анонимный класс, а генерируется как synthetic-метод, связываемый через invokedynamic", "MethodHandle и MethodHandles.Lookup — типобезопасная альтернатива Reflection API, значительно быстрее за счёт JIT-инлайнинга"]),
+    G("Инструментация во время выполнения", ["Java Agents: premain (загружается при старте JVM через -javaagent) vs agentmain (подключается к уже запущенной JVM)", "Instrumentation API — ClassFileTransformer, возможность переписывать байткод классов на лету (на этом строятся APM-агенты, покрытие тестами, ORM/AOP-библиотеки)", "Байткод-манипуляция через ASM/ByteBuddy — на чём построены динамические прокси Hibernate и Spring CGLIB"])
+  ]),
+  T("Project Panama, Valhalla и Leyden — куда движется платформа", "Не всегда спрашивают напрямую, но демонстрирует, что кандидат следит за развитием платформы, а не застрял в Java 8.", [
+    G("Project Panama", ["Foreign Function & Memory API (замена JNI) — безопасный вызов нативного кода и работа с off-heap памятью без Unsafe", "Vector API — явная векторизация (SIMD) вычислений на уровне Java-кода вместо надежды на auto-vectorization JIT"]),
+    G("Project Valhalla", ["Value classes / primitive classes — объекты без identity, хранящиеся «плоско» (без указателя), как примитивы, но с методами", "Зачем это нужно: избежать накладных расходов на упаковку (boxing) и промахи кэша процессора из-за разыменования ссылок в коллекциях примитивов"]),
+    G("Project Leyden", ["Цель — ускорение старта JVM и выхода на пиковую производительность (актуально для serverless и коротко живущих контейнеров)", "AppCDS (Application Class-Data Sharing) как предшествующий, уже стабильный шаг в эту сторону — переиспользование метаданных классов между запусками JVM"])
+  ])
+]);
+
+/* ============================================================ 10 ============================================================ */
+S("Эволюция Java: ключевые версии", "Senior обязан ориентироваться в фичах современных версий, а не только Java 8", [
+  T("Java 8 — точка отсчёта", "Изменила стиль написания Java-кода навсегда.", [
+    G("Ключевые фичи", ["Lambda-выражения и функциональные интерфейсы", "Stream API для декларативной обработки данных", "java.time (LocalDate/LocalDateTime/ZonedDateTime/Duration/Period) — неизменяемая и потокобезопасная замена Date/Calendar", "Default- и static-методы в интерфейсах", "Optional<T>"])
+  ]),
+  T("Java 9–11", "Модульность и обновление стандартного API.", [
+    G("Платформа", ["JPMS (Java Platform Module System) — module-info.java, инкапсуляция пакетов между модулями", "JShell — интерактивный REPL для быстрых экспериментов"]),
+    G("Синтаксис и API", ["var для локальных переменных (Java 10) — вывод типа, не «динамическая типизация»", "Новый HTTP Client (java.net.http, Java 11) — поддержка HTTP/2 и асинхронности из коробки", "Java 11 — LTS-версия, часто база для legacy-проектов"])
+  ]),
+  T("Java 12–17", "Существенное упрощение синтаксиса для типовых конструкций.", [
+    G("Синтаксис", ["Switch expressions (Java 14) — switch как выражение со стрелочным синтаксисом, без fall-through", "Text blocks (Java 15) — многострочные строковые литералы \"\"\"...\"\"\"", "Pattern matching for instanceof — совмещает проверку типа и приведение"]),
+    G("Records и sealed classes", ["Record (Java 16) — неизменяемый value-объект: конструктор, геттеры, equals/hashCode/toString генерируются автоматически", "Sealed classes/interfaces (Java 17) — явно ограниченный список разрешённых наследников (permits)", "Комбинация sealed + pattern matching даёт компилятору исчерпывающую проверку веток"])
+  ], "Чем record отличается от обычного класса с геттерами? Зачем нужны sealed classes и как они сочетаются с switch?"),
+  T("Java 21 (LTS) и далее", "Актуальная база для собеседований в 2025–2026.", [
+    G("Ключевые фичи", ["Virtual threads (Project Loom) — лёгкие потоки для массового IO-bound параллелизма", "Pattern matching for switch и record patterns — деструктуризация record прямо в case", "Sequenced collections — единый интерфейс getFirst/getLast/reversed для List/Deque/LinkedHashSet/LinkedHashMap", "Structured concurrency (в развитии, preview/incubator в разных версиях)"])
+  ])
+]);
+
+/* ============================================================ 11 ============================================================ */
+S("Ввод-вывод: I/O и NIO", "Работа с потоками данных, файлами и сериализацией", [
+  T("Классический java.io", "Базовые потоки ввода-вывода.", [
+    G("Иерархия потоков", ["Байтовые потоки: InputStream/OutputStream (файлы, сеть, бинарные данные)", "Символьные потоки: Reader/Writer (текст, с учётом кодировки)", "Буферизация: BufferedReader/BufferedWriter/BufferedInputStream уменьшают число системных вызовов"]),
+    G("Паттерн проектирования", ["Decorator-паттерн лежит в основе java.io: обёртки друг вокруг друга (new BufferedReader(new InputStreamReader(new FileInputStream(...))))"])
+  ]),
+  T("Сериализация объектов", "Классический механизм и его проблемы.", [
+    G("Механизм", ["Serializable — маркерный интерфейс без методов", "transient — поле не участвует в сериализации", "serialVersionUID — явный контроль совместимости версий класса при десериализации"]),
+    G("Проблемы и альтернативы", ["Уязвимости десериализации (произвольный код через gadget chains) — одна из известных категорий атак на Java-приложения", "Раздутый и негибкий формат по сравнению с текстовыми/бинарными форматами", "Альтернативы: JSON (Jackson/Gson), Protocol Buffers, Avro — для межсервисного обмена"])
+  ]),
+  T("java.nio и NIO.2", "Более производительный и гибкий API ввода-вывода.", [
+    G("Основные абстракции", ["Buffer (позиция/лимит/ёмкость) и Channel — низкоуровневая работа с данными", "Path и Files API (NIO.2) — современная замена java.io.File"]),
+    G("Продвинутое", ["Неблокирующий ввод-вывод и Selector — один поток обслуживает много каналов (основа для высоконагруженных серверов)", "Memory-mapped files (MappedByteBuffer) — отображение файла напрямую в память процесса"])
+  ])
+]);
+
+/* ============================================================ 12 ============================================================ */
+S("Принципы проектирования и паттерны", "То, как писать код, который не превратится в легаси через полгода", [
+  T("SOLID", "Пять принципов, о которых спрашивают почти на каждом senior-интервью.", [
+    G("S и O", ["Single Responsibility — у класса одна причина для изменения", "Open/Closed — открыт для расширения (например, через новые реализации интерфейса), закрыт для изменения существующего кода"]),
+    G("L, I, D", ["Liskov Substitution — наследник должен быть заменим вместо родителя без изменения корректности программы", "Interface Segregation — узкие интерфейсы вместо одного «толстого» с ненужными методами", "Dependency Inversion — модули высокого уровня зависят от абстракций, а не от конкретных реализаций"])
+  ], "Приведите реальный пример нарушения принципа Liskov в коде, который вы видели."),
+  T("DRY, KISS, YAGNI, GRASP", "Дополнительные принципы хорошего дизайна.", [
+    G("Принципы", ["DRY — Don't Repeat Yourself, устранение дублирования знания (не обязательно кода дословно)", "KISS — Keep It Simple, Stupid", "YAGNI — You Aren't Gonna Need It, не проектировать «про запас»", "GRASP: Information Expert, Low Coupling, High Cohesion, Controller, Polymorphism"])
+  ]),
+  T("Порождающие паттерны", "Управление созданием объектов.", [
+    G("Singleton", ["Потокобезопасные реализации: eager initialization, double-checked locking с volatile, holder-класс (lazy holder idiom), enum-синглтон (самый надёжный против рефлексии и сериализации)"]),
+    G("Остальные", ["Factory Method — делегирует создание объекта подклассам", "Abstract Factory — семейство связанных фабрик", "Builder — пошаговое создание сложного объекта (часто в связке с Lombok @Builder)", "Prototype — создание через клонирование существующего объекта"])
+  ]),
+  T("Структурные паттерны", "Композиция классов и объектов.", [
+    G("Основные", ["Adapter — приведение несовместимого интерфейса к нужному", "Decorator — динамическое добавление поведения без изменения класса (используется в java.io)", "Facade — упрощённый интерфейс к сложной подсистеме"]),
+    G("Прокси и остальные", ["Proxy — контроль доступа к объекту; JDK dynamic proxy (только интерфейсы) vs CGLIB (наследование классов, использует Spring AOP)", "Composite — единообразная работа с деревом объектов", "Flyweight — разделение общего состояния между множеством объектов для экономии памяти"])
+  ]),
+  T("Поведенческие паттерны", "Взаимодействие и распределение ответственности между объектами.", [
+    G("Часто встречаемые", ["Strategy — семейство взаимозаменяемых алгоритмов", "Observer — подписка на события (основа слушателей событий, в т.ч. ApplicationEvent в Spring)", "Command — инкапсуляция запроса как объекта (undo/redo, очереди задач)"]),
+    G("Остальные", ["Template Method — скелет алгоритма в родителе, шаги переопределяются наследниками", "Chain of Responsibility — цепочка обработчиков (похоже на цепочку фильтров в Spring Security)", "State — поведение меняется в зависимости от внутреннего состояния объекта", "Visitor — добавление операций без изменения посещаемых классов"])
+  ]),
+  T("Dependency Injection и Inversion of Control", "Основа работы большинства современных фреймворков.", [
+    G("Принципы", ["Инверсия управления — не объект создаёт свои зависимости, а получает их извне", "Constructor injection (предпочтительно, позволяет final-поля и явные обязательные зависимости) vs setter injection (опциональные зависимости) vs field injection (сложнее тестировать)", "Service Locator как альтернативный, менее прозрачный подход к получению зависимостей"])
+  ]),
+  T("Антипаттерны и code smells", "Умение распознать плохой дизайн так же важно, как умение проектировать хороший.", [
+    G("Частые смеллы", ["God object/God class — класс, который знает и делает слишком много", "Anemic domain model — сущности без поведения, вся логика в сервисах", "Spaghetti code — запутанные, непрозрачные зависимости между компонентами", "Магические числа/строки вместо именованных констант, слишком длинные методы и классы"])
+  ])
+]);
+
+/* ============================================================ 13 ============================================================ */
+S("Тестирование", "Инженерная дисциплина, обязательная для senior-уровня", [
+  T("Стратегия тестирования", "Как выстроить баланс между разными видами тестов.", [
+    G("Пирамида", ["Unit-тесты (много, быстрые, изолированные) → integration (меньше, проверяют взаимодействие компонентов) → e2e (мало, дорогие, весь стек)"]),
+    G("Test doubles", ["Dummy — просто заполняет параметр, не используется", "Stub — возвращает заранее заданные ответы", "Spy — реальный объект с возможностью проверить вызовы", "Mock — объект с ожиданиями и проверкой вызовов", "Fake — упрощённая рабочая реализация (например, in-memory база вместо реальной)"])
+  ]),
+  T("JUnit 5", "Основной фреймворк для unit-тестов в Java.", [
+    G("Жизненный цикл", ["@Test, @BeforeEach/@AfterEach (перед/после каждого теста), @BeforeAll/@AfterAll (один раз на класс, статические)", "@DisplayName, @Disabled, @Tag для категоризации тестов"]),
+    G("Возможности", ["Parameterized tests: @ValueSource, @CsvSource, @MethodSource", "Assertions: assertEquals/assertTrue/assertThrows/assertAll (группировка проверок)", "Extensions API — механизм расширения (аналог JUnit 4 Rules)"])
+  ]),
+  T("Mockito", "Фреймворк для создания моков и стабов.", [
+    G("Базовое API", ["mock() — полностью фиктивный объект vs spy() — обёртка над реальным объектом", "when(...).thenReturn(...)/thenThrow(...) — настройка поведения", "verify(mock, times(n)) — проверка количества и параметров вызовов"]),
+    G("Продвинутое", ["ArgumentCaptor — перехват и проверка реальных аргументов вызова", "Мокирование статических методов через mockito-inline / MockedStatic", "@Mock/@InjectMocks и MockitoExtension для JUnit 5"])
+  ]),
+  T("Интеграционное тестирование", "Проверка взаимодействия реальных компонентов.", [
+    G("Spring-тесты", ["@SpringBootTest — поднимает полный контекст приложения", "Срезы контекста: @WebMvcTest (только web-слой), @DataJpaTest (только JPA-слой с in-memory БД)"]),
+    G("Testcontainers", ["Поднятие реальной БД/Kafka/Redis в Docker-контейнере на время прогона тестов", "Приближает интеграционные тесты к реальному окружению вместо H2/моков БД"]),
+    G("Контрактное тестирование", ["Pact — проверка совместимости API между producer и consumer без полного end-to-end окружения"])
+  ]),
+  T("Качество и метрики тестов", "Тесты ради тестов не приносят пользы.", [
+    G("Подходы", ["TDD-цикл: red (падающий тест) → green (минимальный код для прохождения) → refactor", "Покрытие кода (JaCoCo) — ориентир на непротестированные ветки, а не самоцель в процентах"]),
+    G("Проверка качества тестов", ["Мутационное тестирование (PIT) — намеренно «портит» код и проверяет, ловят ли тесты мутации", "Flaky-тесты — нестабильные тесты и способы их устранения (изоляция времени, случайности, порядка выполнения)"])
+  ])
+]);
+
+/* ============================================================ 14 ============================================================ */
+S("Инструменты сборки", "Экосистема вокруг компиляции и управления зависимостями", [
+  T("Maven", "Самый распространённый build-инструмент в корпоративной Java.", [
+    G("Жизненный цикл", ["validate → compile → test → package → verify → install → deploy", "Плагины привязываются к фазам жизненного цикла"]),
+    G("Структура проекта", ["pom.xml: coordinates (groupId/artifactId/version), dependencies, build", "Scope зависимостей: compile (по умолчанию), provided, runtime, test, system", "Multi-module проекты и родительский POM (наследование конфигурации и версий через dependencyManagement)"])
+  ]),
+  T("Gradle", "Более гибкая и быстрая альтернатива Maven.", [
+    G("Основы", ["build.gradle на Groovy или build.gradle.kts на Kotlin DSL", "Задачи (tasks) и явные/неявные зависимости между ними (dependsOn)", "Инкрементальная сборка и кэширование задач — основная причина, почему Gradle быстрее Maven на больших проектах"])
+  ]),
+  T("Управление зависимостями", "Практический навык избегания dependency hell.", [
+    G("Проблемы и решения", ["Транзитивные зависимости и конфликты версий (diamond dependency conflict)", "Разрешение конфликтов: nearest-wins в Maven, явное указание версии", "BOM (Bill of Materials) — согласованный набор версий для семейства библиотек (например, spring-boot-dependencies)", "Артефакторные репозитории: Nexus, Artifactory — приватное хранение и проксирование зависимостей"])
+  ])
+]);
+
+/* ============================================================ 15 ============================================================ */
+S("Базы данных: реляционные, JPA/Hibernate, NoSQL, Redis", "SQL и NoSQL — необходимый минимум для backend-разработчика senior-уровня, с максимальной детализацией по ORM и Redis", [
+  T("Реляционные БД: теория", "Фундамент, без которого невозможно проектировать надёжные системы.", [
+    G("Нормализация", ["1NF — атомарность значений, 2NF — устранение частичных зависимостей от составного ключа, 3NF — устранение транзитивных зависимостей", "Денормализация как осознанный компромисс ради производительности чтения"]),
+    G("ACID", ["Atomicity — транзакция выполняется целиком или не выполняется вовсе", "Consistency — переход между валидными состояниями БД", "Isolation — транзакции не видят промежуточные состояния друг друга", "Durability — после коммита данные сохраняются даже при сбое"]),
+    G("Изоляция и индексы", ["Уровни изоляции: Read Uncommitted, Read Committed, Repeatable Read, Serializable", "Аномалии: dirty read, non-repeatable read, phantom read — какой уровень какие устраняет", "Индексы на B-tree: почему не используются при функциях над колонкой, LIKE '%x%', неверном порядке составного индекса"])
+  ], "В чём разница между phantom read и non-repeatable read? Как понять, что запросу не хватает индекса?"),
+  T("SQL глубже", "Продвинутый уровень владения запросами.", [
+    G("Джойны и агрегация", ["inner/left/right/full/cross join — разница в поведении при отсутствии совпадений", "Оконные функции: ROW_NUMBER, RANK, LAG/LEAD, SUM OVER (PARTITION BY …)", "GROUP BY + HAVING vs WHERE"]),
+    G("Оптимизация", ["EXPLAIN / EXPLAIN ANALYZE — чтение плана запроса, поиск seq scan там, где ожидается index scan", "Блокировки на уровне строк и таблиц, deadlock между транзакциями"])
+  ]),
+  T("JDBC", "Низкоуровневый доступ к базе из Java.", [
+    G("API", ["Connection → Statement/PreparedStatement → ResultSet", "PreparedStatement — параметризованные запросы, защита от SQL injection, план запроса кэшируется"]),
+    G("Практика", ["Batch-обработка (addBatch/executeBatch) для массовых вставок/обновлений", "Пул соединений: HikariCP (де-факто стандарт в Spring Boot) — параметры maximumPoolSize, connectionTimeout", "SQL injection через конкатенацию строк — классическая уязвимость и почему PreparedStatement её закрывает"])
+  ]),
+  T("JPA и Hibernate: маппинг сущностей и связи", "Базовый слой ORM — то, с чего начинается любая работа с Hibernate.", [
+    G("Аннотации маппинга", ["@Entity, @Table, @Id, @GeneratedValue (стратегии IDENTITY/SEQUENCE/TABLE/AUTO)", "@Column: nullable, length, unique, columnDefinition", "@Embeddable/@Embedded — value-объекты внутри таблицы сущности"]),
+    G("Связи между сущностями", ["@OneToMany/@ManyToOne — обязательный mappedBy на «не владеющей» стороне, чтобы избежать лишней таблицы связи", "@ManyToMany — через промежуточную таблицу (@JoinTable) или отдельную entity-связку для дополнительных полей", "@OneToOne и разница между владеющей и обратной стороной связи", "CascadeType (PERSIST/MERGE/REMOVE/ALL) и orphanRemoval — управление жизненным циклом дочерних сущностей"])
+  ]),
+  T("JPA и Hibernate: жизненный цикл, кэш и производительность", "Самая частая тема из практических вопросов на Java-собеседованиях среднего и старшего уровня.", [
+    G("Жизненный цикл сущности", ["Transient (новый объект, не связан с persistence context) → Persistent (managed, отслеживается) → Detached (после закрытия сессии) → Removed", "Dirty checking — Hibernate сам генерирует UPDATE для изменённых полей managed-сущности при flush", "Flush modes: AUTO (перед запросом и коммитом) vs COMMIT"]),
+    G("Fetch-стратегии и N+1", ["FetchType.LAZY (по умолчанию для коллекций) vs EAGER (по умолчанию для @ManyToOne/@OneToOne)", "N+1 проблема: один запрос на родителей + по одному на каждую ленивую коллекцию", "Решения: JOIN FETCH в JPQL, @EntityGraph, batch fetching (@BatchSize / hibernate.default_batch_fetch_size)", "LazyInitializationException — обращение к ленивой связи вне активной сессии/транзакции"]),
+    G("Кэширование", ["Первый уровень (Session/EntityManager) — обязательный, живёт в рамках одной транзакции/сессии", "Второй уровень (SessionFactory) — опциональный, разделяется между сессиями (Ehcache, Caffeine, Infinispan как провайдеры)", "Query cache — кэш результатов конкретных запросов, требует включения второго уровня"]),
+    G("Блокировки и версионирование", ["Optimistic locking через @Version — конфликт обнаруживается при commit (OptimisticLockException)", "Pessimistic locking — LockModeType.PESSIMISTIC_WRITE, блокировка строки в БД на время транзакции"])
+  ], "Как обнаружить и решить проблему N+1? Когда возникает LazyInitializationException и как её избежать? В чём разница между optimistic и pessimistic locking?"),
+  T("JPA и Hibernate: запросы и Spring Data JPA", "Как формулировать выборки — от простых до динамических — и что даёт Spring поверх JPA.", [
+    G("Языки запросов", ["JPQL — объектно-ориентированный аналог SQL, оперирует сущностями и их полями, а не таблицами", "Criteria API — программное построение запросов через типобезопасный DSL", "Native SQL-запросы — когда нужны возможности конкретной СУБД"]),
+    G("Spring Data JPA", ["Репозитории: JpaRepository/CrudRepository, автоматическая реализация по имени интерфейса", "Query methods по соглашению именования: findByLastNameAndAgeGreaterThan(...)", "@Query с JPQL/native, именованные параметры (:param)", "Specifications — динамическая композиция условий (аналог Criteria API поверх Spring Data)", "Pageable/Sort — встроенная пагинация и сортировка", "Projections — интерфейсные или DTO-проекции для выборки только нужных полей", "@EntityGraph и аудит (@CreatedDate/@LastModifiedBy через Spring Data JPA Auditing)"])
+  ]),
+  T("NoSQL и MongoDB", "Когда реляционная модель — не лучший выбор.", [
+    G("Типы NoSQL", ["Документные (MongoDB) — гибкая схема, JSON/BSON-документы", "Key-value (Redis, DynamoDB) — максимально простая и быстрая модель", "Колоночные (Cassandra) — оптимизированы под запись и аналитические запросы по колонкам", "Графовые (Neo4j) — для данных со сложными связями"]),
+    G("MongoDB", ["Документы и коллекции вместо строк и таблиц, отсутствие жёсткой схемы", "Индексы (в т.ч. составные, текстовые, геопространственные)", "Aggregation pipeline — $match/$group/$project/$lookup для аналитики внутри БД"])
+  ]),
+  T("Redis: структуры данных и команды", "Один из самых недооценённых по глубине разделов — Redis это far more, чем просто key-value кэш.", [
+    G("Структуры данных", ["String — простое значение, счётчики через INCR/DECR", "List — двусвязный список, LPUSH/RPUSH/LRANGE, очереди (в т.ч. как простая альтернатива message broker)", "Hash — объект с полями, HSET/HGET/HGETALL, эффективное хранение сущностей", "Set — уникальные элементы, SADD/SINTER/SUNION/SDIFF для операций над множествами", "Sorted Set (ZSet) — элементы с score, ZADD/ZRANGE/ZRANGEBYSCORE — основа лидербордов и очередей с приоритетом", "Bitmaps, HyperLogLog (приближённый подсчёт уникальных элементов), Geo-команды (GEOADD/GEODIST)", "Streams (с Redis 5) — append-only лог сообщений, консьюмер-группы, аналог упрощённого Kafka"]),
+    G("Ключи и TTL", ["EXPIRE/TTL/PERSIST — управление временем жизни ключа", "Паттерны именования ключей (namespace:entity:id)"])
+  ]),
+  T("Redis: персистентность, репликация, кластер и паттерны применения", "Продакшн-эксплуатация Redis и типовые архитектурные паттерны с его использованием.", [
+    G("Персистентность", ["RDB — периодические снапшоты всего датасета на диск, быстрое восстановление, риск потери данных за интервал между снапшотами", "AOF (Append Only File) — журнал всех операций записи, более надёжен, но больше по объёму", "Комбинация RDB+AOF для баланса скорости восстановления и надёжности"]),
+    G("Вытеснение и память", ["Политики eviction: noeviction, allkeys-lru, volatile-lru, allkeys-lfu, volatile-ttl", "maxmemory — лимит памяти, после которого включается выбранная политика вытеснения"]),
+    G("Масштабирование и отказоустойчивость", ["Репликация master-replica (асинхронная по умолчанию)", "Redis Sentinel — мониторинг и автоматический failover master-узла", "Redis Cluster — шардирование по 16384 hash slots между узлами"]),
+    G("Паттерны применения", ["Cache-aside (самый частый паттерн кэширования, разбирается в разделе системного дизайна)", "Распределённые блокировки (Redlock) — координация между инстансами приложения", "Rate limiting через INCR + EXPIRE или sorted set (sliding window)", "Pub/Sub для простых событийных уведомлений (без гарантии доставки, в отличие от Streams)", "MULTI/EXEC/WATCH — транзакции и оптимистичная блокировка на уровне Redis", "Spring: @Cacheable/@CacheEvict поверх Spring Cache abstraction + spring-boot-starter-data-redis, клиенты Jedis и Lettuce"])
+  ], "Чем Redis Cluster отличается от Sentinel? Как реализовать rate limiter на Redis? Когда AOF предпочтительнее RDB?")
+]);
+
+/* ============================================================ 16 ============================================================ */
+S("Spring Framework и Spring Boot", "Стандарт де-факто в корпоративной Java-разработке — разобран по каждому модулю отдельно", [
+  T("IoC-контейнер", "Сердце Spring — управление жизненным циклом бинов.", [
+    G("Контейнер", ["BeanFactory — базовый контейнер (ленивая инициализация) vs ApplicationContext — расширенный (события, i18n, ранняя инициализация singleton-бинов)", "Bean definition — метаданные о том, как создать и сконфигурировать бин"]),
+    G("Жизненный цикл бина", ["Создание экземпляра → внедрение зависимостей → @PostConstruct/InitializingBean → использование → @PreDestroy/DisposableBean", "BeanPostProcessor — хук до/после инициализации любого бина, BeanFactoryPostProcessor — модификация bean definitions до создания экземпляров", "Scopes: singleton (по умолчанию), prototype, request, session, application"]),
+    G("Стереотипы", ["@Component — базовая аннотация-стереотип, @Service/@Repository/@Controller — семантические специализации", "@Repository дополнительно транслирует специфичные исключения БД в DataAccessException"])
+  ]),
+  T("Dependency Injection в Spring", "Практическая реализация принципа DI.", [
+    G("Способы внедрения", ["Constructor injection — рекомендуемый способ: позволяет final-поля, делает обязательные зависимости явными, упрощает unit-тестирование без контейнера", "Field injection (@Autowired на поле) — компактно, но усложняет тестирование и скрывает обязательные зависимости", "Setter injection — для опциональных/переконфигурируемых зависимостей"]),
+    G("Разрешение неоднозначности", ["@Qualifier — выбор конкретного бина при нескольких кандидатах одного типа", "@Primary — бин-кандидат по умолчанию среди нескольких реализаций", "Циклические зависимости между бинами — ошибка при constructor injection, «решается» (с оговорками) через @Lazy или field injection, но чаще сигнализирует о проблеме дизайна"])
+  ]),
+  T("Spring Boot: автоконфигурация и запуск приложения", "Слой автоконфигурации поверх Spring Framework.", [
+    G("Автоконфигурация", ["@SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan", "Автоконфигурации подключаются условно через @Conditional (@ConditionalOnClass, @ConditionalOnMissingBean, @ConditionalOnProperty)", "spring.factories / META-INF/spring/…AutoConfiguration.imports — механизм регистрации автоконфигураций"]),
+    G("Конфигурация приложения", ["Starters — наборы транзитивных зависимостей под конкретную задачу (spring-boot-starter-web, -data-jpa, -security)", "application.yml/properties, профили (spring.profiles.active) для разных окружений", "@ConfigurationProperties — типобезопасное связывание конфигурации с Java-объектом (в отличие от точечных @Value)"])
+  ]),
+  T("Spring MVC / Web", "Обработка HTTP-запросов.", [
+    G("Обработка запроса", ["DispatcherServlet — единая точка входа, делегирует HandlerMapping/HandlerAdapter", "@RestController = @Controller + @ResponseBody, @RequestMapping и производные (@GetMapping и т.д.)", "Filter (уровень сервлет-контейнера, до Spring) vs Interceptor (HandlerInterceptor, внутри Spring MVC, знает о хендлере)"]),
+    G("Ошибки и валидация", ["@ControllerAdvice + @ExceptionHandler — централизованная обработка исключений по всему приложению", "Bean Validation (JSR-380): @Valid/@Validated, @NotNull/@Size/@Pattern, кастомные валидаторы через ConstraintValidator", "ResponseEntityExceptionHandler как базовый класс для типовых ошибок Spring MVC"])
+  ]),
+  T("Spring Data JPA: репозитории и запросы", "Сокращение boilerplate-кода для работы с БД поверх JPA (см. также раздел про Hibernate/JPA).", [
+    G("Репозитории", ["JpaRepository/CrudRepository/PagingAndSortingRepository — готовые CRUD-операции без реализации", "Query methods по имени метода — Spring парсит имя и строит запрос"]),
+    G("Динамические запросы", ["Specifications — композиция условий (and/or) поверх Criteria API", "Projections (интерфейсные/DTO) — выборка только нужных полей без загрузки всей сущности", "Auditing: @CreatedDate/@LastModifiedDate/@CreatedBy через @EnableJpaAuditing"])
+  ]),
+  T("Spring Security", "Аутентификация и авторизация в Spring-приложениях.", [
+    G("Архитектура", ["SecurityFilterChain — цепочка сервлет-фильтров (аутентификация, авторизация, CSRF, CORS)", "AuthenticationManager/AuthenticationProvider — проверка учётных данных", "UserDetailsService — загрузка данных пользователя, PasswordEncoder (BCrypt) — хранение и сверка паролей"]),
+    G("Авторизация и токены", ["Method security: @PreAuthorize/@PostAuthorize/@Secured на уровне методов сервисов", "JWT-аутентификация: свой фильтр, извлекающий и валидирующий токен из заголовка Authorization", "OAuth2/OpenID Connect: spring-security-oauth2-client (роль client) и resource-server (валидация токенов от внешнего Authorization Server)"])
+  ]),
+  T("Spring AOP", "Сквозная функциональность без загрязнения бизнес-логики.", [
+    G("Механизм", ["Proxy-based AOP: JDK dynamic proxy (если есть интерфейс) vs CGLIB (наследование класса, если интерфейса нет)", "Advice-типы: @Before, @After, @AfterReturning, @AfterThrowing, @Around (полный контроль над вызовом через ProceedingJoinPoint)", "Pointcut-выражения: execution(* com.example.service.*.*(..))"]),
+    G("Ограничения", ["Self-invocation problem — вызов аннотированного метода из другого метода того же класса не проходит через прокси (advice не срабатывает)", "Типичные применения: логирование, @Transactional, @Cacheable, аудит"])
+  ]),
+  T("Spring Cloud и микросервисы", "Инструментарий для распределённых Spring-приложений.", [
+    G("Инфраструктурные компоненты", ["Config Server — централизованное хранение конфигурации для множества сервисов", "Service discovery: Eureka / Consul — сервисы регистрируются и находят друг друга по имени, а не фиксированному адресу", "API Gateway: Spring Cloud Gateway — единая точка входа, маршрутизация, rate limiting"]),
+    G("Отказоустойчивость и вызовы между сервисами", ["Feign — декларативный HTTP-клиент между сервисами", "Балансировка нагрузки на стороне клиента (Spring Cloud LoadBalancer)", "Circuit Breaker (Resilience4j): состояния CLOSED/OPEN/HALF_OPEN, предотвращение каскадных отказов"])
+  ]),
+  T("Реактивный стек: Spring WebFlux", "Неблокирующая альтернатива Spring MVC для высоконагруженных IO-bound сценариев.", [
+    G("Основы Reactor", ["Mono<T> (0..1 элемент) и Flux<T> (0..N элементов) — реактивные типы Project Reactor", "Подписка (subscribe) как момент запуска ленивого потока данных", "Операторы: map/flatMap/filter/zip/merge, аналогичны Stream API, но асинхронны"]),
+    G("Практика", ["Backpressure — потребитель управляет скоростью, с которой издатель присылает данные", "R2DBC — реактивный доступ к реляционным БД (в отличие от блокирующего JDBC)", "Когда WebFlux оправдан (много параллельных IO-bound соединений), а когда усложняет код без выгоды"])
+  ]),
+  T("Тестирование Spring-приложений", "Специфика тестирования приложений на фреймворке.", [
+    G("Срезы тестирования", ["@SpringBootTest — полный контекст (медленнее, ближе к реальности)", "@WebMvcTest — только web-слой с MockMvc, зависимости мокируются через @MockBean", "@DataJpaTest — только JPA-слой с автоконфигурируемой in-memory или Testcontainers БД"]),
+    G("Инструменты", ["MockMvc — отправка тестовых HTTP-запросов без реального сервера", "Тестовые профили (application-test.yml) и Testcontainers для интеграционных тестов, близких к продакшену"])
+  ]),
+  T("Spring Boot Actuator и production-ready функции", "То, что делает Spring Boot приложение наблюдаемым в проде.", [
+    G("Возможности", ["/actuator/health, /actuator/metrics, /actuator/info — встроенные эндпоинты состояния", "Micrometer — фасад метрик, экспортируемых в Prometheus/Grafana/другие системы", "Кастомные HealthIndicator для проверки состояния внешних зависимостей (БД, брокер сообщений)"])
+  ])
+]);
+
+/* ============================================================ 17 ============================================================ */
+S("REST API и веб-протоколы", "Проектирование интерфейсов взаимодействия сервисов", [
+  T("HTTP протокол подробно", "Основа основ веб-взаимодействия.", [
+    G("Методы и статусы", ["GET/POST/PUT/PATCH/DELETE и их идемпотентность (GET/PUT/DELETE идемпотентны, POST — нет)", "Категории статус-кодов: 2xx успех, 3xx редирект, 4xx ошибка клиента, 5xx ошибка сервера"]),
+    G("Заголовки", ["Кэширование: Cache-Control (max-age, no-cache, no-store), ETag + If-None-Match для условных запросов", "Content negotiation: Accept/Content-Type", "CORS-заголовки: Access-Control-Allow-Origin и preflight-запросы (OPTIONS)"])
+  ]),
+  T("Проектирование REST API", "Практика построения читаемых и удобных API.", [
+    G("Дизайн", ["Ресурсно-ориентированные URL (/orders/123), а не глагольные (/getOrder)", "Версионирование API: через URL (/v1/...), заголовок или content negotiation", "Пагинация (offset-based vs cursor-based) и фильтрация через query-параметры"]),
+    G("Документация и HATEOAS", ["HATEOAS — ссылки на связанные действия прямо в ответе API", "OpenAPI/Swagger — контрактное описание API, генерация клиентов и документации"])
+  ]),
+  T("Альтернативы REST", "Когда REST — не лучший инструмент.", [
+    G("Сравнение", ["GraphQL: клиент сам описывает нужные поля одним запросом — плюс гибкость, минус сложность кэширования на HTTP-уровне и N+1 на резолверах", "gRPC: бинарный протокол на HTTP/2 + Protocol Buffers — высокая производительность для межсервисного взаимодействия, слабее для браузерных клиентов", "WebSocket — постоянное двунаправленное соединение для real-time (чаты, live-обновления)"])
+  ]),
+  T("gRPC и Protocol Buffers подробнее", "Стандарт межсервисного взаимодействия там, где важна производительность и строгая типизация контракта.", [
+    G("Protocol Buffers", [".proto-файл описывает message (структуры данных) и service (RPC-методы), контракт версионируется независимо от языка", "Обратная совместимость через номера полей (field numbers) — нельзя переиспользовать номер удалённого поля", "Генерация клиентского и серверного кода из .proto под разные языки — общий контракт для гетерогенных сервисов"]),
+    G("Виды вызовов", ["Unary RPC — классический запрос-ответ, как обычный HTTP-вызов", "Server streaming — один запрос, поток ответов (например, подписка на обновления)", "Client streaming — поток запросов, один ответ (загрузка файла чанками)", "Bidirectional streaming — независимые потоки в обе стороны одновременно"]),
+    G("Обработка ошибок и middleware", ["Status и StatusRuntimeException — коды ошибок gRPC (NOT_FOUND, UNAUTHENTICATED, DEADLINE_EXCEEDED и т.д.), не пересекаются напрямую с HTTP статус-кодами", "Interceptors — аналог фильтров/middleware: аутентификация, логирование, метрики на каждый вызов", "Deadline/timeout — обязательная практика, чтобы клиент не ждал вызов бесконечно"])
+  ])
+]);
+
+/* ============================================================ 18 ============================================================ */
+S("Микросервисная архитектура", "Проектирование распределённых систем — ключевая тема senior-собеседований", [
+  T("Монолит vs микросервисы", "Осознанный выбор архитектуры, а не следование моде.", [
+    G("Trade-offs", ["Монолит: проще разработка и деплой на старте, сложнее масштабировать команду и части системы независимо", "Микросервисы: независимое масштабирование и деплой, но растёт операционная сложность (сеть, мониторинг, распределённые транзакции)", "Модульный монолит — чёткие границы модулей внутри одного деплоя как промежуточный шаг"])
+  ]),
+  T("Паттерны межсервисного взаимодействия", "Стандартные решения типовых проблем распределённых систем.", [
+    G("Базовые паттерны", ["API Gateway — единая точка входа для внешних клиентов", "Service Discovery — динамическое обнаружение адресов сервисов", "Circuit Breaker (предотвращение каскадных отказов) и Bulkhead (изоляция ресурсов между вызовами разных сервисов)"]),
+    G("Данные в распределённой системе", ["Saga-паттерн — последовательность локальных транзакций с компенсирующими действиями при откате (choreography vs orchestration)", "CQRS — разделение модели записи и модели чтения", "Event Sourcing — состояние системы восстанавливается из последовательности событий, а не хранится напрямую"])
+  ]),
+  T("Kafka: архитектура и хранение данных", "Основа основ — без этого нельзя понять ни одну реальную интеграцию через Kafka.", [
+    G("Ключевые понятия", ["Broker — узел кластера Kafka, Topic — именованный поток сообщений, Partition — единица параллелизма и хранения внутри топика", "Offset — позиция сообщения внутри партиции, монотонно возрастает, не переиспользуется", "Replication factor, leader/follower партиции, ISR (in-sync replicas) — набор реплик, полностью синхронизированных с лидером"]),
+    G("Хранение", ["Log — партиция физически хранится как упорядоченный append-only лог на диске", "Retention: по времени (retention.ms) или по размеру, независимо от того, прочитано сообщение или нет", "Log compaction — альтернатива retention: хранит только последнее значение для каждого ключа (для changelog-топиков)", "ZooKeeper (классическая архитектура) vs KRaft (Kafka без ZooKeeper, встроенный consensus)"])
+  ]),
+  T("Kafka: Producer, Consumer и семантика доставки", "Практическая работа с Kafka — то, что реально спрашивают про надёжность доставки.", [
+    G("Producer", ["acks=0/1/all(-1) — компромисс между скоростью и надёжностью подтверждения записи", "Партиционирование по ключу (одинаковый ключ → одна партиция → сохранение порядка для этого ключа)", "batch.size и linger.ms — батчинг сообщений для пропускной способности, компрессия (snappy/lz4/gzip)", "Идемпотентный продюсер (enable.idempotence=true) — исключает дубликаты при повторной отправке"]),
+    G("Consumer", ["Consumer group — партиции распределяются между consumer'ами группы, каждая партиция читается только одним consumer'ом группы одновременно", "Rebalance — перераспределение партиций при изменении состава группы (может временно останавливать обработку)", "Стратегии коммита offset: auto-commit (риск потери/дублей) vs ручной commitSync/commitAsync после обработки", "max.poll.records, poll-loop — консьюмер обязан регулярно вызывать poll(), иначе считается «упавшим»"]),
+    G("Гарантии доставки", ["At-most-once, at-least-once (по умолчанию при правильном коммите после обработки), exactly-once (через идемпотентного продюсера + транзакции Kafka)", "Dead Letter Queue (DLQ) — паттерн для сообщений, которые не удалось обработать после retry"])
+  ], "Как обеспечить exactly-once обработку сообщений в Kafka? Что произойдёт при rebalance посреди обработки батча сообщений?"),
+  T("RabbitMQ и сравнение брокеров сообщений", "Классический брокер очередей с моделью, отличной от Kafka.", [
+    G("Модель RabbitMQ", ["Exchange (direct/topic/fanout/headers) принимает сообщение и маршрутизирует в очереди по routing key", "Queue — хранилище сообщений для консьюмеров, сообщение удаляется после подтверждения (ack)", "Dead letter exchange — аналог DLQ в модели RabbitMQ"]),
+    G("Kafka vs RabbitMQ", ["Kafka — лог событий с длительным хранением и повторным чтением, оптимизирован под высокую пропускную способность и потоковую обработку", "RabbitMQ — классическая очередь задач с гибкой маршрутизацией, сообщение обычно удаляется после обработки", "Выбор зависит от задачи: событийный стриминг и replay истории → Kafka; сложная маршрутизация задач и приоритеты → RabbitMQ"])
+  ]),
+  T("Наблюдаемость (Observability)", "Как понять, что происходит в распределённой системе.", [
+    G("Три столпа observability", ["Логи: централизованный сбор через ELK/EFK-стек (Elasticsearch/Logstash или Fluentd/Kibana)", "Метрики: Prometheus (pull-модель сбора) + Grafana (визуализация и алерты)", "Трейсинг: OpenTelemetry как стандарт инструментирования, Jaeger/Zipkin как backend для хранения и просмотра трейсов"]),
+    G("Практика", ["Correlation ID / trace ID — сквозной идентификатор запроса через все сервисы для связывания логов и спанов", "SLI/SLO/SLA — метрики уровня обслуживания как основа для алертинга"])
+  ])
+]);
+
+/* ============================================================ 19 ============================================================ */
+S("Системный дизайн", "Обязательный этап почти любого senior-собеседования", [
+  T("Основы масштабирования", "Базовые техники увеличения пропускной способности системы.", [
+    G("Масштабирование", ["Вертикальное (мощнее один сервер) vs горизонтальное (больше серверов) масштабирование", "Балансировка нагрузки: round-robin/least-connections, L4 (транспортный уровень) vs L7 (учитывает содержимое HTTP-запроса)"]),
+    G("Данные", ["Sharding — разделение данных между узлами по ключу шардирования", "Репликация: master-slave (масштабирование чтения) vs master-master (сложнее конфликты записи)"])
+  ]),
+  T("Согласованность данных и кэширование", "Компромиссы распределённых систем.", [
+    G("Теория", ["CAP-теорема: при разделении сети (Partition tolerance обязателен) выбор между Consistency и Availability", "Eventual consistency (в итоге согласуется, выше доступность) vs strong consistency (всегда актуальные данные, ниже доступность/выше задержка)"]),
+    G("Кэширование", ["Cache-aside — приложение само читает из кэша, при промахе идёт в БД и заполняет кэш", "Write-through — запись сразу и в кэш, и в БД синхронно", "Write-back — запись сначала в кэш, в БД асинхронно (риск потери данных при сбое)", "CDN — кэширование статического контента географически ближе к пользователю"])
+  ]),
+  T("Практика проектирования систем", "Формат, в котором обычно проходит system design интервью.", [
+    G("Методология", ["Оценка нагрузки (back-of-the-envelope): DAU, RPS, объём хранимых данных, требования к задержке", "Структура ответа: уточнение требований → оценка нагрузки → high-level дизайн → углубление в проблемные компоненты → обсуждение trade-offs"]),
+    G("Типовые задачи", ["Проектирование URL shortener (генерация коротких ключей, redirect, аналитика переходов)", "Проектирование ленты новостей / чата (fan-out on write vs fan-out on read)", "Проектирование rate limiter (token bucket, sliding window log/counter)"])
+  ]),
+  T("Резервное копирование и отказоустойчивость данных", "Часто забываемая часть system design — «есть бэкап» и «данные восстановимы» это разные утверждения.", [
+    G("Метрики восстановления", ["RPO (Recovery Point Objective) — сколько данных допустимо потерять (интервал между бэкапами)", "RTO (Recovery Time Objective) — как быстро система должна вернуться в строй после сбоя", "Эти метрики — бизнес-требование, а не техническая деталь: их нужно обсуждать с заказчиком до выбора стратегии бэкапов"]),
+    G("Практика", ["Полный vs инкрементальный/дифференциальный бэкап — компромисс между временем создания и временем восстановления", "«Бэкап, который ни разу не восстанавливали, не бэкап» — регулярное тестирование процедуры восстановления", "Географически распределённые копии (offsite/cross-region) как защита от отказа целого дата-центра"])
+  ])
+]);
+
+/* ============================================================ 20 ============================================================ */
+S("DevOps и инфраструктура", "Минимум, который сегодня ожидают от backend-разработчика уровня senior", [
+  T("Docker", "Контейнеризация приложений.", [
+    G("Основы", ["Образ (неизменяемый шаблон, слои) vs контейнер (запущенный экземпляр образа)", "Dockerfile: слои кэшируются, порядок инструкций влияет на скорость пересборки"]),
+    G("Практика для Java", ["Multi-stage build — сборка в одном образе (с JDK), финальный образ только с JRE и артефактом (меньше размер)", "Docker Compose — описание нескольких связанных контейнеров (приложение + БД + брокер) для локальной разработки"])
+  ]),
+  T("Kubernetes", "Оркестрация контейнеров в production.", [
+    G("Базовые объекты", ["Pod — минимальная единица деплоя (один или несколько тесно связанных контейнеров)", "Deployment — управляет репликами подов и раскаткой новых версий", "Service — стабильная точка доступа к подам (ClusterIP/NodePort/LoadBalancer)"]),
+    G("Конфигурация и здоровье", ["ConfigMap/Secret — вынесение конфигурации и чувствительных данных из образа", "Liveness probe (жив ли под, иначе рестарт) vs readiness probe (готов ли принимать трафик)", "Horizontal Pod Autoscaler — автоматическое масштабирование числа подов по метрикам"])
+  ]),
+  T("CI/CD", "Автоматизация сборки, тестирования и доставки.", [
+    G("Пайплайн", ["Этапы: build → test → package (образ/артефакт) → deploy", "Jenkins (декларативные Pipeline as Code) / GitLab CI / GitHub Actions — популярные системы"]),
+    G("Стратегии деплоя", ["Blue-green — два идентичных окружения, переключение трафика целиком", "Canary — постепенный перевод небольшой доли трафика на новую версию с мониторингом метрик"]),
+    G("Безопасность пайплайна", ["SAST (Static Application Security Testing) — анализ исходного кода на уязвимости до сборки", "Сканирование зависимостей на известные CVE (OWASP Dependency-Check, Snyk) и образов контейнеров (Trivy)", "Semantic versioning (MAJOR.MINOR.PATCH) как соглашение о совместимости версий артефактов"])
+  ]),
+  T("Облака и Infrastructure as Code", "Общее представление, достаточное для senior-уровня.", [
+    G("Облачные сервисы", ["Compute (виртуальные машины/serverless), Storage (объектное/блочное), managed БД — базовые категории сервисов AWS/GCP/Azure"]),
+    G("IaC и принципы", ["Terraform — декларативное описание инфраструктуры как кода, план/применение изменений", "12-factor app: конфигурация через переменные окружения, stateless-процессы, явные зависимости, логи как поток событий"])
+  ])
+]);
+
+/* ============================================================ 21 ============================================================ */
+S("Безопасность приложений", "То, что должен знать каждый backend-разработчик, независимо от специализации", [
+  T("OWASP Top 10", "Классификация самых частых уязвимостей веб-приложений.", [
+    G("Ключевые категории", ["Injection (SQL/NoSQL) — непроверенный пользовательский ввод в запросе", "Broken authentication — слабые пароли, отсутствие защиты от подбора, некорректное управление сессией", "XSS (Cross-Site Scripting) — внедрение скриптов через непроверенный вывод в HTML", "CSRF (Cross-Site Request Forgery) — выполнение действия от имени пользователя без его ведома", "Security misconfiguration — избыточные права, дефолтные пароли, открытые debug-эндпоинты"])
+  ]),
+  T("Аутентификация и авторизация", "Разграничение «кто ты» и «что тебе можно».", [
+    G("Базовые понятия", ["Аутентификация — подтверждение личности, авторизация — проверка прав на конкретное действие"]),
+    G("Токены и протоколы", ["JWT: header.payload.signature, подпись HMAC/RSA, уязвимости — алгоритм none, слабый секрет, отсутствие проверки exp", "OAuth2 flows: authorization code (для веб-приложений с бэкендом), client credentials (машина-машина)", "OpenID Connect — слой идентификации поверх OAuth2 (добавляет id_token)"])
+  ]),
+  T("Современная аутентификация: passkeys, WebAuthn и mTLS", "Индустрия постепенно уходит от паролей — тема всё чаще встречается на собеседованиях уровня senior/security-aware backend.", [
+    G("WebAuthn / FIDO2", ["Passwordless-вход через платформенный (Touch ID, Windows Hello, привязан к устройству) или роуминговый (USB/NFC/BLE-ключ) аутентификатор — один и тот же API поддерживает оба сценария", "signCount и клон-детекция — сервер отслеживает счётчик подписей, чтобы заметить клонирование ключа", "Публично-ключевая схема исключает утечку «секрета» с сервера (в отличие от паролей и их хэшей)"]),
+    G("Контекстное доверие", ["Risk-based / step-up authentication — не любое действие требует одинакового уровня подтверждения (обычный вход ≠ просмотр чувствительных данных ≠ необратимое действие)", "Number matching как защита от relay-атак — сверка короткого кода на двух экранах эффективнее, чем простое «одобрить push»", "OAuth 2.0 Device Authorization Grant (RFC 8628) — паттерн входа на устройстве без ввода пароля через подтверждение с другого доверенного устройства"]),
+    G("mTLS", ["Взаимный TLS — не только клиент проверяет сертификат сервера, но и сервер проверяет сертификат клиента", "Типичное применение — аутентификация сервис-сервис внутри периметра микросервисной архитектуры (нулевое доверие к внутренней сети)"])
+  ]),
+  T("Прикладная криптография", "Понимание на уровне «спроектировать безопасно», а не только «назвать термины».", [
+    G("Основы", ["Симметричное шифрование (один ключ, быстрее, AES) vs асимметричное (пара ключей, медленнее, RSA/ECC)", "Хэширование паролей (bcrypt/Argon2id, с солью и настраиваемой стоимостью) — принципиально отличается от шифрования (необратимо)", "TLS handshake: обмен сертификатами, согласование симметричного ключа сессии через асимметричную криптографию"]),
+    G("AEAD и режимы шифрования", ["AES-GCM — Authenticated Encryption with Associated Data: шифрование и проверка целостности за одну операцию", "Nonce/IV и почему его нельзя переиспользовать с одним и тем же ключом (для GCM это катастрофически ломает конфиденциальность)", "ECB-режим как классическая ошибка (сохраняет видимые паттерны в данных) — почему его нельзя использовать"]),
+    G("KDF и managed-библиотеки", ["KDF (Key Derivation Function): PBKDF2 vs Argon2id — почему Argon2id устойчивее к брутфорсу на GPU/ASIC (memory-hard функция)", "HMAC — целостность и аутентификация сообщения без шифрования содержимого", "Envelope Encryption — каскад ключей (Master Key → Category/Data Encryption Key) вместо одного ключа на всё: упрощает ротацию и разделение ответственности", "Managed-библиотеки (например, Google Tink) поверх голого JCE — небезопасные конфигурации (ECB, статичный IV) недоступны по дизайну API"]),
+    G("Частые ошибки", ["Сравнение секретов через == / .equals() вместо constant-time сравнения (timing attack)", "Логирование секретов и ключей в открытом виде", "Хранение ключа шифрования рядом с зашифрованными данными"])
+  ]),
+  T("Threat modeling и управление ключами", "Проактивная безопасность — думать об атаках на этапе проектирования, а не после инцидента.", [
+    G("Threat modeling", ["STRIDE — систематическая категоризация угроз: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege", "Разбор одного сценария целиком (кто атакующий, какая цель, какой вектор, какая защита) ценнее общих слов о «безопасности в целом»"]),
+    G("Управление ключами", ["Ротация ключей — регулярная и по инциденту, с сохранением возможности расшифровать старые данные (versioned keys)", "Разделение обязанностей — кто может инициировать ротацию/доступ к корневому ключу (принцип наименьших привилегий)", "KMS/HSM — вынесение хранения и операций с мастер-ключами в специализированный сервис/устройство"]),
+    G("Secure deletion", ["DELETE FROM в реляционной БД не равно «данные уничтожены» — запись физически может оставаться до перезаписи, плюс WAL/бэкапы", "Soft delete + отложенное затирание (delayed wipe) как более честная модель для чувствительных данных", "Обнуление секретов в памяти (byte[], а не String — строки неизменяемы и остаются в памяти дольше ожидаемого)"])
+  ])
+]);
+
+/* ============================================================ 22 ============================================================ */
+S("Производительность и оптимизация", "Практические навыки для систем с высокой нагрузкой", [
+  T("Профилирование приложения", "Поиск узких мест перед оптимизацией — по данным, а не по интуиции.", [
+    G("Виды профилирования", ["CPU profiling — где приложение тратит процессорное время (sampling vs instrumentation)", "Memory profiling — какие объекты и в каком количестве занимают heap, поиск утечек"]),
+    G("Инструменты", ["JFR (Java Flight Recorder) — встроенный низкоуровневый профилировщик", "async-profiler — flame graph по CPU и аллокациям", "VisualVM — визуальный мониторинг heap/threads/GC в реальном времени"]),
+    G("Микробенчмаркинг (JMH)", ["Java Microbenchmark Harness — корректный способ измерить производительность маленького кусочка кода", "Наивные замеры через System.currentTimeMillis() в цикле врут из-за JIT warm-up, dead code elimination и constant folding", "@Warmup/@Measurement, Blackhole для предотвращения выкидывания «неиспользуемого» результата оптимизатором"])
+  ]),
+  T("Оптимизация на разных уровнях", "Системный подход к производительности.", [
+    G("Данные и кэш", ["Оптимизация SQL-запросов и индексов — обычно даёт наибольший выигрыш относительно затраченных усилий", "Кэширование: локальное in-process (Caffeine — W-TinyLFU алгоритм вытеснения) vs распределённое (Redis)"]),
+    G("JVM и нагрузочное тестирование", ["JVM-тюнинг: размер heap (-Xms/-Xmx), выбор GC под профиль latency/throughput", "Нагрузочное тестирование: JMeter (классика), Gatling/k6 (код-ориентированные сценарии) — поиск точки деградации перед продакшеном"])
+  ])
+]);
+
+/* ============================================================ 23 ============================================================ */
+S("Алгоритмы и структуры данных", "Классический раздел технического интервью, отдельный от Java как языка", [
+  T("Основы анализа сложности", "Язык, на котором обсуждают эффективность решений.", [
+    G("Понятия", ["Big O — асимптотическая верхняя оценка времени/памяти в худшем случае", "Амортизированная сложность (например, add в ArrayList — O(1) амортизированно, несмотря на редкие resize)", "Best / average / worst case — важно указывать явно при анализе решения"])
+  ]),
+  T("Структуры данных", "Базовый набор, который должен уметь применять любой кандидат.", [
+    G("Линейные структуры", ["Массивы и связные списки — компромисс доступ по индексу vs вставка/удаление", "Стек (LIFO) и очередь (FIFO), дек как обобщение обоих"]),
+    G("Деревья и хэш-таблицы", ["Хэш-таблицы и стратегии разрешения коллизий (chaining vs open addressing)", "Деревья: BST, AVL (самобалансирующееся по высоте), красно-чёрное дерево (используется в TreeMap/HashMap-treeify), trie (префиксное дерево для строк)", "Куча (heap) — основа приоритетной очереди, O(log n) на вставку/извлечение минимума/максимума"]),
+    G("Графы", ["Список смежности (эффективен для разреженных графов) vs матрица смежности (быстрая проверка ребра, O(V²) памяти)"])
+  ]),
+  T("Алгоритмы", "Классические алгоритмы, встречающиеся в live-coding.", [
+    G("Сортировки и поиск", ["Quicksort (в среднем O(n log n), худший O(n²)), mergesort (стабильный, гарантированный O(n log n)), heapsort", "Бинарный поиск и его вариации (поиск границы вхождения)"]),
+    G("Графовые алгоритмы", ["BFS (кратчайший путь в невзвешенном графе, обход по уровням) vs DFS (обход вглубь, поиск компонент связности)", "Dijkstra (кратчайшие пути с неотрицательными весами), Bellman-Ford (допускает отрицательные веса)", "Топологическая сортировка для DAG"]),
+    G("Парадигмы", ["Динамическое программирование: мемоизация (сверху вниз) vs табуляция (снизу вверх)", "Жадные алгоритмы — локально оптимальный выбор на каждом шаге, не всегда даёт глобальный оптимум", "Backtracking — перебор с отсечением заведомо тупиковых веток"])
+  ]),
+  T("Практика к техническому интервью", "Как тренироваться эффективно, а не просто решать задачи подряд.", [
+    G("Подход к практике", ["Категории задач на LeetCode: массивы/строки, two pointers, sliding window, деревья/графы, DP — практиковать по темам, а не вразнобой", "Проговаривание решения вслух: подход → оценка сложности → edge cases → код", "Типичные ошибки на live coding: не уточнить границы входных данных, не проверить пустой/некорректный ввод"])
+  ])
+]);
+
+/* ============================================================ 24 ============================================================ */
+S("Архитектурные подходы", "Продвинутые темы, отличающие senior от middle", [
+  T("Чистая архитектура", "Организация зависимостей внутри приложения.", [
+    G("Подходы", ["Слоистая архитектура: presentation → business → data access", "Hexagonal architecture (Ports & Adapters) — бизнес-логика в центре, внешние системы подключаются через порты", "Clean Architecture (Robert Martin) — зависимости направлены только внутрь, к бизнес-правилам, независимо от фреймворков и БД"])
+  ]),
+  T("Domain-Driven Design", "Подход к проектированию сложной предметной логики.", [
+    G("Тактические паттерны", ["Entity — объект с идентичностью, сохраняющейся при изменении атрибутов", "Value Object — объект, определяемый только своими атрибутами, неизменяемый", "Aggregate и Aggregate Root — граница согласованности данных, единственная точка доступа к внутренним объектам агрегата"]),
+    G("Стратегические паттерны", ["Bounded Context — явная граница применимости модели и терминов", "Ubiquitous language — общий язык между разработчиками и бизнесом внутри одного bounded context"])
+  ]),
+  T("CQRS и Event Sourcing подробнее", "Продвинутые паттерны для систем со сложной логикой чтения/записи.", [
+    G("Детали реализации", ["Разделение команд (изменяют состояние, ничего не возвращают по сути) и запросов (только читают, не изменяют состояние)", "Event Store как единственный источник истины — состояние вычисляется как результат применения всех событий по порядку", "Проекции — денормализованные read-модели, построенные из потока событий для быстрого чтения"])
+  ]),
+  T("Практики командной разработки", "Инженерная культура, которую ожидают от senior.", [
+    G("Практики", ["Code review — конструктивный фидбек: аргументация через принципы/риски, а не личные предпочтения", "Управление техническим долгом — явная фиксация, приоритизация наравне с фичами, а не «когда-нибудь потом»", "12-factor app как чек-лист зрелости архитектуры сервиса"]),
+    G("Документирование решений", ["ADR (Architecture Decision Record) — короткий документ формата «Контекст → Решение → Рассмотренные альтернативы → Последствия» на каждое значимое техническое решение", "ADR — это именно то, что отличает senior-кандидата на собеседовании: он объясняет, почему выбрано решение и что было отвергнуто, а не только что сделано"])
+  ])
+]);
+
+/* ============================================================ 25 ============================================================ */
+S("Soft skills и подготовка к Senior-собеседованию", "То, что часто решает исход собеседования при равном техническом уровне", [
+  T("Что реально ожидают от Senior", "Отличие senior от middle — не только в объёме технических знаний.", [
+    G("Ожидания", ["Автономность и самостоятельное принятие решений без постоянного контроля", "Менторство junior/middle-разработчиков, code review как инструмент обучения команды", "Влияние на архитектуру и технические решения, а не только реализация поставленных задач", "Умение явно формулировать trade-offs, риски и стоимость технических решений для нетехнической аудитории"])
+  ]),
+  T("Как проходит system design интервью", "Формат и ожидания интервьюера.", [
+    G("Формат", ["Структура ответа: требования → оценка нагрузки → high-level дизайн → детали → компромиссы", "Умение задавать уточняющие вопросы вместо того, чтобы додумывать требования самостоятельно", "Управление временем — не увязать в деталях одного компонента в ущерб общей картине"])
+  ]),
+  T("Behavioral интервью", "Поведенческие вопросы задают почти всегда, и к ним тоже нужно готовиться.", [
+    G("Метод и материал", ["STAR-метод: Situation (контекст) → Task (задача) → Action (что сделали именно вы) → Result (измеримый результат)", "Заготовленные заранее истории: сложный конфликт в команде, провал проекта и выводы, ситуация с лидерством/инициативой", "Вопросы, которые стоит задать интервьюеру: про процессы, техдолг, метрики успеха роли"])
+  ]),
+  T("Презентация своего опыта", "Как рассказать о проектах так, чтобы это звучало на уровень senior.", [
+    G("Фокус рассказа", ["Impact и метрики результата, а не перечисление использованных технологий", "Структура «проблема → решение → альтернативы, которые рассматривались → результат»", "Честный разговор о неудачах и выводах из них — это тоже сигнал зрелости, а не слабости"])
+  ])
+]);
+
+/* ============================================================ 26 ============================================================ */
+S("Ресурсы для подготовки", "Проверенная литература и площадки для практики", [
+  T("Книги — обязательный минимум", "Классика, которую цитируют на большинстве senior-собеседований.", [
+    G("Язык и конкурентность", ["«Effective Java» — Joshua Bloch (лучшие практики языка, обязательна)", "«Java Concurrency in Practice» — Brian Goetz (стандарт по многопоточности в Java)"]),
+    G("Архитектура и дизайн", ["«Clean Code» и «Clean Architecture» — Robert C. Martin", "«Head First Design Patterns» — паттерны проектирования с наглядными примерами", "«Designing Data-Intensive Applications» — Martin Kleppmann (must-read для системного дизайна)", "«System Design Interview» — Alex Xu (практическая подготовка к интервью)"])
+  ]),
+  T("Площадки и формат практики", "Куда идти после того, как теория прочитана.", [
+    G("Практика", ["LeetCode / HackerRank — алгоритмическая часть технического интервью", "Baeldung — практические статьи по Java, Spring, Hibernate с примерами кода", "Educative.io — структурированные курсы по system design", "Mock-интервью с коллегами или на специализированных платформах (Pramp)"])
+  ])
+]);
+
+/* ===================== APP LOGIC ===================== */
+const STORAGE_KEY = "java-senior-roadmap-progress-v2";
+const COLLAPSE_KEY = "java-senior-roadmap-collapse-v2";
+const THEME_KEY = "java-senior-roadmap-theme-v1";
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function loadChecked(){
+  try{ return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")); }
+  catch(e){ return new Set(); }
+}
+function saveChecked(set){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify([...set])); }catch(e){}
+}
+function loadCollapse(){
+  try{ return JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "null"); }
+  catch(e){ return null; }
+}
+function saveCollapse(obj){
+  try{ localStorage.setItem(COLLAPSE_KEY, JSON.stringify(obj)); }catch(e){}
+}
+
+let checked = loadChecked();
+let openMap = loadCollapse() || {0:true};
+
+const root = document.getElementById("sections-root");
+const navList = document.getElementById("nav-list");
+let totalTopics = 0;
+
+SECTIONS.forEach((sec, si) => {
+  sec.topics.forEach((t, ti) => { t.id = "s"+si+"-t"+ti; totalTopics++; });
+});
+document.getElementById("stat-total").textContent = totalTopics;
+
+function slugForSection(si){ return "sec-"+si; }
+
+function render(){
+  root.innerHTML = "";
+  navList.innerHTML = "";
+
+  SECTIONS.forEach((sec, si) => {
+    const doneCount = sec.topics.filter(t => checked.has(t.id)).length;
+    const pct = Math.round((doneCount / sec.topics.length) * 100);
+
+    const li = document.createElement("li");
+    li.className = "nav-item";
+    li.innerHTML = `<span class="nav-idx">${String(si+1).padStart(2,"0")}</span><span class="nav-title">${escapeHtml(sec.title)}</span><span class="nav-bar"><span style="width:${pct}%"></span></span>`;
+    li.addEventListener("click", () => {
+      openMap[si] = true; saveCollapse(openMap); render();
+      document.getElementById(slugForSection(si)).scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    navList.appendChild(li);
+
+    const secEl = document.createElement("section");
+    secEl.className = "topic-section" + (openMap[si] ? " open" : "");
+    secEl.id = slugForSection(si);
+
+    const head = document.createElement("div");
+    head.className = "sec-head";
+    head.innerHTML = `
+      <div class="sec-num">${String(si+1).padStart(2,"0")}</div>
+      <div class="sec-titles">
+        <h3>${escapeHtml(sec.title)}</h3>
+        <p>${escapeHtml(sec.subtitle)}</p>
+      </div>
+      <div class="sec-meta">
+        <div class="sec-progress">
+          <div class="sec-progress-track"><span style="width:${pct}%"></span></div>
+          <div class="sec-progress-label">${doneCount}/${sec.topics.length}</div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>`;
+    head.addEventListener("click", () => {
+      openMap[si] = !openMap[si]; saveCollapse(openMap); render();
+    });
+    secEl.appendChild(head);
+
+    const body = document.createElement("div");
+    body.className = "sec-body";
+    sec.topics.forEach(t => {
+      const row = document.createElement("div");
+      row.className = "topic-row" + (checked.has(t.id) ? " done" : "");
+      const searchBlob = [t.title, t.desc, t.q||"", ...t.groups.flatMap(g => [g.h, ...g.items])].join(" ").toLowerCase();
+      row.dataset.search = searchBlob;
+      const groupsHtml = t.groups.map(g => `
+        <div class="group-block">
+          <div class="group-h">${escapeHtml(g.h)}</div>
+          <ul class="group-items">${g.items.map(it => `<li>${escapeHtml(it)}</li>`).join("")}</ul>
+        </div>`).join("");
+      row.innerHTML = `
+        <input type="checkbox" class="topic-check" ${checked.has(t.id) ? "checked" : ""}>
+        <div class="topic-main">
+          <div class="topic-title-row"><span class="topic-title">${escapeHtml(t.title)}</span></div>
+          <p class="topic-desc">${escapeHtml(t.desc)}</p>
+          <div class="group-list">${groupsHtml}</div>
+          ${t.q ? `<div class="qbox"><b>Частый вопрос на собеседовании</b>${escapeHtml(t.q)}</div>` : ""}
+        </div>`;
+      const cb = row.querySelector(".topic-check");
+      const toggle = () => {
+        if(checked.has(t.id)) checked.delete(t.id); else checked.add(t.id);
+        saveChecked(checked);
+        render();
+      };
+      cb.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
+      row.querySelector(".topic-title").addEventListener("click", toggle);
+      body.appendChild(row);
+    });
+    secEl.appendChild(body);
+    root.appendChild(secEl);
+  });
+
+  updateStats();
+  applySearch(document.getElementById("search-input-main").value);
+}
+
+function updateStats(){
+  const doneTotal = checked.size;
+  const pct = totalTopics ? Math.round((doneTotal/totalTopics)*100) : 0;
+  document.getElementById("stat-pct").textContent = pct;
+  document.getElementById("stat-done").textContent = doneTotal;
+  const circumference = 138.2;
+  const ring = document.getElementById("ring-progress");
+  ring.setAttribute("stroke-dashoffset", String(circumference - (circumference*pct/100)));
+}
+
+function applySearch(query){
+  const q = query.trim().toLowerCase();
+  let visibleCount = 0;
+  const rows = document.querySelectorAll(".topic-row");
+  const sections = document.querySelectorAll(".topic-section");
+  if(!q){
+    rows.forEach(r => { r.classList.remove("hidden"); visibleCount++; });
+    sections.forEach(s => s.style.display = "");
+    document.getElementById("empty-state").classList.remove("show");
+    document.getElementById("toolbar-visible").textContent = totalTopics;
+    return;
+  }
+  sections.forEach((secEl) => {
+    let anyVisible = false;
+    secEl.querySelectorAll(".topic-row").forEach(r => {
+      const match = r.dataset.search.includes(q);
+      r.classList.toggle("hidden", !match);
+      if(match){ anyVisible = true; visibleCount++; }
+    });
+    secEl.style.display = anyVisible ? "" : "none";
+    if(anyVisible) secEl.classList.add("open");
+  });
+  document.getElementById("toolbar-visible").textContent = visibleCount;
+  document.getElementById("empty-state").classList.toggle("show", visibleCount === 0);
+}
+
+const searchMain = document.getElementById("search-input-main");
+const searchSide = document.getElementById("search-input");
+searchMain.addEventListener("input", () => { searchSide.value = searchMain.value; applySearch(searchMain.value); });
+searchSide.addEventListener("input", () => { searchMain.value = searchSide.value; applySearch(searchSide.value); });
+
+document.getElementById("btn-expand-all").addEventListener("click", () => {
+  SECTIONS.forEach((_, si) => openMap[si] = true); saveCollapse(openMap); render();
+});
+document.getElementById("btn-collapse-all").addEventListener("click", () => {
+  SECTIONS.forEach((_, si) => openMap[si] = false); saveCollapse(openMap); render();
+});
+
+document.getElementById("btn-reset").addEventListener("click", () => {
+  if(confirm("Сбросить весь прогресс изучения? Это действие нельзя отменить.")){
+    checked = new Set(); saveChecked(checked); render();
+  }
+});
+
+document.getElementById("btn-export").addEventListener("click", () => {
+  const payload = { checked: [...checked], exportedAt: new Date().toISOString() };
+  document.getElementById("export-text").value = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  document.getElementById("export-modal").classList.add("show");
+});
+document.getElementById("export-close").addEventListener("click", () => document.getElementById("export-modal").classList.remove("show"));
+document.getElementById("export-copy").addEventListener("click", () => {
+  const ta = document.getElementById("export-text");
+  ta.select(); document.execCommand("copy");
+});
+
+document.getElementById("btn-import").addEventListener("click", () => {
+  document.getElementById("import-text").value = "";
+  document.getElementById("import-modal").classList.add("show");
+});
+document.getElementById("import-cancel").addEventListener("click", () => document.getElementById("import-modal").classList.remove("show"));
+document.getElementById("import-apply").addEventListener("click", () => {
+  try{
+    const raw = document.getElementById("import-text").value.trim();
+    const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
+    checked = new Set(payload.checked || []);
+    saveChecked(checked);
+    document.getElementById("import-modal").classList.remove("show");
+    render();
+  }catch(e){
+    alert("Не удалось прочитать данные. Проверьте, что текст скопирован полностью.");
+  }
+});
+
+/* Theme handling */
+function applyTheme(mode){
+  if(mode === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", mode);
+  document.querySelectorAll("[data-theme-btn]").forEach(b => b.classList.toggle("active", b.dataset.themeBtn === mode));
+  try{ localStorage.setItem(THEME_KEY, mode); }catch(e){}
+}
+document.querySelectorAll("[data-theme-btn]").forEach(b => {
+  b.addEventListener("click", () => applyTheme(b.dataset.themeBtn));
+});
+applyTheme((() => { try{ return localStorage.getItem(THEME_KEY) || "system"; }catch(e){ return "system"; } })());
+
+render();
+</script>
