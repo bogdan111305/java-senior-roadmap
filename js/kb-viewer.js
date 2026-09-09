@@ -128,11 +128,13 @@ async function kbRenderMermaidBlocks(container){
 }
 
 function kbUpdateActiveFileNav(path){
-  document.querySelectorAll("#kb-modal-files .kb-file-pill").forEach(el => {
-    el.classList.toggle("active", el.dataset.path === path);
-  });
+  const select = document.querySelector("#kb-modal-files .kb-file-select");
+  if(select && select.value !== path) select.value = path;
 }
 
+/* Переключатель файлов темы-подпапки — один компактный <select> вместо
+   ряда кнопок: на узком экране ряд кнопок легко занимал 2-3 строки над
+   текстом, а select — всегда одна строка независимо от числа файлов. */
 function kbRenderFileNav(node){
   const nav = document.getElementById("kb-modal-files");
   if(!node || !Array.isArray(node.children) || node.children.length === 0){
@@ -141,12 +143,15 @@ function kbRenderFileNav(node){
     return;
   }
   const items = [{ path: node.path, title: "Обзор" }, ...node.children.map(c => ({ path: c.path, title: c.title }))];
-  nav.innerHTML = items.map(it =>
-    `<button type="button" class="kb-file-pill" data-path="${kbEscapeHtml(it.path)}">${kbEscapeHtml(it.title)}</button>`
+  const options = items.map(it =>
+    `<option value="${kbEscapeHtml(it.path)}">${kbEscapeHtml(it.title)}</option>`
   ).join("");
+  nav.innerHTML = `<select class="kb-file-select" aria-label="Файл темы">${options}</select>`;
   nav.hidden = false;
-  nav.querySelectorAll(".kb-file-pill").forEach((btn, i) => {
-    btn.addEventListener("click", () => kbLoadFile(items[i].path, { title: items[i].title }));
+  const select = nav.querySelector(".kb-file-select");
+  select.addEventListener("change", () => {
+    const item = items.find(it => it.path === select.value);
+    if(item) kbLoadFile(item.path, { title: item.title });
   });
 }
 
