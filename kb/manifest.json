@@ -1,0 +1,59 @@
+{
+  "01-01-os-basics": {
+    "path": "01-fundamentals/01-os-basics.md",
+    "section": 1,
+    "status": "not-started",
+    "title": "Как устроен компьютер и операционная система"
+  },
+  "01-02-number-systems-encodings": {
+    "path": "01-fundamentals/02-number-systems-encodings.md",
+    "section": 1,
+    "status": "not-started",
+    "title": "Системы счисления и кодировки"
+  },
+  "01-03-networking-basics": {
+    "children": [
+      {
+        "path": "01-fundamentals/03-networking-basics/01-switching-and-osi.md",
+        "slug": "01-03-01-switching-and-osi",
+        "title": "Коммутация каналов, пакетная коммутация и модель OSI"
+      },
+      {
+        "path": "01-fundamentals/03-networking-basics/02-ethernet-data-link.md",
+        "slug": "01-03-02-ethernet-data-link",
+        "title": "Ethernet и канальный уровень"
+      },
+      {
+        "path": "01-fundamentals/03-networking-basics/03-network-layer-ip.md",
+        "slug": "01-03-03-network-layer-ip",
+        "title": "Сетевой уровень и IP"
+      },
+      {
+        "path": "01-fundamentals/03-networking-basics/04-transport-layer.md",
+        "slug": "01-03-04-transport-layer",
+        "title": "Транспортный уровень: UDP, TCP и ICMP"
+      },
+      {
+        "path": "01-fundamentals/03-networking-basics/05-advanced-topics.md",
+        "slug": "01-03-05-advanced-topics",
+        "title": "VLAN, VPN, DHCP и другие продвинутые сетевые темы"
+      }
+    ],
+    "path": "01-fundamentals/03-networking-basics/00-index.md",
+    "section": 1,
+    "status": "not-started",
+    "title": "Основы сетей"
+  },
+  "01-04-git": {
+    "path": "01-fundamentals/04-git.md",
+    "section": 1,
+    "status": "not-started",
+    "title": "Git и работа с кодовой базой"
+  },
+  "01-05-algorithmic-thinking-intro": {
+    "path": "01-fundamentals/05-algorithmic-thinking-intro.md",
+    "section": 1,
+    "status": "not-started",
+    "title": "Алгоритмическое мышление: введение"
+  }
+}

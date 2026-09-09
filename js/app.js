@@ -111,7 +111,10 @@ function render(){
       row.innerHTML = `
         <input type="checkbox" class="topic-check" ${checked.has(t.id) ? "checked" : ""}>
         <div class="topic-main">
-          <div class="topic-title-row"><span class="topic-title">${escapeHtml(t.title)}</span></div>
+          <div class="topic-title-row">
+            <span class="topic-title">${escapeHtml(t.title)}</span>
+            ${t.kb ? `<button type="button" class="kb-btn" data-kb="${escapeHtml(t.kb)}" title="Открыть конспект из базы знаний">📖 Материалы</button>` : ""}
+          </div>
           <p class="topic-desc">${escapeHtml(t.desc)}</p>
           <div class="group-list">${groupsHtml}</div>
           ${t.q ? `<div class="qbox"><b>Частый вопрос на собеседовании</b>${escapeHtml(t.q)}</div>` : ""}
@@ -124,6 +127,10 @@ function render(){
       };
       cb.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
       row.querySelector(".topic-title").addEventListener("click", toggle);
+      row.querySelector(".kb-btn")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if(typeof openKbViewer === "function") openKbViewer(e.currentTarget.dataset.kb);
+      });
       body.appendChild(row);
     });
     secEl.appendChild(body);

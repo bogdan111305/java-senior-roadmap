@@ -8,4 +8,11 @@ const SECTIONS = [];
 
 function S(title, subtitle, topics){ SECTIONS.push({ title, subtitle, topics }); }
 function G(h, items){ return { h, items }; }
-function T(title, desc, groups, q){ return { title, desc, groups, q }; }
+/*
+  kb — необязательный topic_slug из kb/manifest.json (например "01-04-git").
+  Если указан, в строке темы появляется кнопка «Материалы», открывающая
+  соответствующий .md-конспект из kb/ во всплывающем окне (js/kb-viewer.js).
+  Если тема пока не законспектирована в kb/ — просто не передавайте этот
+  аргумент, кнопка не появится.
+*/
+function T(title, desc, groups, q, kb){ return { title, desc, groups, q, kb }; }

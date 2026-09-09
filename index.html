@@ -129,6 +129,31 @@
   </div>
 </div>
 
+<!-- Модалка чтения конспекта kb/ — открывается кнопкой «Материалы» у темы,
+     контент подгружается и рендерится на лету в js/kb-viewer.js -->
+<div class="modal-backdrop" id="kb-modal">
+  <div class="modal kb-modal">
+    <div class="kb-modal-head">
+      <div class="kb-modal-titlewrap">
+        <div class="kb-modal-eyebrow" id="kb-modal-eyebrow">База знаний</div>
+        <h4 id="kb-modal-title">Загрузка…</h4>
+      </div>
+      <button class="kb-modal-close" id="kb-modal-close" aria-label="Закрыть">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <nav class="kb-modal-files" id="kb-modal-files" hidden></nav>
+    <div class="kb-modal-body" id="kb-modal-body">
+      <div class="kb-modal-status" id="kb-modal-status">Загрузка…</div>
+      <article class="kb-content" id="kb-modal-content"></article>
+    </div>
+  </div>
+</div>
+
+<!-- markdown → HTML и рендер Mermaid-диаграмм прямо в браузере (для содержимого kb/) -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
 <!-- Данные дорожной карты: сначала helpers (S/T/G), затем 26 файлов по одному на раздел -->
 <script src="js/helpers.js"></script>
 <script src="js/data/01-fundamentals.js"></script>
@@ -157,6 +182,8 @@
 <script src="js/data/24-architecture.js"></script>
 <script src="js/data/25-soft-skills.js"></script>
 <script src="js/data/26-resources.js"></script>
+<!-- Просмотр конспектов kb/: подгрузка manifest.json, fetch .md, рендер markdown+Mermaid -->
+<script src="js/kb-viewer.js"></script>
 <!-- Логика приложения: рендер, поиск, тема, экспорт/импорт, мобильное меню -->
 <script src="js/app.js"></script>
 </body>
