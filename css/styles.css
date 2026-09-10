@@ -280,7 +280,7 @@ section.topic-section{
    широкая sequence-диаграмма) — разница ширины читается как осознанный
    приём, а не как случайный баг. */
 .kb-content{--kb-col: 760px; font-size:14.5px; line-height:1.7; color:var(--text);}
-.kb-content h1,.kb-content h2,.kb-content h3{margin:24px auto 10px; font-family:"IBM Plex Serif", Georgia, serif; max-width:var(--kb-col);}
+.kb-content h1,.kb-content h2,.kb-content h3,.kb-content h4{margin:24px auto 10px; font-family:"IBM Plex Serif", Georgia, serif; max-width:var(--kb-col);}
 .kb-content h1{font-size:22px;}
 .kb-content h2{font-size:18.5px; padding-top:6px; border-top:1px solid var(--border); margin-top:28px;}
 .kb-content h3{font-size:15.5px; color:var(--accent); font-family:"IBM Plex Sans"; font-weight:600;}

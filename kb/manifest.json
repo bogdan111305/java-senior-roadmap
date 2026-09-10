@@ -55,5 +55,84 @@
     "section": 1,
     "status": "not-started",
     "title": "Алгоритмическое мышление: введение"
+  },
+  "02-01-environment-setup": {
+    "path": "02-java-core/01-environment-setup.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Установка окружения и первая программа"
+  },
+  "02-02-variables-and-types": {
+    "path": "02-java-core/02-variables-and-types.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Переменные и типы данных"
+  },
+  "02-03-operators-and-control-flow": {
+    "path": "02-java-core/03-operators-and-control-flow.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Операторы и управляющие конструкции"
+  },
+  "02-04-arrays": {
+    "path": "02-java-core/04-arrays.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Массивы"
+  },
+  "02-05-methods": {
+    "path": "02-java-core/05-methods.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Методы"
+  },
+  "02-06-strings": {
+    "path": "02-java-core/06-strings.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Строки"
+  },
+  "02-07-regex": {
+    "path": "02-java-core/07-regex.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Регулярные выражения (Pattern/Matcher)"
+  },
+  "02-08-date-time": {
+    "path": "02-java-core/08-date-time.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Дата и время: java.time подробнее"
+  },
+  "02-09-classes-and-objects": {
+    "path": "02-java-core/09-classes-and-objects.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Классы и объекты"
+  },
+  "02-10-initialization-order": {
+    "path": "02-java-core/10-initialization-order.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Порядок инициализации при наследовании"
+  },
+  "02-11-final-and-static": {
+    "path": "02-java-core/11-final-and-static.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "final и static"
+  },
+  "02-12-enum-and-annotations": {
+    "children": [
+      {
+        "path": "02-java-core/12-enum-and-annotations/01-enum-internals.md",
+        "slug": "02-12-01-enum-internals",
+        "title": "Enum под капотом"
+      }
+    ],
+    "path": "02-java-core/12-enum-and-annotations/00-index.md",
+    "section": 2,
+    "status": "not-started",
+    "title": "Enum и аннотации"
   }
 }
