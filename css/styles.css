@@ -279,34 +279,35 @@ section.topic-section{
    за края текстовой колонки, когда им нужно больше места (сравнение схем,
    широкая sequence-диаграмма) — разница ширины читается как осознанный
    приём, а не как случайный баг. */
-.kb-content{--kb-col: 760px; font-size:14.5px; line-height:1.7; color:var(--text);}
+.kb-content{--kb-col: 920px; font-size:16.5px; line-height:1.7; color:var(--text);}
 .kb-content h1,.kb-content h2,.kb-content h3,.kb-content h4{margin:24px auto 10px; font-family:"IBM Plex Serif", Georgia, serif; max-width:var(--kb-col);}
-.kb-content h1{font-size:22px;}
-.kb-content h2{font-size:18.5px; padding-top:6px; border-top:1px solid var(--border); margin-top:28px;}
-.kb-content h3{font-size:15.5px; color:var(--accent); font-family:"IBM Plex Sans"; font-weight:600;}
+.kb-content h1{font-size:25px;}
+.kb-content h2{font-size:21px; padding-top:6px; border-top:1px solid var(--border); margin-top:28px;}
+.kb-content h3{font-size:17.5px; color:var(--accent); font-family:"IBM Plex Sans"; font-weight:600;}
+.kb-content h4{font-size:16.5px; font-weight:600;}
 .kb-content > :first-child{margin-top:0;}
 .kb-content p{margin:0 auto 14px; max-width:var(--kb-col);}
 .kb-content ul,.kb-content ol{margin:0 auto 14px; padding-left:22px; display:flex; flex-direction:column; gap:4px; max-width:var(--kb-col);}
-.kb-content li{font-size:14px;}
+.kb-content li{font-size:16px;}
 .kb-content strong{font-weight:600;}
 .kb-content code{
-  font-family:"IBM Plex Mono"; font-size:12.8px; background:var(--surface-2); padding:1px 5px; border-radius:4px;
+  font-family:"IBM Plex Mono"; font-size:14.5px; background:var(--surface-2); padding:1px 5px; border-radius:4px;
 }
 .kb-content pre:not(.mermaid){
   background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:12px 14px;
   overflow-x:auto; margin:0 auto 16px; max-width:var(--kb-col);
 }
-.kb-content pre:not(.mermaid) code{background:none; padding:0; font-size:12.5px; line-height:1.6;}
+.kb-content pre:not(.mermaid) code{background:none; padding:0; font-size:14px; line-height:1.6;}
 .kb-content blockquote{
   margin:0 auto 16px; padding:10px 14px; border-left:3px solid var(--accent-2); background:var(--accent-2-soft);
-  border-radius:8px; color:var(--text-soft); font-size:13.5px; max-width:var(--kb-col);
+  border-radius:8px; color:var(--text-soft); font-size:15px; max-width:var(--kb-col);
 }
 .kb-content blockquote p:last-child{margin-bottom:0;}
 .kb-content table{
-  width:100%; max-width:var(--kb-col); margin:0 auto 18px; border-collapse:collapse; font-size:13px; display:block; overflow-x:auto;
+  width:100%; max-width:var(--kb-col); margin:0 auto 18px; border-collapse:collapse; font-size:14.5px; display:block; overflow-x:auto;
 }
 .kb-content th,.kb-content td{border:1px solid var(--border); padding:7px 10px; text-align:left;}
-.kb-content thead th{background:var(--surface-2); font-family:"IBM Plex Mono"; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;}
+.kb-content thead th{background:var(--surface-2); font-family:"IBM Plex Mono"; font-size:12.5px; text-transform:uppercase; letter-spacing:.03em;}
 .kb-content hr{border:none; border-top:1px solid var(--border); max-width:var(--kb-col);}
 .kb-content a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--accent-soft); text-underline-offset:2px;}
 .kb-content a:hover{text-decoration-color:var(--accent);}
