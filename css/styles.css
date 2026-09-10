@@ -232,7 +232,7 @@ section.topic-section{
 
 /* ---------- Модалка просмотра kb/ (js/kb-viewer.js) ---------- */
 .kb-modal{
-  max-width:1080px; width:96vw; height:min(88vh, 960px); padding:0; display:flex; flex-direction:column; overflow:hidden;
+  max-width:1400px; width:98vw; height:min(94vh, 1100px); padding:0; display:flex; flex-direction:column; overflow:hidden;
 }
 .kb-modal-head{
   display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
