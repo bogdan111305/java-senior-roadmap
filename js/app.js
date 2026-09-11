@@ -2,6 +2,7 @@
 const STORAGE_KEY = "java-senior-roadmap-progress-v2";
 const COLLAPSE_KEY = "java-senior-roadmap-collapse-v2";
 const THEME_KEY = "java-senior-roadmap-theme-v1";
+const COLOR_KEY = "java-senior-roadmap-color-v1";
 
 function escapeHtml(str){
   return String(str)
@@ -235,5 +236,20 @@ document.querySelectorAll("[data-theme-btn]").forEach(b => {
   b.addEventListener("click", () => applyTheme(b.dataset.themeBtn));
 });
 applyTheme((() => { try{ return localStorage.getItem(THEME_KEY) || "system"; }catch(e){ return "system"; } })());
+
+/* Цвет акцента — независимая ручка от режима светлая/тёмная (см. styles.css,
+   блок "Цветовые темы"): [data-color] на <html> переключает только
+   --accent/--accent-2 и их -soft варианты, поэтому любой цвет сочетается
+   с любым режимом. "mint" — исходная палитра, для неё в CSS нет
+   оверрайдов (уже задана в :root по умолчанию). */
+function applyColor(key){
+  document.documentElement.setAttribute("data-color", key);
+  document.querySelectorAll("[data-color-btn]").forEach(b => b.classList.toggle("active", b.dataset.colorBtn === key));
+  try{ localStorage.setItem(COLOR_KEY, key); }catch(e){}
+}
+document.querySelectorAll("[data-color-btn]").forEach(b => {
+  b.addEventListener("click", () => applyColor(b.dataset.colorBtn));
+});
+applyColor((() => { try{ return localStorage.getItem(COLOR_KEY) || "mint"; }catch(e){ return "mint"; } })());
 
 render();
