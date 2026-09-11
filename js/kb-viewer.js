@@ -146,7 +146,7 @@ function kbRenderFileNav(node){
   const options = items.map(it =>
     `<option value="${kbEscapeHtml(it.path)}">${kbEscapeHtml(it.title)}</option>`
   ).join("");
-  nav.innerHTML = `<select class="kb-file-select" aria-label="Файл темы">${options}</select>`;
+  nav.innerHTML = `<div class="kb-modal-files-inner"><select class="kb-file-select" aria-label="Файл темы">${options}</select></div>`;
   nav.hidden = false;
   const select = nav.querySelector(".kb-file-select");
   select.addEventListener("change", () => {

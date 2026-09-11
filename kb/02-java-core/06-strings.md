@@ -13,9 +13,6 @@ related:
 last_reviewed: null
 ---
 
-# Строки
-
----
 `String` — самый часто используемый тип в любом Java-коде, и именно поэтому
 детали его устройства — иммутабельность, пул строк, разница `==`/`equals` —
 спрашивают чаще почти любой другой темы синтаксиса, вплоть до junior-уровня.
@@ -64,14 +61,14 @@ time-of-use). Во-вторых, кэшируемость `hashCode()`: поск
 ```mermaid
 flowchart LR
     subgraph "String pool (в куче)"
-    P["\"hello\""]
+    P["#quot;hello#quot;"]
     end
     subgraph "Обычная куча"
-    N["new String(\"hello\")"]
+    N["new String(#quot;hello#quot;)"]
     end
-    a["a = \"hello\""] --> P
-    b["b = \"hello\""] --> P
-    c["c = new String(\"hello\")"] --> N
+    a["a = #quot;hello#quot;"] --> P
+    b["b = #quot;hello#quot;"] --> P
+    c["c = new String(#quot;hello#quot;)"] --> N
     d["d = c.intern()"] -.-> P
 ```
 `a` и `b` — два литерала с одинаковым содержимым, поэтому оба указывают на
