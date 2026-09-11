@@ -124,6 +124,22 @@ public static Direction[] values();
 поддерживают внутри себя, — поиск по имени происходит за счёт хеш-таблицы, а
 не последовательного сравнения строк со всеми константами по очереди.
 
+```
+public static Direction valueOf(java.lang.String);
+    Code:
+       0: ldc           #7                  // class Direction
+       2: aload_0
+       3: invokestatic  #33                 // Method java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+       6: checkcast     #7                  // class Direction
+       9: areturn
+```
+Сгенерированный `valueOf` сам по себе не содержит цикла сравнений — он
+делегирует в `java.lang.Enum.valueOf(Class, String)`, а тот внутри вызывает
+`Class.enumConstantDirectory()`, который лениво строит и кэширует именно
+`Map<String, T>` прямо на объекте `Class` (по одной на enum-тип, один раз за
+всё время жизни JVM) — второй и последующие вызовы `valueOf` для того же
+enum-типа используют уже готовую хеш-таблицу, а не пересобирают её заново.
+
 #### Константы с телом — анонимные подклассы
 Отдельный интересный случай — константа с собственным телом (constant-specific
 class body), например `PLUS { public int apply(int a, int b) { return a + b; } }`
@@ -173,6 +189,26 @@ Op$1.class   Op$2.class   Op.class
 самый надёжный способ реализовать singleton в Java — гарантии платформы здесь
 сильнее любых соглашений, которые разработчик мог бы случайно нарушить в
 ручной реализации.
+
+```java
+enum Singleton { INSTANCE }
+
+Constructor<Singleton> ctor = Singleton.class.getDeclaredConstructor(String.class, int.class);
+ctor.setAccessible(true);
+try {
+    ctor.newInstance("FAKE", 99);
+} catch (IllegalArgumentException e) {
+    System.out.println("newInstance на enum -> " + e.getClass().getSimpleName() + ": " + e.getMessage());
+}
+```
+```
+newInstance на enum -> IllegalArgumentException: Cannot reflectively create enum objects
+```
+Даже после `setAccessible(true)`, который у обычного класса открыл бы доступ
+к приватному конструктору, JVM явно проверяет флаг `ENUM` в модификаторах
+класса и отказывает в создании нового экземпляра прямо на уровне
+`Constructor.newInstance` — это защита на уровне платформы, а не соглашение,
+которое реализация `Singleton` могла бы случайно не соблюсти.
 
 #### switch по enum: ordinal() + tableswitch
 Наконец, `switch` по enum не сравнивает строки, как могло бы показаться по
@@ -257,6 +293,23 @@ A: Никакого сравнения строк — компилятор вс�
 переименовываются) или отдельное явное поле с кодом, задаваемое через
 конструктор enum, а не полагаться на порядок объявления.
 
+```java
+enum StatusV1 { NEW, ACTIVE, DONE }
+// где-то во внешней системе сохранили StatusV1.ACTIVE.ordinal() == 1
+
+enum StatusV2 { NEW, PENDING, ACTIVE, DONE } // позже добавили PENDING в середину
+
+System.out.println("StatusV2.values()[1] теперь: " + StatusV2.values()[1].name());
+```
+```
+StatusV2.values()[1] теперь: PENDING
+```
+Сохранённое ранее число `1` когда-то означало `ACTIVE`. После того как в
+объявление enum вставили новую константу `PENDING` перед `ACTIVE`, позиция `1`
+стала указывать на `PENDING` — само значение `1` во внешнем хранилище никак
+не изменилось, но то, что оно означает, тихо стало другим, без единой ошибки
+компиляции или исполнения в момент вставки.
+
 #### values() клонирует массив, но не сами константы
 Другое заблуждение — думать, что раз `values()` возвращает клон массива, то
 сравнение через `==` для двух отдельных вызовов `values()` вернёт `true` для
@@ -266,6 +319,23 @@ A: Никакого сравнения строк — компилятор вс�
 внутри этих массивов — сами enum-константы — остаются теми же самыми
 единственными на JVM объектами, поэтому `values()[0] == Direction.NORTH`
 по-прежнему истинно, даже если сам массив-обёртка при каждом вызове новый.
+
+```java
+Direction[] v1 = Direction.values();
+Direction[] v2 = Direction.values();
+System.out.println("v1 == v2 (разные массивы): " + (v1 == v2));
+System.out.println("v1[0] == v2[0] (та же константа): " + (v1[0] == v2[0]));
+System.out.println("v1[0] == Direction.NORTH: " + (v1[0] == Direction.NORTH));
+```
+```
+v1 == v2 (разные массивы): false
+v1[0] == v2[0] (та же константа): true
+v1[0] == Direction.NORTH: true
+```
+`v1 == v2` ложно — это два разных объекта-массива, полученных двумя разными
+вызовами `clone()`. Но `v1[0] == v2[0]` истинно — оба массива на нулевой
+позиции хранят ссылку на один и тот же единственный объект `Direction.NORTH`,
+клонируется только контейнер, а не то, что в нём лежит.
 
 ## Связанные темы
 - [Enum и аннотации](00-index.md) — базовое использование enum и EnumMap/EnumSet, обзорный уровень для собеседования.
