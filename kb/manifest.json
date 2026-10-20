@@ -134,5 +134,53 @@
     "section": 2,
     "status": "not-started",
     "title": "Enum и аннотации"
+  },
+  "03-01-encapsulation": {
+    "path": "03-oop/01-encapsulation.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Инкапсуляция"
+  },
+  "03-02-inheritance": {
+    "path": "03-oop/02-inheritance.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Наследование"
+  },
+  "03-03-polymorphism": {
+    "path": "03-oop/03-polymorphism.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Полиморфизм"
+  },
+  "03-04-abstract-vs-interface": {
+    "path": "03-oop/04-abstract-vs-interface.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Абстракция: abstract class vs interface"
+  },
+  "03-05-composition-vs-inheritance": {
+    "path": "03-oop/05-composition-vs-inheritance.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Композиция vs наследование"
+  },
+  "03-06-object-class": {
+    "path": "03-oop/06-object-class.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Класс Object — универсальный суперкласс"
+  },
+  "03-07-comparable-comparator": {
+    "path": "03-oop/07-comparable-comparator.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Comparable и Comparator"
+  },
+  "03-08-nested-classes": {
+    "path": "03-oop/08-nested-classes.md",
+    "section": 3,
+    "status": "not-started",
+    "title": "Вложенные и анонимные классы"
   }
 }

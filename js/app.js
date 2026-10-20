@@ -1,7 +1,14 @@
 /* ===================== APP LOGIC ===================== */
-const STORAGE_KEY = "java-senior-roadmap-progress-v2";
-const COLLAPSE_KEY = "java-senior-roadmap-collapse-v2";
+/* v3: ID темы — её название ("t:<название>"), а не позиция ("s14-t2", как в v2).
+   Поэтому перенос темы в другой раздел или вставка новых разделов не сдвигает
+   отметки. Прогресс формата v2 один раз переносится через LEGACY_PROGRESS_MAP
+   (js/progress-migration.js). Переименование темы сбрасывает её отметку. */
+const STORAGE_KEY = "java-senior-roadmap-progress-v3";
+const LEGACY_STORAGE_KEY = "java-senior-roadmap-progress-v2";
+const COLLAPSE_KEY = "java-senior-roadmap-collapse-v3";
+const LEGACY_COLLAPSE_KEY = "java-senior-roadmap-collapse-v2";
 const THEME_KEY = "java-senior-roadmap-theme-v1";
+const LEGACY_ID_RE = /^s\d+-t\d+$/;
 
 function escapeHtml(str){
   return String(str)
@@ -10,32 +17,81 @@ function escapeHtml(str){
     .replace(/>/g, "&gt;");
 }
 
+/* Стабильные ID тем. Названия тем уникальны во всей карте; если когда-нибудь
+   появится повтор, ID дополнится названием раздела. */
+const titleCount = new Map();
+SECTIONS.forEach(sec => sec.topics.forEach(t => titleCount.set(t.title, (titleCount.get(t.title) || 0) + 1)));
+const topicByTitle = new Map();
+let totalTopics = 0;
+SECTIONS.forEach(sec => {
+  sec.topics.forEach(t => {
+    t.id = titleCount.get(t.title) > 1 ? "t:" + sec.title + " / " + t.title : "t:" + t.title;
+    topicByTitle.set(t.title, t);
+    totalTopics++;
+  });
+});
+const knownIds = new Set(SECTIONS.flatMap(sec => sec.topics.map(t => t.id)));
+
+/* Перевод ID из старого позиционного формата в новый. Неизвестные ID отбрасываются. */
+function normalizeIds(ids){
+  const result = new Set();
+  for(const id of ids){
+    if(LEGACY_ID_RE.test(id)){
+      const titles = (typeof LEGACY_PROGRESS_MAP !== "undefined" && LEGACY_PROGRESS_MAP[id]) || [];
+      titles.forEach(title => { const t = topicByTitle.get(title); if(t) result.add(t.id); });
+    } else if(knownIds.has(id)){
+      result.add(id);
+    }
+  }
+  return result;
+}
+
 function loadChecked(){
-  try{ return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")); }
-  catch(e){ return new Set(); }
+  try{
+    const current = localStorage.getItem(STORAGE_KEY);
+    if(current !== null) return normalizeIds(JSON.parse(current));
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if(legacy !== null){
+      const migrated = normalizeIds(JSON.parse(legacy));
+      saveChecked(migrated); // старый ключ не трогаем — остаётся как резервная копия
+      return migrated;
+    }
+  }catch(e){}
+  return new Set();
 }
 function saveChecked(set){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify([...set])); }catch(e){}
 }
+/* Свёрнутость разделов хранится по названию раздела. */
 function loadCollapse(){
-  try{ return JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "null"); }
-  catch(e){ return null; }
+  try{
+    const current = localStorage.getItem(COLLAPSE_KEY);
+    if(current !== null) return JSON.parse(current);
+    const legacy = JSON.parse(localStorage.getItem(LEGACY_COLLAPSE_KEY) || "null");
+    if(legacy && typeof LEGACY_SECTION_TITLES !== "undefined"){
+      const byTitle = {};
+      Object.entries(legacy).forEach(([idx, open]) => {
+        const title = LEGACY_SECTION_TITLES[idx];
+        if(title) byTitle[title] = open;
+      });
+      return byTitle;
+    }
+  }catch(e){}
+  return null;
 }
 function saveCollapse(obj){
   try{ localStorage.setItem(COLLAPSE_KEY, JSON.stringify(obj)); }catch(e){}
 }
 
 let checked = loadChecked();
-let openMap = loadCollapse() || {0:true};
+let openMap = loadCollapse() || {[SECTIONS[0].title]: true};
 
 const root = document.getElementById("sections-root");
 const navList = document.getElementById("nav-list");
-let totalTopics = 0;
 
-SECTIONS.forEach((sec, si) => {
-  sec.topics.forEach((t, ti) => { t.id = "s"+si+"-t"+ti; totalTopics++; });
-});
 document.getElementById("stat-total").textContent = totalTopics;
+const toolbarSections = document.getElementById("toolbar-sections");
+if(toolbarSections) toolbarSections.textContent = SECTIONS.length;
 
 function slugForSection(si){ return "sec-"+si; }
 
@@ -66,14 +122,14 @@ function render(){
     li.className = "nav-item";
     li.innerHTML = `<span class="nav-idx">${String(si+1).padStart(2,"0")}</span><span class="nav-title">${escapeHtml(sec.title)}</span><span class="nav-bar"><span style="width:${pct}%"></span></span>`;
     li.addEventListener("click", () => {
-      openMap[si] = true; saveCollapse(openMap); render();
+      openMap[sec.title] = true; saveCollapse(openMap); render();
       closeSidebar();
       document.getElementById(slugForSection(si)).scrollIntoView({behavior:"smooth", block:"start"});
     });
     navList.appendChild(li);
 
     const secEl = document.createElement("section");
-    secEl.className = "topic-section" + (openMap[si] ? " open" : "");
+    secEl.className = "topic-section" + (openMap[sec.title] ? " open" : "");
     secEl.id = slugForSection(si);
 
     const head = document.createElement("div");
@@ -92,7 +148,7 @@ function render(){
         <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>`;
     head.addEventListener("click", () => {
-      openMap[si] = !openMap[si]; saveCollapse(openMap); render();
+      openMap[sec.title] = !openMap[sec.title]; saveCollapse(openMap); render();
     });
     secEl.appendChild(head);
 
@@ -183,10 +239,10 @@ searchMain.addEventListener("input", () => { searchSide.value = searchMain.value
 searchSide.addEventListener("input", () => { searchMain.value = searchSide.value; applySearch(searchSide.value); });
 
 document.getElementById("btn-expand-all").addEventListener("click", () => {
-  SECTIONS.forEach((_, si) => openMap[si] = true); saveCollapse(openMap); render();
+  SECTIONS.forEach(sec => openMap[sec.title] = true); saveCollapse(openMap); render();
 });
 document.getElementById("btn-collapse-all").addEventListener("click", () => {
-  SECTIONS.forEach((_, si) => openMap[si] = false); saveCollapse(openMap); render();
+  SECTIONS.forEach(sec => openMap[sec.title] = false); saveCollapse(openMap); render();
 });
 
 document.getElementById("btn-reset").addEventListener("click", () => {
@@ -215,7 +271,7 @@ document.getElementById("import-apply").addEventListener("click", () => {
   try{
     const raw = document.getElementById("import-text").value.trim();
     const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
-    checked = new Set(payload.checked || []);
+    checked = normalizeIds(payload.checked || []); // принимает и старые позиционные ID из экспорта v2
     saveChecked(checked);
     document.getElementById("import-modal").classList.remove("show");
     render();

@@ -81,7 +81,7 @@
     <div class="howto">
       <h3>Как пользоваться картой</h3>
       <ol>
-        <li><strong>Порядок изучения:</strong> разделы 1–11 — ядро языка и платформы (обязательный минимум для любого уровня), 12–17 — инженерная практика (паттерны, тесты, БД, Spring), 18–20 — архитектура и инфраструктура, 21–24 — продвинутые темы senior-уровня, 25–26 — soft skills и ресурсы.</li>
+        <li><strong>Порядок изучения:</strong> разделы 1–11 — ядро языка и платформы (обязательный минимум для любого уровня), 12–14 — инженерная практика (паттерны, тесты, сборка), 15–22 — данные и Spring (SQL, JDBC, Hibernate, Spring, Spring Data, MongoDB, Redis, OpenSearch), 23–28 — интеграция и архитектура распределённых систем (REST, микросервисы, Kafka, RabbitMQ, наблюдаемость, системный дизайн), 29–31 — инфраструктура (Docker, Kubernetes, CI/CD), 32–35 — продвинутые темы senior-уровня, 36–37 — soft skills и ресурсы.</li>
         <li><strong>Структура каждой темы:</strong> заголовок (чек-бокс) → краткое описание → несколько именованных групп подпунктов → внутри каждой группы — конкретные факты, методы и термины для разбора. Это и есть «подпункты к подпунктам».</li>
         <li><strong>Как использовать в диалоге со мной:</strong> берите формулировку подпункта дословно — например «treeify-порог HashMap» или «идемпотентный продюсер Kafka» — и просите разобрать подробно, с примерами кода, сравнением или практическими задачами.</li>
         <li><strong>Отмечайте темы</strong> галочкой по мере изучения — прогресс сохраняется в этом браузере автоматически (localStorage).</li>
@@ -95,7 +95,7 @@
         <input id="search-input-main" type="text" placeholder="Найти по слову: HashMap, N+1, consumer group, volatile…">
       </div>
       <div class="toolbar-stat"><b id="toolbar-visible">0</b> тем показано</div>
-      <div class="toolbar-stat">Разделов: <b>26</b></div>
+      <div class="toolbar-stat">Разделов: <b id="toolbar-sections">37</b></div>
     </div>
 
     <div id="sections-root"></div>
@@ -154,7 +154,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
 
-<!-- Данные дорожной карты: сначала helpers (S/T/G), затем 26 файлов по одному на раздел -->
+<!-- Данные дорожной карты: сначала helpers (S/T/G), затем 37 файлов по одному на раздел -->
 <script src="js/helpers.js"></script>
 <script src="js/data/01-fundamentals.js"></script>
 <script src="js/data/02-java-core.js"></script>
@@ -170,20 +170,32 @@
 <script src="js/data/12-design-patterns.js"></script>
 <script src="js/data/13-testing.js"></script>
 <script src="js/data/14-build-tools.js"></script>
-<script src="js/data/15-databases.js"></script>
-<script src="js/data/16-spring.js"></script>
-<script src="js/data/17-rest-api.js"></script>
-<script src="js/data/18-microservices.js"></script>
-<script src="js/data/19-system-design.js"></script>
-<script src="js/data/20-devops.js"></script>
-<script src="js/data/21-security.js"></script>
-<script src="js/data/22-performance.js"></script>
-<script src="js/data/23-algorithms.js"></script>
-<script src="js/data/24-architecture.js"></script>
-<script src="js/data/25-soft-skills.js"></script>
-<script src="js/data/26-resources.js"></script>
+<script src="js/data/15-relational-sql.js"></script>
+<script src="js/data/16-jdbc.js"></script>
+<script src="js/data/17-jpa-hibernate.js"></script>
+<script src="js/data/18-spring.js"></script>
+<script src="js/data/19-spring-data-jpa.js"></script>
+<script src="js/data/20-mongodb.js"></script>
+<script src="js/data/21-redis.js"></script>
+<script src="js/data/22-opensearch.js"></script>
+<script src="js/data/23-rest-api.js"></script>
+<script src="js/data/24-microservices.js"></script>
+<script src="js/data/25-kafka.js"></script>
+<script src="js/data/26-rabbitmq.js"></script>
+<script src="js/data/27-observability.js"></script>
+<script src="js/data/28-system-design.js"></script>
+<script src="js/data/29-docker.js"></script>
+<script src="js/data/30-kubernetes.js"></script>
+<script src="js/data/31-ci-cd-cloud.js"></script>
+<script src="js/data/32-security.js"></script>
+<script src="js/data/33-performance.js"></script>
+<script src="js/data/34-algorithms.js"></script>
+<script src="js/data/35-architecture.js"></script>
+<script src="js/data/36-soft-skills.js"></script>
+<script src="js/data/37-resources.js"></script>
 <!-- Просмотр конспектов kb/: подгрузка manifest.json, fetch .md, рендер markdown+Mermaid -->
 <script src="js/kb-viewer.js"></script>
+<script src="js/progress-migration.js"></script>
 <!-- Логика приложения: рендер, поиск, тема, экспорт/импорт, мобильное меню -->
 <script src="js/app.js"></script>
 </body>
