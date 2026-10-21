@@ -206,5 +206,53 @@
     "section": 4,
     "status": "not-started",
     "title": "Исключения в многопоточном коде"
+  },
+  "05-01-collections-hierarchy": {
+    "path": "05-collections/01-collections-hierarchy.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Иерархия коллекций"
+  },
+  "05-02-list-implementations": {
+    "path": "05-collections/02-list-implementations.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "List: ArrayList, LinkedList, Vector"
+  },
+  "05-03-set-implementations": {
+    "path": "05-collections/03-set-implementations.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Set: HashSet, LinkedHashSet, TreeSet"
+  },
+  "05-04-hashmap-internals": {
+    "path": "05-collections/04-hashmap-internals.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Map: HashMap изнутри"
+  },
+  "05-05-queue-and-deque": {
+    "path": "05-collections/05-queue-and-deque.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Queue и Deque"
+  },
+  "05-06-iterators-and-modification": {
+    "path": "05-collections/06-iterators-and-modification.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Итераторы и модификация коллекций"
+  },
+  "05-07-immutable-collections": {
+    "path": "05-collections/07-immutable-collections.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Неизменяемые и утилитарные коллекции"
+  },
+  "05-08-choosing-collection": {
+    "path": "05-collections/08-choosing-collection.md",
+    "section": 5,
+    "status": "not-started",
+    "title": "Выбор правильной коллекции"
   }
 }

@@ -343,7 +343,7 @@ A: `arraycopy` — native intrinsic, который копирует блок п
 - [Переменные и типы данных](02-variables-and-types.md) — примитивы и обёртки, которые массив хранит по-разному.
 - [Класс Object](../03-oop/06-object-class.md) — унаследованные массивом `equals`, `hashCode` и `toString`.
 - [Comparable и Comparator](../03-oop/07-comparable-comparator.md) — TimSort и исключение при нарушении контракта компаратора.
-- Иерархия коллекций (раздел 5) — `ArrayList` поверх массива и `Arrays.asList`.
+- [Иерархия коллекций](../05-collections/01-collections-hierarchy.md) — `ArrayList` поверх массива и `Arrays.asList`.
 - Границы типов и wildcard (раздел 6) — инвариантность generics и почему нельзя `new T[]`.
 - Области памяти JVM (раздел 9) — заголовок объекта массива и compressed oops.
 

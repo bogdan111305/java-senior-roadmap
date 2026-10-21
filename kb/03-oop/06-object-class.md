@@ -482,7 +482,7 @@ size: 1, iterator видит: 2
 - [Наследование](02-inheritance.md) — почему equals с instanceof ломается при добавлении полей в наследнике.
 - [Comparable и Comparator](07-comparable-comparator.md) — согласованность compareTo с equals.
 - [Инкапсуляция](01-encapsulation.md) — record и неизменяемые классы-значения.
-- Map: HashMap изнутри (раздел 5) — как hashCode и equals используются при поиске.
+- [Map: HashMap изнутри](../05-collections/04-hashmap-internals.md) — как hashCode и equals используются при поиске.
 - Взаимодействие потоков и deadlock (раздел 8) — wait/notify на практике.
 - GC Roots, типы ссылок и утечки памяти (раздел 9) — Cleaner и фантомные ссылки.
 

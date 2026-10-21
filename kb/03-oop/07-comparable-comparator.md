@@ -251,7 +251,7 @@ naturalOrder с null -> NullPointerException
 ## Связанные темы
 - [Массивы](../02-java-core/04-arrays.md) — Arrays.sort: TimSort для объектов и его стабильность.
 - [Класс Object](06-object-class.md) — контракт equals, с которым желательно согласовать compareTo.
-- Set: HashSet, LinkedHashSet, TreeSet (раздел 5) — как TreeSet использует compareTo вместо equals.
+- [Set: HashSet, LinkedHashSet, TreeSet](../05-collections/03-set-implementations.md) — как TreeSet использует compareTo вместо equals.
 - Стандартные функциональные интерфейсы (раздел 7) — Comparator как функциональный интерфейс.
 - Stream API (раздел 7) — sorted, max, min с компаратором.
 

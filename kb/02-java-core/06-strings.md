@@ -408,7 +408,7 @@ replaceAll: -----
 - [Переменные и типы данных](02-variables-and-types.md) — неизменяемые обёртки устроены по тому же принципу.
 - [Регулярные выражения](07-regex.md) — `split`, `replaceAll` и `matches` поверх `Pattern`.
 - [Системы счисления и кодировки](../01-fundamentals/02-number-systems-encodings.md) — UTF-16, суррогатные пары и кодировка по умолчанию.
-- Map: HashMap изнутри (раздел 5) — кэшированный `hashCode` строк и защита от коллизий.
+- [Map: HashMap изнутри](../05-collections/04-hashmap-internals.md) — кэшированный `hashCode` строк и защита от коллизий.
 - Байткод, invokedynamic и Instrumentation API (раздел 9) — `StringConcatFactory`.
 
 ## Источники
