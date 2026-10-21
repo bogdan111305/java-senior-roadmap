@@ -10,6 +10,7 @@ related:
   - "02-04-arrays"
   - "03-03-polymorphism"
   - "09-03-jvm-memory-areas"
+  - "04-01-exception-hierarchy"
 last_reviewed: null
 ---
 
@@ -367,7 +368,7 @@ System.out.println("программа продолжила работу дал�
 - [Переменные и типы данных](02-variables-and-types.md) — расширяющие преобразования и упаковка, на которых строится выбор перегрузки.
 - [Полиморфизм](../03-oop/03-polymorphism.md) — динамический выбор при переопределении.
 - Области памяти JVM (раздел 9) — устройство кадра стека.
-- Иерархия исключений (раздел 4) — чем `Error` отличается от `Exception`.
+- [Иерархия исключений](../04-exceptions/01-exception-hierarchy.md) — чем `Error` отличается от `Exception`.
 
 ## Источники
 - [JLS §15.12.2: Compile-Time Step 2 — Determine Method Signature](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.12.2) — фазы выбора перегрузки.

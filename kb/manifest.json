@@ -182,5 +182,29 @@
     "section": 3,
     "status": "not-started",
     "title": "Вложенные и анонимные классы"
+  },
+  "04-01-exception-hierarchy": {
+    "path": "04-exceptions/01-exception-hierarchy.md",
+    "section": 4,
+    "status": "not-started",
+    "title": "Иерархия исключений"
+  },
+  "04-02-try-catch-finally": {
+    "path": "04-exceptions/02-try-catch-finally.md",
+    "section": 4,
+    "status": "not-started",
+    "title": "Механизм try-catch-finally"
+  },
+  "04-03-custom-exceptions": {
+    "path": "04-exceptions/03-custom-exceptions.md",
+    "section": 4,
+    "status": "not-started",
+    "title": "Свои исключения и best practices"
+  },
+  "04-04-exceptions-in-concurrency": {
+    "path": "04-exceptions/04-exceptions-in-concurrency.md",
+    "section": 4,
+    "status": "not-started",
+    "title": "Исключения в многопоточном коде"
   }
 }
