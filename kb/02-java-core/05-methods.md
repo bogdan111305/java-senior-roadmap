@@ -150,19 +150,31 @@ error: reference to p is ambiguous
 
 ```mermaid
 flowchart LR
-    subgraph "Стек вызывающего кода"
+    subgraph CALLER["Стек вызывающего кода"]
     sb["sb"]
     end
-    subgraph "Стек метода mutate/reassign"
-    param["param (копия ссылки)"]
+    subgraph CALLEE["Стек метода mutate/reassign"]
+    p1["param до reassign<br/>(копия ссылки sb)"]
+    p2["param после reassign"]
     end
-    subgraph Куча
+    subgraph HEAP["Куча"]
     obj1["StringBuilder original"]
     obj2["StringBuilder new object"]
     end
     sb --> obj1
-    param -.->|"до reassign"| obj1
-    param -->|"после reassign"| obj2
+    p1 -.-> obj1
+    p2 --> obj2
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class sb,p1,p2 main
+    class obj1,obj2 accent
+    style CALLER fill:none,stroke:#94a3b8,color:#718096
+    style CALLEE fill:none,stroke:#94a3b8,color:#718096
+    style HEAP fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 `sb` и `param` сначала указывают на один объект, поэтому мутация через `param`
 видна через `sb`. `reassign` перевешивает только собственную копию ссылки.
@@ -293,7 +305,7 @@ A: Статически, по объявленным типам аргумент
 неоднозначности. Поэтому для `int` аргумента `g(long)` выигрывает у
 `g(Integer)`.
 
-**Q: Что удалит list.remove(1) у List<Integer>?**
+**Q: Что удалит `list.remove(1)` у `List<Integer>`?**
 A: Элемент по индексу 1, а не число 1. У `List` две перегрузки — `remove(int
 index)` и `remove(Object o)`, и `int` подходит к первой без упаковки, то есть
 на первой фазе выбора. Чтобы удалить значение, передают

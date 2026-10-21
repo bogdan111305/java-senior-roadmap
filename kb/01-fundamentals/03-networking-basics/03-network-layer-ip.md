@@ -82,6 +82,7 @@ IP-адресом Х, сообщите мне свой MAC-адрес") на в�
 рассылать широковещательный запрос перед каждым пакетом.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant A as Узел А (IP=10, MAC=aa:aa)
     participant C as Узел C (IP=30, MAC=cc:cc)
@@ -206,6 +207,7 @@ ICMP в целом — в `04-transport-layer.md`).
 конце этого пункта.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant S as Источник (traceroute)
     participant R1 as R1 (хоп 1)
@@ -285,6 +287,7 @@ IP-адрес и порт отправителя на свой публичны�
 обращаются к одному и тому же внешнему серверу; видно, зачем в таблице
 трансляций нужен именно порт, а не только IP-адрес:
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant A as Устройство А<br/>192.168.1.10:5000
     participant B as Устройство Б<br/>192.168.1.11:5000
@@ -359,6 +362,7 @@ IPv6 — следующее поколение IP, придуманное пре
    MAC-адрес Б через ARP и доставляет кадр напрямую.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant A as Узел А
     participant GW as Шлюз А (R1)

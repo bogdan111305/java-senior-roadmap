@@ -174,6 +174,18 @@ flowchart LR
         D3["3: fetch → Dog.fetch (новый)"]
     end
     CALL["animal.sound()<br/>invokevirtual, слот 1"] --> D1
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A0,A1,A2,D0,D2 main
+    class D1 accent
+    class D3 good
+    class CALL muted
+    style AV fill:none,stroke:#94a3b8,color:#718096
+    style DV fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Ссылка имеет тип `Animal`, но объект — `Dog`, поэтому вызов `sound()` идёт по
 слоту 1 в таблице `Dog`. Слоты унаследованных методов совпадают, поэтому один

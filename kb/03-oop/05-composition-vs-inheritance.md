@@ -91,13 +91,25 @@ deque = [second, first], pop() = second
 flowchart LR
     subgraph INH["Наследование"]
         direction TB
-        IH["InstrumentedHashSet"] -- "extends" --> HS1["HashSet"]
-        HS1 -. "addAll вызывает this.add —<br/>попадает в наследника" .-> IH
+        IH["InstrumentedHashSet<br/>extends HashSet"] --> HS1["HashSet"]
+        HS1 -.-> CB["addAll вызывает this.add —<br/>вызов попадает в наследника"]
+        CB -.-> IH
     end
     subgraph COMP["Композиция"]
         direction TB
-        IS["InstrumentedSet<br/>implements Set"] -- "хранит ссылку,<br/>делегирует вызовы" --> HS2["любой Set:<br/>HashSet, TreeSet..."]
+        IS["InstrumentedSet implements Set<br/>хранит ссылку, делегирует вызовы"] --> HS2["любой Set:<br/>HashSet, TreeSet..."]
     end
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class IH,IS main
+    class HS1,HS2 accent
+    class CB bad
+    style INH fill:none,stroke:#94a3b8,color:#718096
+    style COMP fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 Счётчик добавлений через композицию (сравните с примером в теме

@@ -65,8 +65,16 @@ ISO 8601 и для колонок `timestamptz` в JDBC, но не знает, �
 
 ```mermaid
 flowchart LR
-    I["Instant\n2026-09-10T11:30:00Z"] --> M["ZonedDateTime\nEurope/Moscow → 14:30 +03:00"]
-    I --> T["ZonedDateTime\nAsia/Tokyo → 20:30 +09:00"]
+    I["Instant<br/>2026-09-10T11:30:00Z"] --> M["ZonedDateTime<br/>Europe/Moscow → 14:30 +03:00"]
+    I --> T["ZonedDateTime<br/>Asia/Tokyo → 20:30 +09:00"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class I main
+    class M,T accent
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 ```java

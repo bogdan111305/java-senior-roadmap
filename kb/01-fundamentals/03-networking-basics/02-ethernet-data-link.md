@@ -39,6 +39,15 @@ flowchart LR
     S --> T["Тип/EtherType<br/>2 байта"]
     T --> PL["Полезная нагрузка (IP-пакет)<br/>46–1500 байт"]
     PL --> F["FCS<br/>4 байта"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class P,F muted
+    class D,S,T main
+    class PL accent
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Размер полезной нагрузки не произволен: минимум 46 байт нужен, чтобы кадр
 целиком успел дойти до самого дальнего устройства сегмента раньше, чем
@@ -68,16 +77,27 @@ access). Если коллизия всё же произошла, её обна
 
 ```mermaid
 flowchart TD
-    A["Есть данные для передачи"] --> B{"Канал свободен?<br/>(carrier sense)"}
-    B -- нет --> B
-    B -- да --> C["Начать передачу"]
-    C --> D{"Обнаружена коллизия?<br/>(искажение сигнала)"}
-    D -- нет --> E["Передача завершена"]
-    D -- да --> J["Отправить jam-сигнал —<br/>все устройства узнают о коллизии"]
+    A["Есть данные для передачи"] --> B(["Канал свободен?<br/>(carrier sense)"])
+    B --> WAIT["нет — ждать, пока<br/>канал освободится"] --> B
+    B --> C["да — начать передачу"]
+    C --> D(["Обнаружена коллизия?<br/>(искажение сигнала)"])
+    D --> E["нет — передача завершена"]
+    D --> J["да — отправить jam-сигнал:<br/>все устройства узнают о коллизии"]
     J --> N["n = число попыток для этого кадра"]
-    N --> W["Пауза: случайное число слотов<br/>из диапазона [0, 2^n − 1]"]
+    N --> W["n ≤ 16 — пауза: случайное число слотов<br/>из диапазона [0, 2^n − 1]"]
     W --> B
-    N -- n > 16 --> G["Отказ: слишком много коллизий"]
+    N --> G["n > 16 — отказ:<br/>слишком много коллизий"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A,C,N main
+    class B,D,WAIT,W muted
+    class E good
+    class J accent
+    class G bad
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Экспоненциальный backoff — это диапазон `[0, 2^n − 1]` слотов, который растёт с
 каждой неудачной попыткой: после первой коллизии пауза — 0 или 1 слот, после
@@ -148,18 +168,31 @@ flowchart LR
         direction LR
         HA["A → B"] --> H0(("хаб"))
         HC["C → D"] --> H0
-        H0 --> HB["Порт B (нужный получатель)"]
-        H0 --> HD["Порт D (нужный получатель)"]
-        H0 -. оба кадра также сюда .-> HX["+ все остальные порты,<br/>включая случайных соседей"]
+        H0 --> HB["Порт B (нужный получатель)<br/>получает оба кадра"]
+        H0 --> HD["Порт D (нужный получатель)<br/>получает оба кадра"]
+        H0 -.-> HX["все остальные порты, включая<br/>случайных соседей, — тоже оба кадра"]
     end
 
     subgraph Switch["Свитч (4 порта) — по таблице MAC-адресов"]
         direction LR
         SA["A → B"] --> S0(("свитч"))
         SC["C → D"] --> S0
-        S0 -->|"только этот кадр"| SB["Порт B"]
-        S0 -->|"только этот кадр"| SD["Порт D"]
+        S0 --> SB["Порт B<br/>только кадр A → B"]
+        S0 --> SD["Порт D<br/>только кадр C → D"]
     end
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class HA,HC,SA,SC main
+    class H0,S0 accent
+    class HB,HD muted
+    class HX bad
+    class SB,SD good
+    style Hub fill:none,stroke:#94a3b8,color:#718096
+    style Switch fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Здесь одновременно идут два независимых разговора: A↔B и C↔D. На хабе оба
 кадра повторяются на все порты: узлы получают чужие кадры впустую (сетевая

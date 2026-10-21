@@ -254,5 +254,23 @@
     "section": 5,
     "status": "not-started",
     "title": "Выбор правильной коллекции"
+  },
+  "06-01-generics-basics": {
+    "path": "06-generics/01-generics-basics.md",
+    "section": 6,
+    "status": "not-started",
+    "title": "Основы generics"
+  },
+  "06-02-bounded-types-and-wildcards": {
+    "path": "06-generics/02-bounded-types-and-wildcards.md",
+    "section": 6,
+    "status": "not-started",
+    "title": "Границы типов и wildcard"
+  },
+  "06-03-generics-pitfalls": {
+    "path": "06-generics/03-generics-pitfalls.md",
+    "section": 6,
+    "status": "not-started",
+    "title": "Ограничения и подводные камни generics"
   }
 }

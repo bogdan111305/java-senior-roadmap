@@ -48,6 +48,16 @@ flowchart TD
     X --> IO["IOException, SQLException,<br/>InterruptedException …"]
     X --> R["RuntimeException<br/>unchecked"]
     R --> RR["NullPointerException, IllegalArgumentException,<br/>IllegalStateException, ClassCastException …"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class T muted
+    class E,VM,LE bad
+    class X,IO accent
+    class R,RR main
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Checked — вся ветка `Exception`, кроме поддерева `RuntimeException`. Ветки
 `Error` и `RuntimeException` — unchecked.

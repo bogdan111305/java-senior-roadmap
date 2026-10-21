@@ -130,13 +130,25 @@ rejected: id is blank
 ```mermaid
 flowchart LR
     subgraph naive["Без копии"]
-        C1["вызывающий код"] -->|ссылка| D1[("Date")]
-        O1["Period.end"] -->|та же ссылка| D1
+        C1["вызывающий код<br/>держит ссылку"] --> D1[("Date")]
+        O1["Period.end<br/>та же ссылка"] --> D1
     end
     subgraph safe["С защитной копией"]
-        C2["вызывающий код"] -->|ссылка| D2[("Date")]
-        O2["Period.end"] -->|своя ссылка| D3[("копия Date")]
+        C2["вызывающий код<br/>держит ссылку"] --> D2[("Date")]
+        O2["Period.end<br/>своя ссылка"] --> D3[("копия Date")]
     end
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class C1,C2,O1,O2 main
+    class D1 bad
+    class D2 accent
+    class D3 good
+    style naive fill:none,stroke:#94a3b8,color:#718096
+    style safe fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 Две тонкости, которые отличают внимательный ответ. Копию нужно делать до

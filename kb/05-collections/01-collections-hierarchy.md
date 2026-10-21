@@ -40,23 +40,30 @@ collections).
 
 ```mermaid
 flowchart TD
-    I["Iterable"] --> C["Collection"]
-    C --> L["List"]
-    C --> S["Set"]
-    C --> Q["Queue"]
-    S --> SS["SortedSet → NavigableSet"]
-    Q --> D["Deque"]
-    L --> AL["ArrayList, LinkedList"]
-    S --> HS["HashSet, LinkedHashSet"]
-    SS --> TS["TreeSet"]
-    D --> AD["ArrayDeque, LinkedList"]
-    Q --> PQ["PriorityQueue"]
-    M["Map (отдельная иерархия)"] --> SM["SortedMap → NavigableMap"]
-    M --> HM["HashMap, LinkedHashMap"]
-    SM --> TM["TreeMap"]
+    IT(["Iterable"]) --> CO(["Collection"])
+    CO --> SE(["Set"])
+    CO --> LI(["List"])
+    CO --> QU(["Queue"])
+    SE --> NS(["SortedSet → NavigableSet"])
+    SE -.-> HS["HashSet"]
+    NS -.-> TS["TreeSet"]
+    HS --> LHS["LinkedHashSet"]
+    LI -.-> AL["ArrayList"]
+    LI -.-> LL["LinkedList"]
+    QU --> DQ(["Deque"])
+    QU -.-> PQ["PriorityQueue"]
+    DQ -.-> LL
+    DQ -.-> AD["ArrayDeque"]
+    classDef iface fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef impl fill:#fef3c7,stroke:#d97706,color:#0f172a
+    class IT,CO,LI,SE,QU,NS,DQ iface
+    class AL,LL,AD,PQ,HS,LHS,TS impl
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
-`LinkedList` встречается дважды: он реализует и `List`, и `Deque`. `Map` стоит
-особняком — она не связана с `Collection` наследованием.
+Синие скруглённые блоки — интерфейсы, жёлтые прямоугольные — классы. Сплошная
+стрелка — наследование (`extends`), пунктирная — реализация интерфейса
+(`implements`). `LinkedList` реализует сразу `List` и `Deque`, а
+`LinkedHashSet` — наследник `HashSet`.
 
 ```java
 System.out.println("ArrayList: " + Arrays.toString(ArrayList.class.getInterfaces()));
@@ -103,6 +110,26 @@ add на Arrays.asList: java.lang.UnsupportedOperationException
 `values()` и `entrySet()`. Это не копии, а «окна» в саму карту: удаление через
 представление удаляет запись из карты. Поэтому коллекционные операции к карте
 применяются через них.
+
+```mermaid
+flowchart TD
+    MA(["Map"]) --> NM(["SortedMap → NavigableMap"])
+    MA -.-> HM["HashMap"]
+    HM --> LHM["LinkedHashMap"]
+    NM -.-> TM["TreeMap"]
+    MA -.-> VS(["keySet(), entrySet()<br/>→ Set"])
+    MA -.-> VC(["values()<br/>→ Collection"])
+    classDef iface fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef impl fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef view fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    class MA,NM iface
+    class HM,LHM,TM impl
+    class VS,VC view
+    linkStyle default stroke:#94a3b8,stroke-width:2px
+```
+Обозначения те же, что на схеме коллекций. Зелёные блоки — не наследники, а
+представления: через них карта отдаёт свои ключи, записи и значения как обычные
+коллекции.
 
 ```java
 System.out.println("Map extends Collection? " + Collection.class.isAssignableFrom(Map.class));
@@ -242,7 +269,7 @@ A: Интерфейсы `SequencedCollection`, `SequencedSet` и `SequencedMap`,
 - [Queue и Deque](05-queue-and-deque.md) — очереди и двусторонние очереди.
 - [Итераторы и модификация коллекций](06-iterators-and-modification.md) — что происходит при изменении коллекции во время обхода.
 - [Операторы и управляющие конструкции](../02-java-core/03-operators-and-control-flow.md) — во что компилятор разворачивает for-each.
-- Границы типов и wildcard (раздел 6) — `Collection<? extends E>` в сигнатурах JCF.
+- [Границы типов и wildcard](../06-generics/02-bounded-types-and-wildcards.md) — `Collection<? extends E>` в сигнатурах JCF.
 
 ## Источники
 - [Collections Framework Overview](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/doc-files/coll-overview.html).

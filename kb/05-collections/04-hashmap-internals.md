@@ -40,13 +40,22 @@ resize и как на `LinkedHashMap` собрать LRU-кэш.
 
 ```mermaid
 flowchart LR
-    K["put(key, value)"] --> H["h = key.hashCode()<br/>hash = h ^ (h >>> 16)"]
+    K(["put(key, value)"]) --> H["h = key.hashCode()<br/>hash = h ^ (h >>> 16)"]
     H --> I["index = (n - 1) & hash"]
-    I --> T["table[index]"]
-    T --> N1["Node: hash, key, value, next"]
-    N1 --> N2["Node (коллизия)"]
+    I --> T["бакет table[index]"]
+    T --> N1["Node<br/>hash, key, value, next"]
+    N1 --> N2["Node<br/>коллизия"]
     N2 --> N3["…"]
-    T -.->|"8+ узлов и n ≥ 64"| TR["TreeNode: красно-чёрное дерево"]
+    T -.-> TR["TreeNode: красно-чёрное дерево<br/>если узлов больше 8 и n ≥ 64"]
+    classDef step fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bucket fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef chain fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef tree fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    class K,H,I step
+    class T bucket
+    class N1,N2,N3 chain
+    class TR tree
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Поиск по ключу проходит тот же путь: хеш, индекс, затем сравнение с узлами
 бакета — сначала по хешу, потом по `==` и `equals`.

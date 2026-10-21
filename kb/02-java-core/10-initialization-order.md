@@ -105,10 +105,8 @@ names: [Аня, Борис]
 
 ```mermaid
 flowchart TD
-    A["Первое обращение к классу Child"] --> B["static Parent: блоки и инициализаторы полей
-    (сверху вниз, один раз)"]
-    B --> C["static Child: блоки и инициализаторы полей
-    (один раз)"]
+    A["Первое обращение к классу Child"] --> B["static Parent: блоки и инициализаторы полей<br/>(сверху вниз, один раз)"]
+    B --> C["static Child: блоки и инициализаторы полей<br/>(один раз)"]
     C --> D["new Child()"]
     D --> E["super() — переход в конструктор Parent"]
     E --> F["instance Parent: блоки и инициализаторы полей"]
@@ -116,7 +114,17 @@ flowchart TD
     G --> H["instance Child: блоки и инициализаторы полей"]
     H --> I["тело конструктора Child()"]
     I --> J["объект Child полностью готов"]
-    D -.->|"повторный new Child()"| E
+    REP["повторный new Child():<br/>static-этапы уже пройдены"] -.-> E
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A,D,E muted
+    class B,C accent
+    class F,G,H,I main
+    class J,REP good
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 При повторном `new` static-этапы не повторяются: класс уже инициализирован.
 

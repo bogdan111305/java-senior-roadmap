@@ -262,10 +262,20 @@ Consts.VERSION = 1
 
 ```mermaid
 flowchart LR
-    CL["Classloader\n(жив, пока жива JVM)"] --> SF["static Map cache"]
+    CL["Classloader<br/>(жив, пока жива JVM)"] --> SF["static Map cache"]
     SF --> O1["Object A"]
     SF --> O2["Object B"]
-    SF --> O3["Object C\n(снаружи ссылок уже нет)"]
+    SF --> O3["Object C<br/>(снаружи ссылок уже нет)"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class CL muted
+    class SF main
+    class O1,O2 accent
+    class O3 bad
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 `static`-поле живёт в объекте `Class` своего класса, а тот достижим от
 загрузчика классов. Для классов системного загрузчика это означает «до конца

@@ -46,13 +46,23 @@ Ethernet-кадру добавляется дополнительное поле
 
 ```mermaid
 flowchart LR
-    PC1["ПК1 — VLAN 10"] -->|"access-порт:<br/>кадр без тега"| SW1["Свитч A"]
-    PC2["ПК2 — VLAN 20"] -->|"access-порт:<br/>кадр без тега"| SW1
-    SW1 -->|"trunk-порт:<br/>кадр помечен тегом VLAN 10"| SW2["Свитч B"]
-    SW1 -->|"trunk-порт:<br/>кадр помечен тегом VLAN 20"| SW2
-    SW2 -->|"access-порт:<br/>тег снят перед выдачей"| PC3["ПК3 — VLAN 10"]
-    SW2 -->|"access-порт:<br/>тег снят перед выдачей"| PC4["ПК4 — VLAN 20"]
-    PC1 -.->|"✕ недоступно напрямую —<br/>разные broadcast-домены"| PC4
+    PC1["ПК1 — VLAN 10"] --> SW1["Свитч A<br/>access-порты: кадры без тега"]
+    PC2["ПК2 — VLAN 20"] --> SW1
+    SW1 --> TR["trunk между свитчами:<br/>кадры помечены тегом VLAN 10 или 20"]
+    TR --> SW2["Свитч B<br/>снимает тег перед выдачей<br/>в access-порт"]
+    SW2 --> PC3["ПК3 — VLAN 10"]
+    SW2 --> PC4["ПК4 — VLAN 20<br/>для ПК1 недоступен напрямую:<br/>другой broadcast-домен"]
+    PC1 -.-x PC4
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class PC1,PC3 main
+    class PC2,PC4 accent
+    class SW1,SW2 muted
+    class TR good
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Тег появляется и исчезает на границе access- и trunk-портов. Кадр от ПК1
 входит в свитч A через access-порт, и свитч сам помечает его тегом VLAN 10 —
@@ -112,6 +122,7 @@ DHCP-сервер, мне нужен адрес") — DHCP-сервер отве
 устройством на определённый срок аренды (lease time).
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant C as Устройство (без IP)
     participant S1 as DHCP-сервер 1

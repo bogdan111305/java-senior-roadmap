@@ -79,6 +79,14 @@ flowchart LR
     J["jagged[3][]"] --> R0["jagged[0] → int[1]{1}"]
     J --> R1["jagged[1] → int[2]{1,2}"]
     J --> R2["jagged[2] → int[3]{1,2,3}"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class J main
+    class R0,R1,R2 accent
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 `jagged` — массив из трёх ссылок, а не прямоугольный блок памяти. Каждая
 ссылка ведёт на отдельный `int[]` своей длины.
@@ -344,7 +352,7 @@ A: `arraycopy` — native intrinsic, который копирует блок п
 - [Класс Object](../03-oop/06-object-class.md) — унаследованные массивом `equals`, `hashCode` и `toString`.
 - [Comparable и Comparator](../03-oop/07-comparable-comparator.md) — TimSort и исключение при нарушении контракта компаратора.
 - [Иерархия коллекций](../05-collections/01-collections-hierarchy.md) — `ArrayList` поверх массива и `Arrays.asList`.
-- Границы типов и wildcard (раздел 6) — инвариантность generics и почему нельзя `new T[]`.
+- [Границы типов и wildcard](../06-generics/02-bounded-types-and-wildcards.md) — инвариантность generics и почему нельзя `new T[]`.
 - Области памяти JVM (раздел 9) — заголовок объекта массива и compressed oops.
 
 ## Источники

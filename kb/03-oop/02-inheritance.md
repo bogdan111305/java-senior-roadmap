@@ -240,6 +240,7 @@ class Dog extends Animal {
 Последовательность вызовов в примере с fragile base class (выше):
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant C as Клиент
     participant I as InstrumentedHashSet
@@ -317,7 +318,7 @@ hiding), и в объекте живут оба. Какое из них проч
 - [Полиморфизм](03-polymorphism.md) — как JVM выбирает переопределённую реализацию в рантайме.
 - [Абстракция: abstract class vs interface](04-abstract-vs-interface.md) — одиночное наследование классов и множественная реализация интерфейсов.
 - [Композиция vs наследование](05-composition-vs-inheritance.md) — как решить fragile base class обёрткой.
-- Generics (раздел 6) — bridge-методы после стирания типов.
+- [Ограничения и подводные камни generics](../06-generics/03-generics-pitfalls.md) — bridge-методы после стирания типов.
 
 ## Источники
 - Joshua Bloch, «Effective Java», 3rd ed.: Item 18 «Favor composition over inheritance», Item 19 «Design and document for inheritance or else prohibit it».

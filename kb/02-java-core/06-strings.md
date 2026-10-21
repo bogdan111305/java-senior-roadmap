@@ -63,16 +63,27 @@ PermGen). Строковые литералы попадают в пул, поэ
 
 ```mermaid
 flowchart LR
-    subgraph "String pool (в куче)"
+    subgraph POOL["String pool (в куче)"]
     P["#quot;hello#quot;"]
     end
-    subgraph "Обычная куча"
+    subgraph HEAP["Обычная куча"]
     N["new String(#quot;hello#quot;)"]
     end
     a["a = #quot;hello#quot;"] --> P
     b["b = #quot;hello#quot;"] --> P
     c["c = new String(#quot;hello#quot;)"] --> N
     d["d = c.intern()"] -.-> P
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class a,b,c,d main
+    class P good
+    class N accent
+    style POOL fill:none,stroke:#94a3b8,color:#718096
+    style HEAP fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 ```java

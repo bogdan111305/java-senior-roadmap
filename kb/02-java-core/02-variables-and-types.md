@@ -478,7 +478,7 @@ A: Ничем на уровне рантайма: тип выводится пр
 - [Операторы и управляющие конструкции](03-operators-and-control-flow.md) — распаковка в тернарном операторе и порядок вычислений.
 - [Comparable и Comparator](../03-oop/07-comparable-comparator.md) — почему `BigDecimal` по-разному ведёт себя в `HashSet` и `TreeSet`.
 - Области памяти JVM (раздел 9) — где живут примитивы и обёртки.
-- Generics (раздел 6) — почему `List<int>` невозможен.
+- [Ограничения и подводные камни generics](../06-generics/03-generics-pitfalls.md) — почему `List<int>` невозможен.
 
 ## Источники
 - [JLS, глава 4: Types, Values, and Variables](https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html), [глава 5: Conversions and Contexts](https://docs.oracle.com/javase/specs/jls/se21/html/jls-5.html).

@@ -67,6 +67,7 @@ IEEE, ISO) — в `01-switching-and-osi.md`.
 тратить ресурсы на передачу данных.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant C as Клиент
     participant S as Сервер
@@ -292,6 +293,7 @@ read: Read timed out через 503 мс
    мультиплексирование), строит render tree и отрисовывает страницу.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant B as Браузер
     participant D as DNS-резолвер (например 8.8.8.8)

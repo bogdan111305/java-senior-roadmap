@@ -50,22 +50,27 @@ last_reviewed: null
 `ConcurrentHashMap`, а не `Hashtable` и не `Collections.synchronizedMap`.
 
 ```mermaid
-flowchart TD
-    A{"Что храним?"} -->|"последовательность"| B{"Доступ к концам?"}
-    B -->|"по индексу, обход"| AL["ArrayList"]
-    B -->|"очередь / стек"| AD["ArrayDeque"]
-    B -->|"по приоритету"| PQ["PriorityQueue"]
-    A -->|"уникальные элементы"| C{"Нужен порядок?"}
-    C -->|"нет"| HS["HashSet (EnumSet для enum)"]
-    C -->|"вставки"| LHS["LinkedHashSet"]
-    C -->|"сортировка, диапазоны"| TS["TreeSet"]
-    A -->|"ключ → значение"| D{"Нужен порядок?"}
-    D -->|"нет"| HM["HashMap (EnumMap для enum)"]
-    D -->|"вставки / LRU"| LHM["LinkedHashMap"]
-    D -->|"сортировка, диапазоны"| TM["TreeMap"]
+flowchart LR
+    SEQ(["Последовательность"]) --> A1["доступ по индексу, обход"] --> R1["ArrayList"]
+    SEQ --> A2["очередь или стек"] --> R2["ArrayDeque"]
+    SEQ --> A3["обработка по приоритету"] --> R3["PriorityQueue"]
+    SET(["Уникальные элементы"]) --> B1["порядок не важен"] --> R4["HashSet<br/>EnumSet для enum"]
+    SET --> B2["порядок вставки"] --> R5["LinkedHashSet"]
+    SET --> B3["сортировка, диапазоны"] --> R6["TreeSet"]
+    MAP(["Ключ → значение"]) --> C1["порядок не важен"] --> R7["HashMap<br/>EnumMap для enum"]
+    MAP --> C2["порядок вставки, LRU"] --> R8["LinkedHashMap"]
+    MAP --> C3["сортировка, диапазоны"] --> R9["TreeMap"]
+    classDef cat fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef need fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef impl fill:#fef3c7,stroke:#d97706,color:#0f172a
+    class SEQ,SET,MAP cat
+    class A1,A2,A3,B1,B2,B3,C1,C2,C3 need
+    class R1,R2,R3,R4,R5,R6,R7,R8,R9 impl
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
-Для разделяемого между потоками состояния к этой схеме добавляется выбор
-конкурентной реализации (раздел 8).
+Слева — что хранится, в середине — главное требование, справа — коллекция по
+умолчанию для этого случая. Для разделяемого между потоками состояния к схеме
+добавляется выбор конкурентной реализации (раздел 8).
 
 ### Сводная таблица сложности операций
 

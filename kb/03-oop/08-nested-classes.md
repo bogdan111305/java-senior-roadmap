@@ -206,11 +206,20 @@ NestMembers:
 
 ```mermaid
 flowchart LR
-    O["объект Outer"]
-    I["объект Outer$Inner<br/>this$0 → Outer"] -- "скрытая ссылка" --> O
+    O["объект Outer<br/>не нужен, но не собирается"]
+    I["объект Outer$Inner<br/>this$0 — скрытая ссылка на Outer"] --> O
     N["объект Outer$Nested<br/>(без ссылки)"]
     L["долгоживущий список<br/>слушателей"] --> I
-    L -. "держит и Outer,<br/>хотя он никому не нужен" .-> O
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class O bad
+    class I accent
+    class N good
+    class L muted
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Схема объясняет главную опасность inner-классов: пока жив объект inner-
 класса, жив и внешний объект, на который он ссылается через `this$0`. Если

@@ -168,11 +168,21 @@ Java 9 такой помощник пришлось бы сделать `default
 
 ```mermaid
 flowchart TD
-    A["Класс получает метод m() из нескольких источников"] --> B{"Есть m() в классе<br/>или суперклассе?"}
-    B -- да --> C["Побеждает метод класса"]
-    B -- нет --> D{"Один интерфейс наследует<br/>другой?"}
-    D -- да --> E["Побеждает более конкретный интерфейс"]
-    D -- нет --> F["Ошибка компиляции:<br/>переопределите m() явно,<br/>можно через X.super.m()"]
+    A["Класс получает метод m() из нескольких источников"] --> B(["Есть m() в классе<br/>или суперклассе?"])
+    B --> C["да — побеждает метод класса"]
+    B --> D(["нет — один интерфейс<br/>наследует другой?"])
+    D --> E["да — побеждает<br/>более конкретный интерфейс"]
+    D --> F["нет — ошибка компиляции:<br/>переопределите m() явно,<br/>можно через X.super.m()"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A main
+    class B,D muted
+    class C,E good
+    class F bad
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 Конфликт default-методов и его разрешение:

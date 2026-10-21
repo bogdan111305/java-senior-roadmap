@@ -49,20 +49,22 @@ last_reviewed: null
 
 ```mermaid
 flowchart LR
-    A["исходный код:
-    enum Direction { NORTH, SOUTH, EAST, WEST }"] --> B["javac"]
-    B --> C["public final class Direction
-    extends java.lang.Enum&lt;Direction&gt;"]
-    C --> D["4 × public static final Direction
-    (NORTH, SOUTH, EAST, WEST)"]
+    A["исходный код:<br/>enum Direction { NORTH, SOUTH, EAST, WEST }"] --> B["javac"]
+    B --> C["public final class Direction<br/>extends java.lang.Enum&lt;Direction&gt;"]
+    C --> D["4 × public static final Direction<br/>(NORTH, SOUTH, EAST, WEST)"]
     C --> E["private static final Direction[] $VALUES"]
-    C --> F["static {} — создаёт все 4 константы
-    один раз при загрузке класса,
-    заполняет $VALUES"]
-    C --> G["public static Direction[] values()
-    — возвращает $VALUES.clone()"]
-    C --> H["public static Direction valueOf(String)
-    — поиск по скрытой Map&lt;String,E&gt;"]
+    C --> F["static {} — создаёт все 4 константы<br/>один раз при загрузке класса,<br/>заполняет $VALUES"]
+    C --> G["public static Direction[] values()<br/>— возвращает $VALUES.clone()"]
+    C --> H["public static Direction valueOf(String)<br/>— поиск по скрытой Map&lt;String,E&gt;"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A,B muted
+    class C main
+    class D,E,F,G,H accent
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 
 Вывод `javap -p` для `enum Direction { NORTH, SOUTH, EAST, WEST }` подтверждает

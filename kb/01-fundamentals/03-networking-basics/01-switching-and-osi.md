@@ -52,16 +52,26 @@ IP и HTTP можно менять реализацию независимо д�
 flowchart TB
     subgraph CS["Коммутация каналов — канал зарезервирован целиком"]
         direction LR
-        A1["Абонент А"] == выделенный канал, занят<br/>даже когда никто не говорит ==> B1["Абонент Б"]
+        A1["Абонент А"] ==> CH["выделенный канал<br/>занят, даже когда никто не говорит"] ==> B1["Абонент Б"]
     end
 
     subgraph PS["Пакетная коммутация — общая линия делится статистически"]
         direction LR
-        P1["Отправитель 1"] -->|пакет 1a| L(("общая линия"))
-        P2["Отправитель 2"] -->|пакет 2a| L
-        P1 -->|пакет 1b| L
-        L -->|пакеты 1a, 2a, 1b —<br/>вперемешку, порядок не гарантирован| R["Получатели"]
+        P1["Отправитель 1<br/>пакеты 1a, 1b"] --> L["общая линия<br/>пакеты 1a, 2a, 1b вперемешку,<br/>порядок не гарантирован"]
+        P2["Отправитель 2<br/>пакет 2a"] --> L
+        L --> R["Получатели"]
     end
+    CS ~~~ PS
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A1,B1,P1,P2,R main
+    class CH,L accent
+    style CS fill:none,stroke:#94a3b8,color:#718096
+    style PS fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 На верхней схеме канал занят даже в паузах разговора — никто другой им
 воспользоваться не может. На нижней — два независимых отправителя делят одну и
@@ -180,7 +190,16 @@ flowchart TD
     B --> C["Уровень 3 — + IP-заголовок ~20 байт<br/>IP-адреса, TTL → 440 байт"]
     C --> D["Уровень 2 — + Ethernet-заголовок ~14 байт + FCS 4 байта<br/>MAC-адреса → 458 байт"]
     D --> E["Уровень 1 — биты в канале (физический)"]
-    E -. декапсуляция на приёмнике: тот же путь снизу вверх .-> A
+    E -.-> DEC["декапсуляция на приёмнике:<br/>тот же путь снизу вверх"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A,B,C,D main
+    class E accent
+    class DEC muted
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Каждая стрелка вниз — один уровень OSI, добавляющий свой заголовок поверх
 пришедшего сверху, а Ethernet — ещё и трейлер FCS в конце. Байты нарастают:

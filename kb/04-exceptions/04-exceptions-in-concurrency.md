@@ -114,10 +114,19 @@ Exception in thread "pool-1-thread-2" java.lang.IllegalStateException: сбой 
 
 ```mermaid
 flowchart LR
-    A["supplyAsync<br/>бросил исключение"] -->|ошибка| B["thenApply<br/>пропущен"]
-    B -->|ошибка| C["exceptionally / handle<br/>превращают ошибку в значение"]
-    C -->|значение| D["thenAccept<br/>выполняется"]
-    B -->|ошибка| W["whenComplete<br/>видит ошибку,<br/>но не исправляет"]
+    A["supplyAsync<br/>бросил исключение"] --> B["thenApply пропущен:<br/>ошибка идёт дальше"]
+    B --> C["exceptionally / handle<br/>превращают ошибку в значение"]
+    C --> D["thenAccept выполняется<br/>со значением"]
+    B --> W["whenComplete видит ошибку,<br/>но не исправляет"]
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class A,B bad
+    class C,D good
+    class W accent
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 По пути исключение заворачивается в `CompletionException`, поэтому исходный
 тип достают через `getCause()`.

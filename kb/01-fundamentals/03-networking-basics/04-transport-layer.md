@@ -39,17 +39,26 @@ UDP (User Datagram Protocol) — минималистичный транспор
 времени проходит до отправки первого байта полезных данных:
 ```mermaid
 flowchart TB
-    subgraph UDP["UDP — «выстрелил и забыл»"]
-        direction LR
-        U1["Отправитель"] -->|"1: датаграмма с данными"| U2["Получатель"]
-    end
     subgraph TCP["TCP — сначала рукопожатие, потом данные"]
         direction LR
-        T1["Клиент"] -->|"1: SYN"| T2["Сервер"]
-        T2 -->|"2: SYN-ACK"| T1
-        T1 -->|"3: ACK"| T2
-        T1 -->|"4: данные"| T2
+        T1(["Клиент"]) --> S1["1. SYN →"] --> S2["2. ← SYN-ACK"] --> S3["3. ACK →"] --> S4["4. данные →"] --> T2(["Сервер"])
     end
+    subgraph UDP["UDP — «выстрелил и забыл»"]
+        direction LR
+        U1(["Отправитель"]) --> UD["1. датаграмма с данными →"] --> U2(["Получатель"])
+    end
+    TCP ~~~ UDP
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class U1,U2,T1,T2 main
+    class S1,S2,S3 muted
+    class UD,S4 good
+    style UDP fill:none,stroke:#94a3b8,color:#718096
+    style TCP fill:none,stroke:#94a3b8,color:#718096
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 У UDP данные уходят первым же пакетом — задержка до доставки равна одному
 проходу по сети (one-way trip). У TCP тот же первый байт данных не может уйти
@@ -96,6 +105,7 @@ TCP-соединение двунаправленное, и каждая сто�
 `CLOSE_WAIT` → `LAST_ACK`.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant C as Клиент (закрывает первым)
     participant S as Сервер
@@ -251,6 +261,7 @@ ACK, либо "приклеить" ACK к своему собственному 
 хотя бы Nagle на стороне отправителя.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant S as Отправитель (Nagle)
     participant R as Получатель (delayed ACK)

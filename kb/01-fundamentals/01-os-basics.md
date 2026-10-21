@@ -67,14 +67,22 @@ alice   842  820   844     4  java -jar app.jar
 ответа диска или сети, освобождения блокировки; terminated — завершил работу.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Ready: поток создан
-    Ready --> Running: планировщик выделил CPU
-    Running --> Ready: квант времени истёк (вытеснение)
-    Running --> Waiting: ожидание события (I/O, блокировка)
-    Waiting --> Ready: событие произошло
-    Running --> Terminated: поток завершил работу
-    Terminated --> [*]
+flowchart TD
+    NEW(["поток создан"]) --> R(["Ready"])
+    R --> E1["планировщик выделил CPU"] --> RUN(["Running"])
+    RUN --> E2["квант времени истёк<br/>(вытеснение)"] --> R
+    RUN --> E3["ожидание события<br/>(I/O, блокировка)"] --> W(["Waiting"])
+    W --> E4["событие произошло"] --> R
+    RUN --> E5["поток завершил работу"] --> T(["Terminated"])
+    classDef main fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef accent fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef good fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef muted fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    class R,RUN,W main
+    class NEW,T good
+    class E1,E2,E3,E4,E5 muted
+    linkStyle default stroke:#94a3b8,stroke-width:2px
 ```
 Переход `Running → Waiting → Ready` — поток сам уступает CPU, потому что ему
 нечего делать до прихода данных. Переход `Running → Ready` — поток готов
@@ -101,6 +109,7 @@ L1/L2 ему не нужны, а свои приходится подгружа�
 процесса делят адресное пространство, и этот шаг для них не нужен.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#718096", "actorBkg": "#dbeafe", "actorBorder": "#2563eb", "actorTextColor": "#0f172a", "actorLineColor": "#94a3b8", "signalColor": "#94a3b8", "signalTextColor": "#718096", "noteBkgColor": "#fef3c7", "noteBorderColor": "#d97706", "noteTextColor": "#0f172a", "labelBoxBkgColor": "#f1f5f9", "labelBoxBorderColor": "#94a3b8", "labelTextColor": "#0f172a", "loopTextColor": "#718096", "activationBkgColor": "#f1f5f9", "activationBorderColor": "#64748b"}}}%%
 sequenceDiagram
     participant A as Поток A
     participant OS as Планировщик ОС

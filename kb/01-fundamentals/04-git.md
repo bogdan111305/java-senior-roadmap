@@ -163,6 +163,7 @@ rebase уже опубликованной ветки, которую стяну
 D растёт от B, а в `main` независимо появился E. После `merge` оба пути видны,
 и есть merge-коммит M:
 ```mermaid
+%%{init: {"theme": "base", "gitGraph": {"rotateCommitLabel": false}, "themeCSS": ".commit-label-bkg { opacity: 1; stroke: #94a3b8; }", "themeVariables": {"git0": "#2563eb", "git1": "#d97706", "git2": "#16a34a", "gitInv0": "#ffffff", "gitInv1": "#ffffff", "gitBranchLabel0": "#ffffff", "gitBranchLabel1": "#ffffff", "commitLabelColor": "#0f172a", "commitLabelBackground": "#f1f5f9", "commitLabelFontSize": "13px"}}}%%
 gitGraph
    commit id: "A"
    commit id: "B"
@@ -179,6 +180,7 @@ gitGraph
 линейна. Штрих означает новые коммиты с новыми хешами: старые C и D остались
 в базе объектов, но на них больше не указывает ни одна ветка.
 ```mermaid
+%%{init: {"theme": "base", "gitGraph": {"rotateCommitLabel": false}, "themeCSS": ".commit-label-bkg { opacity: 1; stroke: #94a3b8; }", "themeVariables": {"git0": "#2563eb", "git1": "#d97706", "git2": "#16a34a", "gitInv0": "#ffffff", "gitInv1": "#ffffff", "gitBranchLabel0": "#ffffff", "gitBranchLabel1": "#ffffff", "commitLabelColor": "#0f172a", "commitLabelBackground": "#f1f5f9", "commitLabelFontSize": "13px"}}}%%
 gitGraph
    commit id: "A"
    commit id: "B"
@@ -243,6 +245,7 @@ Trunk-based development держит один основной ствол и к�
 в релизную ветку.
 
 ```mermaid
+%%{init: {"theme": "base", "gitGraph": {"rotateCommitLabel": false}, "themeCSS": ".commit-label-bkg { opacity: 1; stroke: #94a3b8; }", "themeVariables": {"git0": "#2563eb", "git1": "#d97706", "git2": "#16a34a", "gitInv0": "#ffffff", "gitInv1": "#ffffff", "gitBranchLabel0": "#ffffff", "gitBranchLabel1": "#ffffff", "commitLabelColor": "#0f172a", "commitLabelBackground": "#f1f5f9", "commitLabelFontSize": "13px"}}}%%
 gitGraph
    commit id: "A"
    branch feature
