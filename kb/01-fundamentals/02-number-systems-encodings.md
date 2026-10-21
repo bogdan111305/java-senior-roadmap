@@ -53,6 +53,15 @@ Java поддерживает литералы во всех трёх систе
 равно 8, а не 10. Длинные литералы можно разделять подчёркиванием:
 `1_000_000`, `0xFF_FF`.
 
+```java
+System.out.println("0b101010=" + 0b101010 + " 0x2A=" + 0x2A + " 052=" + 052 + " 010=" + 010);
+```
+```
+0b101010=42 0x2A=42 052=42 010=8
+```
+Одно и то же число 42 записано тремя способами, а `010` оказался восьмеричной
+восьмёркой.
+
 #### Дополнительный код (two's complement)
 Отдельного бита «минус» в процессоре нет: отрицательные целые хранятся в
 дополнительном коде. Чтобы получить `-x`, нужно инвертировать все биты `x` и
@@ -65,6 +74,17 @@ Java поддерживает литералы во всех трёх систе
 `Integer.MIN_VALUE` нет положительной пары, поэтому `Math.abs(Integer.MIN_VALUE)`
 и `-Integer.MIN_VALUE` возвращают тот же `Integer.MIN_VALUE`.
 
+```java
+System.out.println("-1 в двоичном: " + Integer.toBinaryString(-1));
+System.out.println("Math.abs(Integer.MIN_VALUE)=" + Math.abs(Integer.MIN_VALUE));
+```
+```
+-1 в двоичном: 11111111111111111111111111111111
+Math.abs(Integer.MIN_VALUE)=-2147483648
+```
+`-1` в дополнительном коде — 32 единицы, а модуль минимального `int` остался
+отрицательным: положительного числа такой величины в `int` нет.
+
 #### Байты со знаком в Java
 Все целые типы Java знаковые, включая `byte` с диапазоном от -128 до 127.
 Поэтому байт `0xFF`, прочитанный из файла или сети, в переменной `byte`
@@ -74,6 +94,15 @@ Java поддерживает литералы во всех трёх систе
 Без маски при расширении до `int` знаковый бит размножается (sign extension),
 и вместо 255 получается -1. Это частая ошибка при разборе бинарных протоколов,
 вычислении контрольных сумм и переводе байтов в hex.
+
+```java
+byte b = (byte) 0xFF;
+System.out.println("(byte)0xFF=" + b + ", b & 0xFF=" + (b & 0xFF) + ", Byte.toUnsignedInt=" + Byte.toUnsignedInt(b));
+```
+```
+(byte)0xFF=-1, b & 0xFF=255, Byte.toUnsignedInt=255
+```
+Байт `0xFF` в Java равен `-1`, а беззнаковое 255 получается только маской.
 
 #### Порядок байтов (endianness)
 Многобайтовое число можно записать в память двумя способами. Big-endian —
@@ -85,6 +114,19 @@ Java поддерживает литералы во всех трёх систе
 Java скрывает это от программиста: `DataOutputStream` и `ByteBuffer` по
 умолчанию пишут big-endian. Но при чтении чужого бинарного формата порядок
 нужно знать и задать явно — `ByteBuffer.order(ByteOrder.LITTLE_ENDIAN)`.
+
+```java
+ByteBuffer big = ByteBuffer.allocate(4).putInt(0x0A0B0C0D);
+ByteBuffer little = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(0x0A0B0C0D);
+System.out.println("big-endian:    " + Arrays.toString(big.array()));
+System.out.println("little-endian: " + Arrays.toString(little.array()) + ", native=" + ByteOrder.nativeOrder());
+```
+```
+big-endian:    [10, 11, 12, 13]
+little-endian: [13, 12, 11, 10], native=LITTLE_ENDIAN
+```
+`ByteBuffer` по умолчанию пишет big-endian, хотя сам процессор
+little-endian.
 
 ### Кодировки текста
 
@@ -111,6 +153,23 @@ BMP — 3, эмодзи и редкие иероглифы — 4.
 четырёхбайтового. Все байты-продолжения начинаются с `10`. Благодаря этому
 UTF-8 самосинхронизируется: по любому байту понятно, начало это символа или
 середина. UTF-8 — стандарт де-факто для веба, JSON, HTTP и файлов.
+
+Сколько байт занимает символ:
+```java
+for (String s : new String[]{"A", "Ж", "€", "😀"}) {
+    byte[] utf8 = s.getBytes(StandardCharsets.UTF_8);
+    // печатаем байты в hex и s.length()
+}
+```
+```
+A -> UTF-8 1 байт: 41 | UTF-16 char: 1
+Ж -> UTF-8 2 байт: D0 96 | UTF-16 char: 1
+€ -> UTF-8 3 байт: E2 82 AC | UTF-16 char: 1
+😀 -> UTF-8 4 байт: F0 9F 98 80 | UTF-16 char: 2
+```
+Видна структура UTF-8: первый байт `D0` начинается с битов `110` (двухбайтовый
+символ), `E2` — с `1110` (трёхбайтовый), `F0` — с `11110` (четырёхбайтовый).
+Эмодзи занимает 4 байта в UTF-8 и два `char` в Java.
 
 #### UTF-16 и Java char
 UTF-16 кодирует символ одной или двумя 16-битными единицами (code units).
@@ -139,71 +198,6 @@ Windows-1251, превращается в `РџСЂРёРІРµС‚`: кажд�
 последовательностью UTF-8, и декодер заменяет их символом `U+FFFD` (`�`). Такая
 потеря необратима: исходные байты из строки уже не восстановить.
 
-#### Кодировка по умолчанию в Java
-До Java 17 включительно кодировка по умолчанию зависела от ОС и локали: на
-Linux обычно UTF-8, на русской Windows — Windows-1251. Код без явной
-кодировки (`new String(bytes)`, `FileReader`, `getBytes()`) вёл себя по-разному
-на разных машинах.
-
-С Java 18 (JEP 400) кодировка по умолчанию — UTF-8 на всех платформах.
-Кодировка ОС осталась доступна через свойство `native.encoding`, а вывод в
-консоль управляется отдельным свойством `stdout.encoding`. Тем не менее
-кодировку стоит указывать явно (`StandardCharsets.UTF_8`): код может
-запускаться на старой JVM или с переопределённым `file.encoding`.
-
-### Двоичные данные в тексте
-
-#### Base64
-Base64 — не кодировка символов, а способ записать произвольные байты
-текстом, который безопасно передаётся через JSON, HTTP-заголовки, email и URL.
-Каждые 3 байта (24 бита) превращаются в 4 символа из алфавита в 64 символа,
-поэтому данные вырастают примерно на треть, а неполный хвост добивается
-символами `=`.
-
-Обычный алфавит Base64 содержит `+` и `/`, которые имеют особый смысл в URL,
-поэтому для URL и JWT используют вариант URL-safe с `-` и `_`. В Java оба
-варианта есть в `java.util.Base64`. Важно помнить, что Base64 — не
-шифрование: любой декодирует его обратно одной строкой.
-
-## Примеры
-
-Литералы, знаковые байты и дополнительный код:
-```java
-System.out.println("0b101010=" + 0b101010 + " 0x2A=" + 0x2A + " 052=" + 052 + " 010=" + 010);
-
-byte b = (byte) 0xFF;
-System.out.println("(byte)0xFF=" + b + ", b & 0xFF=" + (b & 0xFF) + ", Byte.toUnsignedInt=" + Byte.toUnsignedInt(b));
-
-System.out.println("-1 в двоичном: " + Integer.toBinaryString(-1));
-System.out.println("Math.abs(Integer.MIN_VALUE)=" + Math.abs(Integer.MIN_VALUE));
-```
-```
-0b101010=42 0x2A=42 052=42 010=8
-(byte)0xFF=-1, b & 0xFF=255, Byte.toUnsignedInt=255
--1 в двоичном: 11111111111111111111111111111111
-Math.abs(Integer.MIN_VALUE)=-2147483648
-```
-Одно и то же число 42 записано тремя способами, а `010` оказался восьмеричной
-восьмёркой. Байт `0xFF` в Java равен `-1`, а беззнаковое 255 получается только
-маской. `-1` в дополнительном коде — 32 единицы.
-
-Сколько байт занимает символ:
-```java
-for (String s : new String[]{"A", "Ж", "€", "😀"}) {
-    byte[] utf8 = s.getBytes(StandardCharsets.UTF_8);
-    // печатаем байты в hex и s.length()
-}
-```
-```
-A -> UTF-8 1 байт: 41 | UTF-16 char: 1
-Ж -> UTF-8 2 байт: D0 96 | UTF-16 char: 1
-€ -> UTF-8 3 байт: E2 82 AC | UTF-16 char: 1
-😀 -> UTF-8 4 байт: F0 9F 98 80 | UTF-16 char: 2
-```
-Видна структура UTF-8: первый байт `D0` начинается с битов `110` (двухбайтовый
-символ), `E2` — с `1110` (трёхбайтовый), `F0` — с `11110` (четырёхбайтовый).
-Эмодзи занимает 4 байта в UTF-8 и два `char` в Java.
-
 Mojibake в обе стороны:
 ```java
 byte[] bytes = "Привет".getBytes(StandardCharsets.UTF_8);
@@ -219,30 +213,53 @@ cp1251 -> UTF-8: ������
 правильной кодировкой, «Привет» вернётся. Во втором декодер заменил
 некорректные последовательности на `�`, и исходные данные потеряны.
 
-Порядок байтов, Base64 и кодировка по умолчанию (JDK 21, Windows):
+#### Кодировка по умолчанию в Java
+До Java 17 включительно кодировка по умолчанию зависела от ОС и локали: на
+Linux обычно UTF-8, на русской Windows — Windows-1251. Код без явной
+кодировки (`new String(bytes)`, `FileReader`, `getBytes()`) вёл себя по-разному
+на разных машинах.
+
+С Java 18 (JEP 400) кодировка по умолчанию — UTF-8 на всех платформах.
+Кодировка ОС осталась доступна через свойство `native.encoding`, а вывод в
+консоль управляется отдельным свойством `stdout.encoding`. Тем не менее
+кодировку стоит указывать явно (`StandardCharsets.UTF_8`): код может
+запускаться на старой JVM или с переопределённым `file.encoding`.
+
+JDK 21 на русской Windows:
 ```java
-ByteBuffer big = ByteBuffer.allocate(4).putInt(0x0A0B0C0D);
-ByteBuffer little = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(0x0A0B0C0D);
-System.out.println("big-endian:    " + Arrays.toString(big.array()));
-System.out.println("little-endian: " + Arrays.toString(little.array()) + ", native=" + ByteOrder.nativeOrder());
-
-System.out.println(Base64.getEncoder().encodeToString("Hi?".getBytes(StandardCharsets.UTF_8)));
-byte[] raw = {(byte) 0xFB, (byte) 0xFF};
-System.out.println(Base64.getEncoder().encodeToString(raw) + " / " + Base64.getUrlEncoder().encodeToString(raw));
-
 System.out.println("defaultCharset=" + Charset.defaultCharset()
         + ", native.encoding=" + System.getProperty("native.encoding"));
 ```
 ```
-big-endian:    [10, 11, 12, 13]
-little-endian: [13, 12, 11, 10], native=LITTLE_ENDIAN
-SGk/
-+/8= / -_8=
 defaultCharset=UTF-8, native.encoding=Cp1251
 ```
-`ByteBuffer` по умолчанию пишет big-endian, хотя сам процессор
-little-endian. Обычный Base64 выдал `+` и `/`, URL-safe — `-` и `_`. На русской
-Windows кодировка ОС — `Cp1251`, но кодировка по умолчанию в Java 21 — UTF-8.
+Кодировка ОС — `Cp1251`, но кодировка по умолчанию в Java 21 — UTF-8.
+
+### Двоичные данные в тексте
+
+#### Base64
+Base64 — не кодировка символов, а способ записать произвольные байты
+текстом, который безопасно передаётся через JSON, HTTP-заголовки, email и URL.
+Каждые 3 байта (24 бита) превращаются в 4 символа из алфавита в 64 символа,
+поэтому данные вырастают примерно на треть, а неполный хвост добивается
+символами `=`.
+
+Обычный алфавит Base64 содержит `+` и `/`, которые имеют особый смысл в URL,
+поэтому для URL и JWT используют вариант URL-safe с `-` и `_`. В Java оба
+варианта есть в `java.util.Base64`. Важно помнить, что Base64 — не
+шифрование: любой декодирует его обратно одной строкой.
+
+```java
+System.out.println(Base64.getEncoder().encodeToString("Hi?".getBytes(StandardCharsets.UTF_8)));
+byte[] raw = {(byte) 0xFB, (byte) 0xFF};
+System.out.println(Base64.getEncoder().encodeToString(raw) + " / " + Base64.getUrlEncoder().encodeToString(raw));
+```
+```
+SGk/
++/8= / -_8=
+```
+Три байта `Hi?` превратились ровно в четыре символа без `=`. Для двух байт
+`FB FF` обычный Base64 выдал `+` и `/`, URL-safe — `-` и `_`, а хвост добит `=`.
 
 ## Частые вопросы на собеседовании
 

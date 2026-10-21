@@ -50,6 +50,27 @@ last_reviewed: null
 транзитивно: из `a > b` и `b > c` следует `a > c`. Ноль заменяем: если
 `a.compareTo(b) == 0`, то `a` и `b` сравниваются с любым `c` одинаково.
 
+Нарушение контракта обнаруживает сама сортировка:
+```java
+// Компаратор, нарушающий контракт: никогда не возвращает 0 и не антисимметричен
+Comparator<Integer> broken = (a, b) -> a < b ? -1 : 1;
+Random r = new Random(0);
+List<Integer> list = new ArrayList<>();
+for (int i = 0; i < 100; i++) list.add(r.nextInt(5));
+try {
+    list.sort(broken);
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}
+```
+```
+Comparison method violates its general contract!
+```
+Для равных `a` и `b` такой компаратор говорит, что `a > b` и одновременно
+`b > a`. TimSort в процессе слияния замечает противоречие и бросает
+исключение. Оно появляется не всегда, а в зависимости от данных и их
+количества, поэтому такой баг легко пропустить в тестах на маленьких списках.
+
 #### Согласованность с equals
 Желательно, но не обязательно, чтобы `compareTo` возвращал ноль ровно тогда,
 когда `equals` возвращает `true`. Нарушение этого правила не ошибка само по
@@ -60,6 +81,20 @@ last_reviewed: null
 (разный масштаб), но равны по `compareTo`. В `HashSet` поместятся оба числа,
 а в `TreeSet` — только одно. Если класс сознательно нарушает согласованность,
 это стоит явно описать в javadoc, как сделано у `BigDecimal`.
+
+`compareTo`, несогласованный с `equals`:
+```java
+BigDecimal one = new BigDecimal("1.0"), oneOO = new BigDecimal("1.00");
+System.out.println("equals: " + one.equals(oneOO) + ", compareTo: " + one.compareTo(oneOO));
+System.out.println("HashSet size: " + new HashSet<>(List.of(one, oneOO)).size()
+        + ", TreeSet size: " + new TreeSet<>(List.of(one, oneOO)).size());
+```
+```
+equals: false, compareTo: 0
+HashSet size: 2, TreeSet size: 1
+```
+Одни и те же два числа — два элемента в `HashSet` и один в `TreeSet`:
+`HashSet` определяет дубликаты через `equals`, `TreeSet` — через `compareTo`.
 
 ### Comparator
 
@@ -85,17 +120,6 @@ last_reviewed: null
 также `nullsFirst(...)` и `nullsLast(...)`, которые оборачивают компаратор и
 определяют место `null`. Без них `null` в сортируемых данных приводит к
 `NullPointerException`.
-
-#### Где используется
-Компаратор принимают `Collections.sort(list, cmp)` и `List.sort(cmp)`,
-`Arrays.sort(arr, cmp)`, `Stream.sorted(cmp)`, `Stream.max/min`,
-конструкторы `TreeSet`, `TreeMap` и `PriorityQueue`. Сортировка объектов в
-`List.sort` и `Arrays.sort` стабильна (TimSort): равные по компаратору
-элементы сохраняют исходный относительный порядок. Поэтому несколько
-последовательных сортировок по разным ключам дают тот же результат, что одна
-сортировка с `thenComparing` в обратном порядке ключей.
-
-## Примеры
 
 Естественный порядок и составной компаратор:
 ```java
@@ -130,63 +154,14 @@ reversed() всей цепочки: [ops/Ivan, dev/Petr, dev/Olga, dev/Anna]
 конце цепочки и разворачивает её целиком — и отдел, и имя, хотя часто
 ожидают, что он развернёт только последний критерий.
 
-Сравнение вычитанием ломается на больших числах:
-```java
-List<Integer> nums = new ArrayList<>(List.of(1, Integer.MIN_VALUE, -1, Integer.MAX_VALUE));
-nums.sort((a, b) -> a - b);
-System.out.println("a - b:           " + nums);
-nums.sort(Integer::compare);
-System.out.println("Integer.compare: " + nums);
-```
-```
-a - b:           [1, 2147483647, -2147483648, -1]
-Integer.compare: [-2147483648, -1, 1, 2147483647]
-```
-`Integer.MAX_VALUE - (-1)` переполняется и становится отрицательным, поэтому
-компаратор считает максимум меньше минус единицы. Результат даже не
-упорядочен. `Integer.compare` (и `comparingInt`) сравнивают без вычитания.
-
-`compareTo`, несогласованный с `equals`, и `null`:
-```java
-BigDecimal one = new BigDecimal("1.0"), oneOO = new BigDecimal("1.00");
-System.out.println("equals: " + one.equals(oneOO) + ", compareTo: " + one.compareTo(oneOO));
-System.out.println("HashSet size: " + new HashSet<>(List.of(one, oneOO)).size()
-        + ", TreeSet size: " + new TreeSet<>(List.of(one, oneOO)).size());
-
-List<String> withNull = new ArrayList<>(Arrays.asList("b", null, "a"));
-withNull.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
-System.out.println("nullsFirst: " + withNull);
-withNull.sort(Comparator.naturalOrder()); // перехвачено
-```
-```
-equals: false, compareTo: 0
-HashSet size: 2, TreeSet size: 1
-nullsFirst: [null, a, b]
-naturalOrder с null -> NullPointerException
-```
-Одни и те же два числа — два элемента в `HashSet` и один в `TreeSet`:
-`HashSet` определяет дубликаты через `equals`, `TreeSet` — через `compareTo`.
-
-Нарушение контракта обнаруживает сама сортировка:
-```java
-// Компаратор, нарушающий контракт: никогда не возвращает 0 и не антисимметричен
-Comparator<Integer> broken = (a, b) -> a < b ? -1 : 1;
-Random r = new Random(0);
-List<Integer> list = new ArrayList<>();
-for (int i = 0; i < 100; i++) list.add(r.nextInt(5));
-try {
-    list.sort(broken);
-} catch (IllegalArgumentException e) {
-    System.out.println(e.getMessage());
-}
-```
-```
-Comparison method violates its general contract!
-```
-Для равных `a` и `b` такой компаратор говорит, что `a > b` и одновременно
-`b > a`. TimSort в процессе слияния замечает противоречие и бросает
-исключение. Оно появляется не всегда, а в зависимости от данных и их
-количества, поэтому такой баг легко пропустить в тестах на маленьких списках.
+#### Где используется
+Компаратор принимают `Collections.sort(list, cmp)` и `List.sort(cmp)`,
+`Arrays.sort(arr, cmp)`, `Stream.sorted(cmp)`, `Stream.max/min`,
+конструкторы `TreeSet`, `TreeMap` и `PriorityQueue`. Сортировка объектов в
+`List.sort` и `Arrays.sort` стабильна (TimSort): равные по компаратору
+элементы сохраняют исходный относительный порядок. Поэтому несколько
+последовательных сортировок по разным ключам дают тот же результат, что одна
+сортировка с `thenComparing` в обратном порядке ключей.
 
 ## Частые вопросы на собеседовании
 
@@ -233,11 +208,39 @@ A: Поведение сортировки и сортированных кол�
 сравниваются неверно. Правильно — `Integer.compare`, `Long.compare`,
 `Double.compare` или `comparingInt/Long/Double`.
 
+Сравнение вычитанием ломается на больших числах:
+```java
+List<Integer> nums = new ArrayList<>(List.of(1, Integer.MIN_VALUE, -1, Integer.MAX_VALUE));
+nums.sort((a, b) -> a - b);
+System.out.println("a - b:           " + nums);
+nums.sort(Integer::compare);
+System.out.println("Integer.compare: " + nums);
+```
+```
+a - b:           [1, 2147483647, -2147483648, -1]
+Integer.compare: [-2147483648, -1, 1, 2147483647]
+```
+`Integer.MAX_VALUE - (-1)` переполняется и становится отрицательным, поэтому
+компаратор считает максимум меньше минус единицы. Результат даже не
+упорядочен. `Integer.compare` (и `comparingInt`) сравнивают без вычитания.
+
 #### null в сортируемых данных
 `naturalOrder()` и большинство компараторов на ключах не обрабатывают `null`
 и падают с `NullPointerException` посреди сортировки. Если `null` возможен,
 место для него задают явно через `nullsFirst` или `nullsLast` — в том числе
 для ключа: `comparing(Employee::manager, nullsLast(naturalOrder()))`.
+```java
+List<String> withNull = new ArrayList<>(Arrays.asList("b", null, "a"));
+withNull.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
+System.out.println("nullsFirst: " + withNull);
+withNull.sort(Comparator.naturalOrder()); // перехвачено
+```
+```
+nullsFirst: [null, a, b]
+naturalOrder с null -> NullPointerException
+```
+С `nullsFirst` сортировка прошла, а голый `naturalOrder()` упал, как только
+дошёл до сравнения с `null`.
 
 #### Изменение ключа объекта внутри TreeSet
 Как и с `hashCode` в `HashSet`, изменение поля, по которому сравнивает

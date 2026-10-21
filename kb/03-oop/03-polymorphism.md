@@ -62,6 +62,31 @@ dispatch), язык этого не делает. Классический об�
 С Java 21 часто проще использовать `switch` с pattern matching по sealed-
 иерархии.
 
+Перегрузка и переопределение в одном вызове:
+```java
+class Printer {
+    void print(Object o) { System.out.println("Printer.print(Object)"); }
+    void print(String s) { System.out.println("Printer.print(String)"); }
+}
+class FancyPrinter extends Printer {
+    @Override void print(Object o) { System.out.println("FancyPrinter.print(Object)"); }
+    @Override void print(String s) { System.out.println("FancyPrinter.print(String)"); }
+}
+// main:
+Printer p = new FancyPrinter();   // статический тип Printer, реальный — FancyPrinter
+Object arg = "hello";             // статический тип Object, реальный — String
+p.print(arg);
+p.print("hello");
+```
+```
+FancyPrinter.print(Object)
+FancyPrinter.print(String)
+```
+В первом вызове работают оба механизма, и каждый по своему правилу. Перегрузку
+`print(Object)` выбрал компилятор по статическому типу `arg`, хотя там лежит
+строка. Реализацию `FancyPrinter` выбрала JVM по реальному типу `p`, хотя
+переменная объявлена как `Printer`.
+
 ### Механизм в JVM
 
 #### Раннее и позднее связывание
@@ -79,6 +104,46 @@ dispatch), язык этого не делает. Классический об�
 JDK: вызов `private`- и `final`-метода компилируется в `invokevirtual`, но
 JVM при разрешении видит, что метод не может быть переопределён, и связывает
 его напрямую, без поиска в таблице.
+
+Инструкции вызова в байткоде:
+```java
+interface Greeter { void greet(); }
+class Calls implements Greeter {
+    static void util() {}
+    private void secret() {}
+    final void locked() {}
+    void open() {}
+    public void greet() {}
+
+    void demo(Greeter g) {
+        util();           // static
+        secret();         // private
+        locked();         // final
+        open();           // обычный виртуальный
+        g.greet();        // через интерфейс
+        super.toString(); // явный вызов реализации родителя
+    }
+}
+```
+```
+$ javap -c Calls     (метод demo, JDK 21)
+       0: invokestatic  #7                  // Method util:()V
+       3: aload_0
+       4: invokevirtual #12                 // Method secret:()V
+       7: aload_0
+       8: invokevirtual #15                 // Method locked:()V
+      11: aload_0
+      12: invokevirtual #18                 // Method open:()V
+      15: aload_1
+      16: invokeinterface #21,  1           // InterfaceMethod Greeter.greet:()V
+      21: aload_0
+      22: invokespecial #26                 // Method java/lang/Object.toString:()Ljava/lang/String;
+```
+Видно, что `private`- и `final`-методы вызываются той же инструкцией
+`invokevirtual`, что и обычный метод. До Java 11 `private`-методы вызывались
+через `invokespecial`, но после введения nestmates (JEP 181) javac перешёл на
+`invokevirtual`. Статическое связывание для них никуда не делось — его
+обеспечивает JVM при разрешении метода, а не выбор инструкции.
 
 #### vtable — таблица виртуальных методов
 Чтобы позднее связывание было быстрым, HotSpot строит для каждого загруженного
@@ -127,73 +192,6 @@ flowchart LR
 hierarchy analysis), JIT девиртуализирует вызов. Если позже загрузится
 переопределяющий класс, скомпилированный код откатится (деоптимизация).
 Подробно — в теме про JIT в разделе 9.
-
-## Примеры
-
-Перегрузка и переопределение в одном вызове:
-```java
-class Printer {
-    void print(Object o) { System.out.println("Printer.print(Object)"); }
-    void print(String s) { System.out.println("Printer.print(String)"); }
-}
-class FancyPrinter extends Printer {
-    @Override void print(Object o) { System.out.println("FancyPrinter.print(Object)"); }
-    @Override void print(String s) { System.out.println("FancyPrinter.print(String)"); }
-}
-// main:
-Printer p = new FancyPrinter();   // статический тип Printer, реальный — FancyPrinter
-Object arg = "hello";             // статический тип Object, реальный — String
-p.print(arg);
-p.print("hello");
-```
-```
-FancyPrinter.print(Object)
-FancyPrinter.print(String)
-```
-В первом вызове работают оба механизма, и каждый по своему правилу. Перегрузку
-`print(Object)` выбрал компилятор по статическому типу `arg`, хотя там лежит
-строка. Реализацию `FancyPrinter` выбрала JVM по реальному типу `p`, хотя
-переменная объявлена как `Printer`.
-
-Инструкции вызова в байткоде:
-```java
-interface Greeter { void greet(); }
-class Calls implements Greeter {
-    static void util() {}
-    private void secret() {}
-    final void locked() {}
-    void open() {}
-    public void greet() {}
-
-    void demo(Greeter g) {
-        util();           // static
-        secret();         // private
-        locked();         // final
-        open();           // обычный виртуальный
-        g.greet();        // через интерфейс
-        super.toString(); // явный вызов реализации родителя
-    }
-}
-```
-```
-$ javap -c Calls     (метод demo, JDK 21)
-       0: invokestatic  #7                  // Method util:()V
-       3: aload_0
-       4: invokevirtual #12                 // Method secret:()V
-       7: aload_0
-       8: invokevirtual #15                 // Method locked:()V
-      11: aload_0
-      12: invokevirtual #18                 // Method open:()V
-      15: aload_1
-      16: invokeinterface #21,  1           // InterfaceMethod Greeter.greet:()V
-      21: aload_0
-      22: invokespecial #26                 // Method java/lang/Object.toString:()Ljava/lang/String;
-```
-Видно, что `private`- и `final`-методы вызываются той же инструкцией
-`invokevirtual`, что и обычный метод. До Java 11 `private`-методы вызывались
-через `invokespecial`, но после введения nestmates (JEP 181) javac перешёл на
-`invokevirtual`. Статическое связывание для них никуда не делось — его
-обеспечивает JVM при разрешении метода, а не выбор инструкции.
 
 ## Частые вопросы на собеседовании
 

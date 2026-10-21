@@ -120,6 +120,23 @@ UDP, но реализует собственную надёжность уже 
 например `HTTP/1.1 200 OK`), заголовками ответа и, опционально, телом с самими
 данными.
 
+```bash
+curl -v https://example.com
+```
+Пример вывода (сокращённо):
+```
+* Connected to example.com (93.184.216.34) port 443
+* TLS handshake, Client hello (1):
+* TLS handshake, Server hello (1):
+> GET / HTTP/1.1
+> Host: example.com
+< HTTP/1.1 200 OK
+< Content-Type: text/html
+```
+Флаг `-v` показывает ровно ту последовательность, что описана в разборе «под
+капотом»: сначала TCP-соединение, затем TLS handshake (строки `TLS handshake`),
+и только потом сам HTTP-запрос (`>`) и ответ сервера (`<`).
+
 #### Коды статуса ответа
 Код статуса ответа — не произвольное число: первая цифра сразу говорит, что
 произошло.
@@ -160,6 +177,21 @@ IP-адрес — этим занимается DNS: распределённа�
 резолвера это итеративный обход (он сам ходит по цепочке серверов), а с точки
 зрения клиента, который просто ждёт готовый ответ, — рекурсивный запрос.
 
+```bash
+dig +trace example.com
+```
+Пример вывода (сокращённо):
+```
+.            518400  IN  NS   a.root-servers.net.
+com.         172800  IN  NS   a.gtld-servers.net.
+example.com. 86400   IN  NS   a.iana-servers.net.
+example.com. 86400   IN  A    93.184.216.34
+```
+Каждая строка — шаг делегирования из цепочки резолвинга, о которой шла речь
+выше: сначала корневой сервер отвечает, кто обслуживает зону `.com`, затем
+сервер зоны `.com` отвечает, кто обслуживает конкретно `example.com`, и только
+последняя строка — реальный `A`-адрес, ради которого всё это затевалось.
+
 #### Типы DNS-записей и TTL
 Среди типов записей чаще всего встречаются `A`/`AAAA` (IPv4/IPv6 адрес), `CNAME`
 (алиас на другое имя) и `MX` (почтовый сервер), а параметр `TTL` у записи
@@ -195,6 +227,19 @@ TCP-соединение однозначно определяется пятё�
 9092 — Kafka. Клиентская сторона обычно получает случайный «эфемерный» порт
 из динамического диапазона (в Linux по умолчанию 32768–60999).
 
+```bash
+ss -tnp
+```
+Пример вывода:
+```
+State  Recv-Q  Send-Q  Local Address:Port   Peer Address:Port    Process
+ESTAB  0       0       10.0.0.5:51342       93.184.216.34:443    curl,pid=1234
+```
+Локальный порт (`51342`) — тот самый случайный "эфемерный" порт со стороны
+клиента, а `443` на удалённой стороне — well-known порт HTTPS: наглядно видно,
+что соединение определяется парой `(IP, порт)` с каждой стороны, а не просто
+IP-адресом.
+
 #### Таймауты сокетов в Java
 У клиентского соединения два разных таймаута. Connect timeout ограничивает
 установление соединения (handshake), read timeout (`SO_TIMEOUT`) — ожидание
@@ -206,6 +251,32 @@ read timeout по умолчанию равен нулю — ждать вечн
 много, пул потоков заканчивается, и «зависает» уже весь сервис. Поэтому оба
 таймаута нужно задавать явно в любом HTTP-клиенте и драйвере базы данных
 (пример ниже).
+
+Read timeout в Java — реальный запуск на JDK 21:
+```java
+try (ServerSocket server = new ServerSocket(0)) {        // сервер принимает, но молчит
+    try (Socket client = new Socket()) {
+        client.connect(new InetSocketAddress("127.0.0.1", server.getLocalPort()), 1000); // connect timeout
+        client.setSoTimeout(500);                                                       // read timeout
+        long start = System.nanoTime();
+        try {
+            client.getInputStream().read();
+        } catch (SocketTimeoutException e) {
+            System.out.println("read: " + e.getMessage() + " через " + (System.nanoTime() - start) / 1_000_000 + " мс");
+        }
+    }
+}
+try (Socket s = new Socket()) {
+    System.out.println("по умолчанию: soTimeout=" + s.getSoTimeout() + " (0 = ждать вечно), tcpNoDelay=" + s.getTcpNoDelay());
+}
+```
+```
+read: Read timed out через 503 мс
+по умолчанию: soTimeout=0 (0 = ждать вечно), tcpNoDelay=false
+```
+Соединение установилось (сервер принял его на уровне ядра, даже не вызывая
+`accept`), но данных нет — и только явный `setSoTimeout` прервал ожидание.
+Без него `read()` ждал бы бесконечно.
 
 ## Как это работает "под капотом"
 Путь от ввода URL до отрисовки страницы (частый вопрос на собеседовании,
@@ -247,81 +318,9 @@ sequenceDiagram
     Note over B: 6. парсинг HTML → DOM → догрузка<br/>ресурсов → render tree → отрисовка
 ```
 Шаги 1-5 на диаграмме — это ровно то же самое, что видно во flag `-v` у `curl`
-в «Примерах» ниже: сначала TCP-рукопожатие, потом (если https) TLS — с теми же
+в примере из пункта «Структура HTTP-запроса и ответа» выше: сначала TCP-рукопожатие, потом (если https) TLS — с теми же
 `ClientHello`/`ServerHello`, что и в реальном выводе curl, — и только
 потом сам HTTP-запрос и ответ.
-
-## Примеры
-```bash
-dig +trace example.com
-```
-Пример вывода (сокращённо):
-```
-.            518400  IN  NS   a.root-servers.net.
-com.         172800  IN  NS   a.gtld-servers.net.
-example.com. 86400   IN  NS   a.iana-servers.net.
-example.com. 86400   IN  A    93.184.216.34
-```
-Каждая строка — шаг делегирования из цепочки резолвинга, о которой шла речь
-выше: сначала корневой сервер отвечает, кто обслуживает зону `.com`, затем
-сервер зоны `.com` отвечает, кто обслуживает конкретно `example.com`, и только
-последняя строка — реальный `A`-адрес, ради которого всё это затевалось.
-
-```bash
-curl -v https://example.com
-```
-Пример вывода (сокращённо):
-```
-* Connected to example.com (93.184.216.34) port 443
-* TLS handshake, Client hello (1):
-* TLS handshake, Server hello (1):
-> GET / HTTP/1.1
-> Host: example.com
-< HTTP/1.1 200 OK
-< Content-Type: text/html
-```
-Флаг `-v` показывает ровно ту последовательность, что описана в разборе «под
-капотом»: сначала TCP-соединение, затем TLS handshake (строки `TLS handshake`),
-и только потом сам HTTP-запрос (`>`) и ответ сервера (`<`).
-
-```bash
-ss -tnp
-```
-Пример вывода:
-```
-State  Recv-Q  Send-Q  Local Address:Port   Peer Address:Port    Process
-ESTAB  0       0       10.0.0.5:51342       93.184.216.34:443    curl,pid=1234
-```
-Локальный порт (`51342`) — тот самый случайный "эфемерный" порт со стороны
-клиента, а `443` на удалённой стороне — well-known порт HTTPS: наглядно видно,
-что соединение определяется парой `(IP, порт)` с каждой стороны, а не просто
-IP-адресом.
-
-Read timeout в Java — реальный запуск на JDK 21:
-```java
-try (ServerSocket server = new ServerSocket(0)) {        // сервер принимает, но молчит
-    try (Socket client = new Socket()) {
-        client.connect(new InetSocketAddress("127.0.0.1", server.getLocalPort()), 1000); // connect timeout
-        client.setSoTimeout(500);                                                       // read timeout
-        long start = System.nanoTime();
-        try {
-            client.getInputStream().read();
-        } catch (SocketTimeoutException e) {
-            System.out.println("read: " + e.getMessage() + " через " + (System.nanoTime() - start) / 1_000_000 + " мс");
-        }
-    }
-}
-try (Socket s = new Socket()) {
-    System.out.println("по умолчанию: soTimeout=" + s.getSoTimeout() + " (0 = ждать вечно), tcpNoDelay=" + s.getTcpNoDelay());
-}
-```
-```
-read: Read timed out через 503 мс
-по умолчанию: soTimeout=0 (0 = ждать вечно), tcpNoDelay=false
-```
-Соединение установилось (сервер принял его на уровне ядра, даже не вызывая
-`accept`), но данных нет — и только явный `setSoTimeout` прервал ожидание.
-Без него `read()` ждал бы бесконечно.
 
 ## Частые вопросы на собеседовании
 **Q: Чем отличается TCP от UDP?**

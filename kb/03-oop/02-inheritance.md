@@ -51,6 +51,58 @@ last_reviewed: null
 `private`, `static` и `final` методы не переопределяются: первые не видны
 наследнику, вторые скрываются, третьи запрещены.
 
+Нарушение правил переопределения ловит компилятор:
+```java
+class Base {
+    public void open() throws IOException {}
+}
+class Narrow extends Base {
+    @Override void open() {}                           // сужение видимости
+}
+class Broad extends Base {
+    @Override public void open() throws Exception {}  // более широкое checked-исключение
+}
+```
+```
+Rules.java:6: error: open() in Narrow cannot override open() in Base
+    @Override void open() {}                           // сужение видимости
+                   ^
+  attempting to assign weaker access privileges; was public
+Rules.java:9: error: open() in Broad cannot override open() in Base
+    @Override public void open() throws Exception {}  // более широкое checked-исключение
+                          ^
+  overridden method does not throw Exception
+2 errors
+```
+Обе ошибки следуют из одного принципа: код, работающий с `Base`, должен
+продолжать работать с любым наследником. Он вправе вызвать `open()` откуда
+угодно и обрабатывает только `IOException` — наследник не может это нарушить.
+
+Поля не переопределяются, а скрываются:
+```java
+class Parent {
+    String name = "parent";
+    String getName() { return name; }
+}
+class Child extends Parent {
+    String name = "child";             // скрывает поле, а не переопределяет
+    @Override String getName() { return name; }
+}
+// main:
+Parent p = new Child();
+System.out.println("p.name      = " + p.name);
+System.out.println("p.getName() = " + p.getName());
+System.out.println("((Child) p).name = " + ((Child) p).name);
+```
+```
+p.name      = parent
+p.getName() = child
+((Child) p).name = child
+```
+Обращение к полю разрешается по статическому типу ссылки (`Parent`), а вызов
+метода — по реальному типу объекта (`Child`). В объекте `Child` при этом живут
+оба поля `name`, родительское и собственное.
+
 #### Ковариантный возвращаемый тип
 Возвращаемый тип при переопределении может быть подтипом исходного: если
 `Animal.copy()` возвращает `Animal`, то `Dog.copy()` вправе возвращать `Dog`.
@@ -62,6 +114,27 @@ last_reviewed: null
 возвращаемый тип, поэтому компилятор генерирует в наследнике синтетический
 bridge-метод со старой сигнатурой, который просто вызывает новый (см. «под
 капотом»).
+
+Ковариантный возвращаемый тип:
+```java
+class Animal {
+    Animal copy() { return new Animal(); }
+}
+class Dog extends Animal {
+    @Override
+    Dog copy() { return new Dog(); } // ковариантный возвращаемый тип
+}
+// main:
+Dog d = new Dog().copy();          // без приведения типа
+Animal a = new Dog();
+System.out.println(a.copy().getClass().getSimpleName());
+```
+```
+Dog
+```
+Через ссылку `Animal` вызвалась реализация `Dog` — переопределение работает,
+хотя возвращаемые типы разные. А `new Dog().copy()` сразу даёт `Dog` без
+приведения.
 
 #### Одиночное наследование классов
 Класс в Java может наследовать ровно один класс, а реализовывать — сколько
@@ -87,6 +160,33 @@ bridge-метод со старой сигнатурой, который про�
 внутри вызывает `add` — поэтому каждый элемент считается дважды. Наследник
 опирался на то, о чём в документации `HashSet` не сказано, и это может
 измениться в любой версии JDK.
+
+Fragile base class в действии:
+```java
+static class InstrumentedHashSet<E> extends HashSet<E> {
+    private int addCount = 0;
+    @Override public boolean add(E e) {
+        addCount++;
+        return super.add(e);
+    }
+    @Override public boolean addAll(Collection<? extends E> c) {
+        addCount += c.size();
+        return super.addAll(c);   // HashSet.addAll внутри вызывает add()
+    }
+    int getAddCount() { return addCount; }
+}
+// main:
+InstrumentedHashSet<String> s = new InstrumentedHashSet<>();
+s.addAll(List.of("a", "b", "c"));
+System.out.println("addCount = " + s.getAddCount());
+```
+```
+addCount = 6
+```
+Добавлено три элемента, а счётчик показывает шесть. «Починить» это, убрав
+переопределение `addAll`, — значит снова завязаться на реализацию `HashSet`.
+Надёжное решение — композиция вместо наследования (тема «Композиция vs
+наследование»).
 
 #### Нарушение инкапсуляции
 Наследование — самая сильная связь между классами: наследник видит
@@ -137,7 +237,7 @@ class Dog extends Animal {
 `Dog copy()`. Тот же механизм используется при переопределении generic-методов
 после стирания типов (раздел 6).
 
-Последовательность вызовов в примере с fragile base class (ниже):
+Последовательность вызовов в примере с fragile base class (выше):
 
 ```mermaid
 sequenceDiagram
@@ -157,108 +257,6 @@ sequenceDiagram
 `HashSet.addAll` вызывает `add` через `this`, а `this` — это наследник. Поэтому
 управление возвращается в переопределённый `add`, и каждый элемент
 учитывается второй раз.
-
-## Примеры
-
-Ковариантный возвращаемый тип:
-```java
-class Animal {
-    Animal copy() { return new Animal(); }
-}
-class Dog extends Animal {
-    @Override
-    Dog copy() { return new Dog(); } // ковариантный возвращаемый тип
-}
-// main:
-Dog d = new Dog().copy();          // без приведения типа
-Animal a = new Dog();
-System.out.println(a.copy().getClass().getSimpleName());
-```
-```
-Dog
-```
-Через ссылку `Animal` вызвалась реализация `Dog` — переопределение работает,
-хотя возвращаемые типы разные. А `new Dog().copy()` сразу даёт `Dog` без
-приведения.
-
-Нарушение правил переопределения ловит компилятор:
-```java
-class Base {
-    public void open() throws IOException {}
-}
-class Narrow extends Base {
-    @Override void open() {}                           // сужение видимости
-}
-class Broad extends Base {
-    @Override public void open() throws Exception {}  // более широкое checked-исключение
-}
-```
-```
-Rules.java:6: error: open() in Narrow cannot override open() in Base
-    @Override void open() {}                           // сужение видимости
-                   ^
-  attempting to assign weaker access privileges; was public
-Rules.java:9: error: open() in Broad cannot override open() in Base
-    @Override public void open() throws Exception {}  // более широкое checked-исключение
-                          ^
-  overridden method does not throw Exception
-2 errors
-```
-Обе ошибки следуют из одного принципа: код, работающий с `Base`, должен
-продолжать работать с любым наследником. Он вправе вызвать `open()` откуда
-угодно и обрабатывает только `IOException` — наследник не может это нарушить.
-
-Fragile base class в действии:
-```java
-static class InstrumentedHashSet<E> extends HashSet<E> {
-    private int addCount = 0;
-    @Override public boolean add(E e) {
-        addCount++;
-        return super.add(e);
-    }
-    @Override public boolean addAll(Collection<? extends E> c) {
-        addCount += c.size();
-        return super.addAll(c);   // HashSet.addAll внутри вызывает add()
-    }
-    int getAddCount() { return addCount; }
-}
-// main:
-InstrumentedHashSet<String> s = new InstrumentedHashSet<>();
-s.addAll(List.of("a", "b", "c"));
-System.out.println("addCount = " + s.getAddCount());
-```
-```
-addCount = 6
-```
-Добавлено три элемента, а счётчик показывает шесть. «Починить» это, убрав
-переопределение `addAll`, — значит снова завязаться на реализацию `HashSet`.
-Надёжное решение — композиция вместо наследования (тема «Композиция vs
-наследование»).
-
-Поля не переопределяются, а скрываются:
-```java
-class Parent {
-    String name = "parent";
-    String getName() { return name; }
-}
-class Child extends Parent {
-    String name = "child";             // скрывает поле, а не переопределяет
-    @Override String getName() { return name; }
-}
-// main:
-Parent p = new Child();
-System.out.println("p.name      = " + p.name);
-System.out.println("p.getName() = " + p.getName());
-System.out.println("((Child) p).name = " + ((Child) p).name);
-```
-```
-p.name      = parent
-p.getName() = child
-((Child) p).name = child
-```
-Обращение к полю разрешается по статическому типу ссылки (`Parent`), а вызов
-метода — по реальному типу объекта (`Child`). В объекте `Child` при этом живут
-оба поля `name`, родительское и собственное.
 
 ## Частые вопросы на собеседовании
 
