@@ -272,5 +272,41 @@
     "section": 6,
     "status": "not-started",
     "title": "Ограничения и подводные камни generics"
+  },
+  "07-01-lambdas-and-closures": {
+    "path": "07-streams-functional/01-lambdas-and-closures.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Лямбда-выражения и замыкания"
+  },
+  "07-02-functional-interfaces": {
+    "path": "07-streams-functional/02-functional-interfaces.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Стандартные функциональные интерфейсы"
+  },
+  "07-03-stream-api": {
+    "path": "07-streams-functional/03-stream-api.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Stream API"
+  },
+  "07-04-collectors": {
+    "path": "07-streams-functional/04-collectors.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Collectors"
+  },
+  "07-05-parallel-streams": {
+    "path": "07-streams-functional/05-parallel-streams.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Параллельные стримы"
+  },
+  "07-06-optional": {
+    "path": "07-streams-functional/06-optional.md",
+    "section": 7,
+    "status": "not-started",
+    "title": "Optional"
   }
 }

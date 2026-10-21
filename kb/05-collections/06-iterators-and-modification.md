@@ -242,7 +242,7 @@ i++ после remove(i): [2, 3] — вторая двойка пропущен�
 - [Map: HashMap изнутри](04-hashmap-internals.md) — `ConcurrentModificationException` в `computeIfAbsent`.
 - [Неизменяемые и утилитарные коллекции](07-immutable-collections.md) — `synchronizedList` и его обход.
 - Concurrent-коллекции и атомарные переменные (раздел 8) — `CopyOnWriteArrayList` и `ConcurrentHashMap`.
-- Stream API (раздел 7) — фильтрация без изменения исходной коллекции.
+- [Stream API](../07-streams-functional/03-stream-api.md) — фильтрация без изменения исходной коллекции.
 
 ## Источники
 - [javadoc java.util.ArrayList](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html) — раздел о fail-fast итераторах.

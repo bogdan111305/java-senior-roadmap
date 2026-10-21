@@ -387,7 +387,7 @@ Spring и многие библиотеки переводят checked в соб
 - [Методы](../02-java-core/05-methods.md) — `StackOverflowError` при рекурсии.
 - [Установка окружения и первая программа](../02-java-core/01-environment-setup.md) — `NoClassDefFoundError` и `ExceptionInInitializerError` на примерах.
 - [Наследование](../03-oop/02-inheritance.md) — правила переопределения методов.
-- Лямбда-выражения и замыкания (раздел 7) — функциональные интерфейсы и их сигнатуры.
+- [Лямбда-выражения и замыкания](../07-streams-functional/01-lambdas-and-closures.md) — функциональные интерфейсы и их сигнатуры.
 - Области памяти JVM (раздел 9) — откуда берутся `OutOfMemoryError` и `StackOverflowError`.
 
 ## Источники

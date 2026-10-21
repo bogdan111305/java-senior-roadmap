@@ -320,7 +320,7 @@ wildcard задают вопрос из PECS: параметр отдаёт да
 - [Массивы](../02-java-core/04-arrays.md) — ковариантность массивов и `ArrayStoreException`.
 - [Comparable и Comparator](../03-oop/07-comparable-comparator.md) — `compareTo` и согласованность с `equals`.
 - [Неизменяемые и утилитарные коллекции](../05-collections/07-immutable-collections.md) — `Collections.copy`, `max`, `min`.
-- Стандартные функциональные интерфейсы (раздел 7) — `Function<? super T, ? extends R>` в сигнатурах JDK.
+- [Стандартные функциональные интерфейсы](../07-streams-functional/02-functional-interfaces.md) — `Function<? super T, ? extends R>` в сигнатурах JDK.
 
 ## Источники
 - [JLS §4.5.1: Type Arguments of Parameterized Types](https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.5.1), [§4.4: Type Variables](https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.4).

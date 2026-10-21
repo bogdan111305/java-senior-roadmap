@@ -242,7 +242,7 @@ A: `Stream.toList()` возвращает неизменяемый список 
 - [Массивы](../02-java-core/04-arrays.md) — `Arrays.asList(int[])` и `Arrays.sort`.
 - [Иерархия коллекций](01-collections-hierarchy.md) — необязательные операции и `UnsupportedOperationException`.
 - [Итераторы и модификация коллекций](06-iterators-and-modification.md) — обход `synchronizedList`.
-- Stream API и Collectors (раздел 7) — `toList`, `toUnmodifiableList`, `toCollection`.
+- [Stream API](../07-streams-functional/03-stream-api.md) и [Collectors](../07-streams-functional/04-collectors.md) — `toList`, `toUnmodifiableList`, `toCollection`.
 
 ## Источники
 - [javadoc java.util.List](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html) — раздел «Unmodifiable Lists».

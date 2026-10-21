@@ -404,7 +404,7 @@ A: Компилятор знает полный список вариантов 
 - [Наследование](02-inheritance.md) — одиночное наследование классов и diamond problem.
 - [Полиморфизм](03-polymorphism.md) — vtable, invokevirtual и пример байткода с invokeinterface.
 - [Композиция vs наследование](05-composition-vs-inheritance.md) — когда вместо абстрактного класса лучше интерфейс и делегирование.
-- Лямбда-выражения и замыкания (раздел 7) — функциональные интерфейсы на практике.
+- [Лямбда-выражения и замыкания](../07-streams-functional/01-lambdas-and-closures.md) — функциональные интерфейсы на практике.
 - Байткод, invokedynamic и Instrumentation API (раздел 9) — LambdaMetafactory и invokedynamic.
 - Java 21 (LTS) и далее (раздел 10) — pattern matching в switch и record patterns по sealed-иерархиям.
 
