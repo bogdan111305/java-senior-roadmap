@@ -37,6 +37,22 @@ List<String> list = new ArrayList<>()` нельзя переприсвоить �
 но элементы в него можно добавлять и удалять. `final` и неизменяемость —
 разные понятия: первое про переменную, второе про объект.
 
+```java
+final List<String> mutable = new ArrayList<>(List.of("a", "b"));
+mutable.add("c");
+System.out.println("final ArrayList после add: " + mutable);
+
+final List<String> immutable = List.of("a", "b");
+immutable.add("c");   // перехвачено
+```
+```
+final ArrayList после add: [a, b, c]
+List.of() бросает UnsupportedOperationException на add()
+```
+Обе переменные `final`, но первый список меняется свободно: `final` запретил
+только переприсвоить `mutable`. Неизменяемым список делает не модификатор
+переменной, а сама реализация `List.of`.
+
 #### final-поля и многопоточность
 У `final`-полей есть особая гарантия модели памяти Java. Если конструктор не
 «утёк» ссылкой на `this` наружу, любой поток, получивший ссылку на объект,
@@ -63,6 +79,35 @@ List<String> list = new ArrayList<>()` нельзя переприсвоить �
 строк и кэшированный `hashCode`. Классы-значения и `record` (неявно `final`)
 закрывают от наследования по той же причине.
 
+```java
+class Base {
+    final void greet() { System.out.println("hi"); }
+}
+public class FinalMethodFail extends Base {
+    void greet() { System.out.println("bye"); } // нельзя переопределить final
+}
+```
+```
+FinalMethodFail.java:5: error: greet() in FinalMethodFail cannot override greet() in Base
+    void greet() { System.out.println("bye"); }
+         ^
+  overridden method is final
+1 error
+```
+То же для класса:
+```java
+public class ExtendStringFail extends String { // String — final класс
+}
+```
+```
+ExtendStringFail.java:1: error: cannot inherit from final String
+public class ExtendStringFail extends String {
+                                      ^
+1 error
+```
+Оба запрета срабатывают на этапе компиляции: до рантайма такой код не
+доходит.
+
 ### static
 
 #### static-поле и static-метод
@@ -76,11 +121,75 @@ List<String> list = new ArrayList<>()` нельзя переприсвоить �
 ссылка не используется. Писать так не стоит: компилятор и IDE предупреждают,
 что статический метод вызван через экземпляр.
 
+`final` и `static` в одном классе:
+```java
+public class FinalStatic {
+    static int instanceCount = 0; // одно поле на класс
+    final int id;                 // blank final - присваивается в конструкторе
+
+    FinalStatic() {
+        id = ++instanceCount;     // присвоение final один раз, не в момент объявления
+    }
+
+    public static void main(String[] args) {
+        FinalStatic a = new FinalStatic();
+        FinalStatic b = new FinalStatic();
+        FinalStatic c = new FinalStatic();
+        System.out.println("a.id=" + a.id + " b.id=" + b.id + " c.id=" + c.id);
+        System.out.println("instanceCount (общий на класс) = " + FinalStatic.instanceCount);
+    }
+}
+```
+```
+a.id=1 b.id=2 c.id=3
+instanceCount (общий на класс) = 3
+```
+У каждого объекта свой `id`, присвоенный один раз, а `instanceCount` один на
+весь класс.
+
+Статический метод через `null`-ссылку:
+```java
+public class NullStatic {
+    static String hello() { return "static-метод вызван через null-ссылку"; }
+
+    public static void main(String[] args) {
+        NullStatic ref = null;
+        System.out.println(ref.hello());   // компилируется в invokestatic, ref не используется
+    }
+}
+```
+```
+static-метод вызван через null-ссылку
+```
+`NullPointerException` нет: для вызова нужен только класс, известный из
+объявленного типа `ref`, а значение ссылки не читается.
+
 #### Hiding, а не overriding
 `static`-метод нельзя переопределить, только скрыть (method hiding) методом с
 той же сигнатурой в подклассе. Выбор между версиями происходит при компиляции,
 по объявленному типу переменной, а не в рантайме по реальному типу объекта —
 по тем же правилам, что и перегрузка.
+
+```java
+class Animal {
+    static String kind() { return "Animal"; }
+    String sound() { return "..."; }
+}
+class Dog extends Animal {
+    static String kind() { return "Dog"; } // hiding, не overriding
+    @Override String sound() { return "Woof"; } // настоящее overriding
+}
+// main:
+Animal ref = new Dog();
+System.out.println("ref.kind() [по объявленному типу Animal]: " + ref.kind());
+System.out.println("ref.sound() [по фактическому типу Dog]: " + ref.sound());
+```
+```
+ref.kind() [по объявленному типу Animal]: Animal
+ref.sound() [по фактическому типу Dog]: Woof
+```
+Объект один и тот же, но статический метод выбран по типу переменной, а
+обычный — по реальному типу объекта.
 
 #### static-блок инициализации
 `static`-блок выполняется один раз при инициализации класса. Его используют,
@@ -88,6 +197,27 @@ List<String> list = new ArrayList<>()` нельзя переприсвоить �
 `Map`, загрузить нативную библиотеку, прочитать конфигурацию. Порядок
 выполнения в цепочке наследования разобран в теме «Порядок инициализации при
 наследовании».
+
+```java
+static class Config {
+    static final Map<String, String> DEFAULTS = new HashMap<>();
+    static {
+        DEFAULTS.put("timeout", "30s");
+        DEFAULTS.put("retries", "3");
+        System.out.println("static-блок Config: заполнили DEFAULTS (" + DEFAULTS.size() + " записи)");
+    }
+}
+// ...
+System.out.println("timeout=" + Config.DEFAULTS.get("timeout"));
+```
+```
+static-блок Config: заполнили DEFAULTS (2 записи)
+timeout=30s
+```
+Блок выполнился при первом обращении к `Config.DEFAULTS`, до того как
+`get` вернул значение. Для такой задачи сегодня чаще пишут
+`Map.of("timeout", "30s", "retries", "3")` — одной строкой и сразу
+неизменяемо.
 
 #### Константы и их подстановка
 `static final` поле примитивного типа или `String` с константным
@@ -100,6 +230,26 @@ List<String> list = new ArrayList<>()` нельзя переприсвоить �
 использовать старое значение, пока их тоже не перекомпилируют. Для значений,
 которые могут меняться между версиями, используют не константы, а
 `static final` поля с неконстантным инициализатором или методы.
+
+```java
+public class Consts {
+    public static final int VERSION = 1;
+}
+public class App {
+    public static void main(String[] args) {
+        System.out.println("Consts.VERSION = " + Consts.VERSION);
+    }
+}
+```
+```
+$ javac Consts.java App.java && java App
+Consts.VERSION = 1
+$ # меняем VERSION на 2 и перекомпилируем только Consts
+$ javac Consts.java && java App
+Consts.VERSION = 1
+```
+`App` по-прежнему печатает 1: значение было подставлено в его байткод при
+компиляции, и к полю `Consts.VERSION` он не обращается вовсе.
 
 #### import static
 `import static java.lang.Math.max;` позволяет вызывать статический член без
@@ -131,116 +281,24 @@ flowchart LR
 загрузчиками классов. Одна статическая ссылка из системного класса на объект
 приложения удерживает весь его загрузчик со всеми классами (classloader leak).
 
-## Примеры
-
-`final` и `static` в одном классе:
 ```java
-public class FinalStatic {
-    static int instanceCount = 0; // одно поле на класс
-    final int id;                 // blank final - присваивается в конструкторе
-
-    FinalStatic() {
-        id = ++instanceCount;     // присвоение final один раз, не в момент объявления
-    }
-
-    public static void main(String[] args) {
-        FinalStatic a = new FinalStatic();
-        FinalStatic b = new FinalStatic();
-        FinalStatic c = new FinalStatic();
-        System.out.println("a.id=" + a.id + " b.id=" + b.id + " c.id=" + c.id);
-        System.out.println("instanceCount (общий на класс) = " + FinalStatic.instanceCount);
-    }
+static class LeakyCache {
+    static final List<byte[]> cache = new ArrayList<>();
+    static void handleRequest() { cache.add(new byte[1_000_000]); }   // ~1 МБ на запрос
+}
+// ...
+for (int i = 1; i <= 3; i++) {
+    LeakyCache.handleRequest();
+    System.out.println("после запроса " + i + ": cache.size()=" + LeakyCache.cache.size());
 }
 ```
 ```
-a.id=1 b.id=2 c.id=3
-instanceCount (общий на класс) = 3
+после запроса 1: cache.size()=1
+после запроса 2: cache.size()=2
+после запроса 3: cache.size()=3
 ```
-У каждого объекта свой `id`, присвоенный один раз, а `instanceCount` один на
-весь класс.
-
-Запрет переопределения и наследования:
-```java
-class Base {
-    final void greet() { System.out.println("hi"); }
-}
-public class FinalMethodFail extends Base {
-    void greet() { System.out.println("bye"); } // нельзя переопределить final
-}
-```
-```
-FinalMethodFail.java:5: error: greet() in FinalMethodFail cannot override greet() in Base
-    void greet() { System.out.println("bye"); }
-         ^
-  overridden method is final
-1 error
-```
-```java
-public class ExtendStringFail extends String { // String — final класс
-}
-```
-```
-ExtendStringFail.java:1: error: cannot inherit from final String
-public class ExtendStringFail extends String {
-                                      ^
-1 error
-```
-
-Hiding и overriding на одном примере:
-```java
-class Animal {
-    static String kind() { return "Animal"; }
-    String sound() { return "..."; }
-}
-class Dog extends Animal {
-    static String kind() { return "Dog"; } // hiding, не overriding
-    @Override String sound() { return "Woof"; } // настоящее overriding
-}
-// main:
-Animal ref = new Dog();
-System.out.println("ref.kind() [по объявленному типу Animal]: " + ref.kind());
-System.out.println("ref.sound() [по фактическому типу Dog]: " + ref.sound());
-```
-```
-ref.kind() [по объявленному типу Animal]: Animal
-ref.sound() [по фактическому типу Dog]: Woof
-```
-
-Статический метод через `null`-ссылку:
-```java
-public class NullStatic {
-    static String hello() { return "static-метод вызван через null-ссылку"; }
-
-    public static void main(String[] args) {
-        NullStatic ref = null;
-        System.out.println(ref.hello());   // компилируется в invokestatic, ref не используется
-    }
-}
-```
-```
-static-метод вызван через null-ссылку
-```
-
-Подстановка константы в чужой класс:
-```java
-public class Consts {
-    public static final int VERSION = 1;
-}
-public class App {
-    public static void main(String[] args) {
-        System.out.println("Consts.VERSION = " + Consts.VERSION);
-    }
-}
-```
-```
-$ javac Consts.java App.java && java App
-Consts.VERSION = 1
-$ # меняем VERSION на 2 и перекомпилируем только Consts
-$ javac Consts.java && java App
-Consts.VERSION = 1
-```
-`App` по-прежнему печатает 1: значение было подставлено в его байткод при
-компиляции, и к полю `Consts.VERSION` он не обращается вовсе.
+Каждый запрос оставляет в статическом списке ещё мегабайт, и ничто его не
+удаляет. На трёх запросах это незаметно, на миллионе — `OutOfMemoryError`.
 
 ## Частые вопросы на собеседовании
 
@@ -281,6 +339,29 @@ A: Оно живёт, пока жив класс, то есть обычно д�
 изменение без синхронизации подвержено гонкам так же, как любое разделяемое
 состояние. Потокобезопасность обеспечивают `synchronized`, атомарные классы и
 неизменяемость, а не модификатор `static`.
+```java
+static class RaceCounter {
+    static int total = 0;
+    static void increment() { total++; }   // чтение, +1, запись — не атомарно
+}
+// ...
+int threadsCount = 8, perThread = 100_000;
+Thread[] threads = new Thread[threadsCount];
+for (int i = 0; i < threadsCount; i++) {
+    threads[i] = new Thread(() -> { for (int j = 0; j < perThread; j++) RaceCounter.increment(); });
+    threads[i].start();
+}
+for (Thread t : threads) t.join();
+System.out.println("ожидалось: " + (threadsCount * perThread));
+System.out.println("реально:   " + RaceCounter.total);
+```
+```
+ожидалось: 800000
+реально:   104804
+```
+Потерялось почти 90% инкрементов, и число меняется от запуска к запуску (в
+пяти прогонах — от 104 тысяч до 120 тысяч). Исправляют через `AtomicInteger`,
+`LongAdder` или `synchronized` (раздел 8).
 
 #### Константы в публичном API
 Публичная константа, которая может измениться в следующей версии библиотеки,

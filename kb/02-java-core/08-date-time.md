@@ -35,6 +35,22 @@ Java-кода. Старые `Date`, `Calendar` и `SimpleDateFormat` счита�
 договора, время открытия магазина «в 9:00» в любом городе. Для момента, который
 произошёл в конкретную секунду для всего мира, локальные типы не подходят.
 
+```java
+LocalDate date = LocalDate.of(2026, 9, 10);
+LocalTime time = LocalTime.of(14, 30);
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+System.out.println("LocalDate: " + date);
+System.out.println("LocalTime: " + time);
+System.out.println("LocalDateTime: " + dateTime);
+```
+```
+LocalDate: 2026-09-10
+LocalTime: 14:30
+LocalDateTime: 2026-09-10T14:30
+```
+В выводе нет ни зоны, ни смещения: это «14:30 10 сентября» вообще, без
+указания, где именно.
+
 #### ZonedDateTime и OffsetDateTime
 `ZonedDateTime` — дата-время с часовой зоной (`ZoneId`, например
 `Europe/Moscow`). Зона — это не просто смещение, а набор правил, включая
@@ -53,11 +69,41 @@ flowchart LR
     I --> T["ZonedDateTime\nAsia/Tokyo → 20:30 +09:00"]
 ```
 
+```java
+ZonedDateTime moscow = dateTime.atZone(ZoneId.of("Europe/Moscow"));
+ZonedDateTime tokyo = moscow.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+System.out.println("ZonedDateTime Moscow: " + moscow);
+System.out.println("ZonedDateTime Tokyo (тот же момент): " + tokyo);
+
+OffsetDateTime offsetDateTime = dateTime.atOffset(ZoneOffset.of("+03:00"));
+System.out.println("OffsetDateTime: " + offsetDateTime);
+```
+```
+ZonedDateTime Moscow: 2026-09-10T14:30+03:00[Europe/Moscow]
+ZonedDateTime Tokyo (тот же момент): 2026-09-10T20:30+09:00[Asia/Tokyo]
+OffsetDateTime: 2026-09-10T14:30+03:00
+```
+14:30 в Москве и 20:30 в Токио — один и тот же момент. У `OffsetDateTime`
+в квадратных скобках нет имени зоны: известно только смещение `+03:00`, но не
+правила, по которым оно может измениться.
+
 #### Instant
 `Instant` — точка на шкале времени UTC: секунды и наносекунды от эпохи Unix
 (1970-01-01T00:00:00Z). Календарных понятий у него нет. Это правильный тип для
 меток событий, `createdAt` в базе и логов распределённой системы, где «раньше» и
 «позже» должны быть однозначны для всех.
+
+```java
+Instant instant = moscow.toInstant();   // moscow из примера выше
+System.out.println("Instant: " + instant);
+System.out.println("секунд от эпохи: " + instant.getEpochSecond());
+```
+```
+Instant: 2026-09-10T11:30:00Z
+секунд от эпохи: 1789039800
+```
+Московские 14:30 превратились в `11:30Z` по UTC, а внутри это просто число
+секунд от 1970 года — одинаковое для любой зоны.
 
 #### Переходы на летнее и зимнее время
 Переход на летнее время создаёт «дыру» (gap): в Европе 29 марта 2026 года
@@ -69,6 +115,27 @@ flowchart LR
 проходит дважды. По умолчанию выбирается более раннее смещение, а
 `withLaterOffsetAtOverlap()` переключает на позднее. Код, который планирует
 задачи на «02:30 каждый день», должен явно решать, что делать в эти два дня.
+
+```java
+ZoneId berlin = ZoneId.of("Europe/Berlin");
+System.out.println("переход на летнее время, 02:30 -> " + LocalDateTime.of(2026, 3, 29, 2, 30).atZone(berlin));
+ZonedDateTime overlap = LocalDateTime.of(2026, 10, 25, 2, 30).atZone(berlin);
+System.out.println("переход на зимнее время, 02:30 -> " + overlap + ", позднее: " + overlap.withLaterOffsetAtOverlap());
+
+ZonedDateTime noon = ZonedDateTime.of(2026, 3, 28, 12, 0, 0, 0, berlin);
+System.out.println("plusDays(1):   " + noon.plusDays(1));
+System.out.println("plusHours(24): " + noon.plusHours(24));
+System.out.println("часов в «сутках» перехода: " + Duration.between(noon, noon.plus(Period.ofDays(1))).toHours());
+```
+```
+переход на летнее время, 02:30 -> 2026-03-29T03:30+02:00[Europe/Berlin]
+переход на зимнее время, 02:30 -> 2026-10-25T02:30+02:00[Europe/Berlin], позднее: 2026-10-25T02:30+01:00[Europe/Berlin]
+plusDays(1):   2026-03-29T12:00+02:00[Europe/Berlin]
+plusHours(24): 2026-03-29T13:00+02:00[Europe/Berlin]
+часов в «сутках» перехода: 23
+```
+Несуществующее 02:30 стало 03:30. «Плюс сутки» по календарю и «плюс 24 часа»
+дали разное время, потому что сутки перехода длятся 23 часа.
 
 ### Периоды и длительности
 
@@ -82,106 +149,6 @@ flowchart LR
 дней» с учётом реальной длины месяцев. `ChronoUnit.DAYS.between(d1, d2)` даёт
 расстояние одним числом — удобно для сортировки и вывода «прошло N дней».
 
-#### Арифметика с месяцами
-Прибавление месяцев «прижимает» день к концу месяца: 31 января плюс месяц — 28
-февраля, а 29 февраля 2024 плюс год — 28 февраля 2025. Из-за этого `d.plusMonths(1).minusMonths(1)` не всегда возвращает исходную дату.
-
-Для типовых календарных операций есть `TemporalAdjusters` (последний день
-месяца, следующий понедельник), а для понятий «месяц» и «день недели» —
-`YearMonth` и `DayOfWeek`.
-
-### Форматирование и конвертация
-
-#### DateTimeFormatter vs SimpleDateFormat
-`SimpleDateFormat` изменяем: внутри хранится рабочий `Calendar`, который меняется
-в процессе разбора и форматирования. Общий экземпляр без синхронизации в
-нескольких потоках даёт непредсказуемые ошибки — неправильные даты или
-исключения при разборе.
-
-`DateTimeFormatter` неизменяем и потокобезопасен: всё нужное зафиксировано при
-создании, и форматирование не трогает общего состояния. Поэтому его хранят в
-`static final` константе. Названия месяцев и дней недели зависят от локали —
-её задают явно через `withLocale` или `ofPattern(pattern, locale)`.
-
-#### Шаблоны: YYYY, hh и uuuu
-Буквы шаблона чувствительны к регистру, и несколько из них — классические
-источники багов. `YYYY` — год недели (week-based year), а не календарный год:
-29–31 декабря часто относятся к первой неделе следующего года, и дата
-`2025-12-29` форматируется как `2026-12-29`. Календарный год — `yyyy` или
-`uuuu`.
-
-`hh` — 12-часовой формат (`15:05` превращается в `03:05`), 24-часовой — `HH`.
-По умолчанию разбор идёт в режиме `SMART` и молча исправляет несуществующую дату
-`2026-02-30` на `2026-02-28`. Строгий режим `ResolverStyle.STRICT` бросает
-исключение, но в нём `yyyy` означает год эры и требует ещё и эру, поэтому со
-`STRICT` используют `uuuu`.
-
-#### Конвертация с legacy Date и хранение в БД
-Мост между старым и новым API — `Instant`: `Date.toInstant()`,
-`Date.from(instant)`, `Instant.atZone(zoneId)`. Так работают с библиотеками,
-которые всё ещё принимают `java.util.Date`.
-
-В JDBC 4.2 драйверы поддерживают `java.time` напрямую через
-`getObject(column, OffsetDateTime.class)` и `setObject`: `LocalDate` ↔ `date`,
-`LocalDateTime` ↔ `timestamp`, `OffsetDateTime` ↔ `timestamp with time zone`.
-`timestamp without time zone` хранит «сырые» дату и время без зоны, а
-`timestamptz` в PostgreSQL хранит момент в UTC и переводит в зону сессии при
-чтении. Смешение подходов в одной системе — частая причина расхождений на
-несколько часов.
-
-#### Неизменяемость
-Все классы `java.time` неизменяемы: `plusDays`, `withZoneSameInstant`,
-`withDayOfMonth` возвращают новый объект, оставляя исходный без изменений. Это
-даёт потокобезопасность без синхронизации, но требует присваивать результат —
-`date.plusDays(1);` без присваивания ничего не делает.
-
-### Время в коде и тестах
-
-#### Clock
-Код, который вызывает `LocalDate.now()` или `Instant.now()` напрямую, трудно
-тестировать: результат зависит от того, когда запущен тест. Решение — получать
-текущее время через `java.time.Clock`, переданный зависимостью, и вызывать
-`LocalDate.now(clock)`.
-
-В проде используют `Clock.systemUTC()` или `Clock.systemDefaultZone()`, в
-тестах — `Clock.fixed(...)` для неподвижного времени или `Clock.offset(...)`
-для сдвига. В Spring `Clock` обычно объявляют бином и внедряют в сервисы.
-
-#### currentTimeMillis и nanoTime
-`System.currentTimeMillis()` и `Instant.now()` показывают время по системным
-часам, которые могут прыгнуть назад или вперёд при синхронизации NTP. Для
-измерения длительности используют `System.nanoTime()` — монотонный счётчик,
-который не связан с календарём и не идёт назад. Его абсолютное значение
-бессмысленно, имеет смысл только разность двух вызовов.
-
-## Примеры
-
-Локальные типы, зоны и `Instant`:
-```java
-LocalDate date = LocalDate.of(2026, 9, 10);
-LocalTime time = LocalTime.of(14, 30);
-LocalDateTime dateTime = LocalDateTime.of(date, time);
-System.out.println("LocalDate: " + date);
-System.out.println("LocalTime: " + time);
-System.out.println("LocalDateTime: " + dateTime);
-
-ZonedDateTime moscow = dateTime.atZone(ZoneId.of("Europe/Moscow"));
-ZonedDateTime tokyo = moscow.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
-System.out.println("ZonedDateTime Moscow: " + moscow);
-System.out.println("ZonedDateTime Tokyo (тот же момент): " + tokyo);
-System.out.println("Instant (UTC epoch): " + moscow.toInstant());
-```
-```
-LocalDate: 2026-09-10
-LocalTime: 14:30
-LocalDateTime: 2026-09-10T14:30
-ZonedDateTime Moscow: 2026-09-10T14:30+03:00[Europe/Moscow]
-ZonedDateTime Tokyo (тот же момент): 2026-09-10T20:30+09:00[Asia/Tokyo]
-Instant (UTC epoch): 2026-09-10T11:30:00Z
-```
-14:30 в Москве и 20:30 в Токио — один и тот же момент, `11:30:00Z` по UTC.
-
-`Duration`, `Period` и `ChronoUnit`:
 ```java
 LocalDateTime start = LocalDateTime.of(2026, 9, 10, 9, 0);
 LocalDateTime end = LocalDateTime.of(2026, 9, 10, 17, 45);
@@ -199,34 +166,77 @@ Duration between: PT8H45M (часы=8 минуты=45)
 Period between: 2y 7m 26d
 ChronoUnit.DAYS.between: 969
 ```
+`Duration` печатается в формате ISO 8601 (`PT8H45M`). Одна и та же разница
+дат — это «2 года 7 месяцев 26 дней» в `Period` и 969 дней в `ChronoUnit`.
 
-Переходы на летнее и зимнее время, арифметика месяцев:
+#### Арифметика с месяцами
+Прибавление месяцев «прижимает» день к концу месяца: 31 января плюс месяц — 28
+февраля, а 29 февраля 2024 плюс год — 28 февраля 2025. Из-за этого `d.plusMonths(1).minusMonths(1)` не всегда возвращает исходную дату.
+
+Для типовых календарных операций есть `TemporalAdjusters` (последний день
+месяца, следующий понедельник), а для понятий «месяц» и «день недели» —
+`YearMonth` и `DayOfWeek`.
+
 ```java
-ZoneId berlin = ZoneId.of("Europe/Berlin");
-System.out.println("переход на летнее время, 02:30 -> " + LocalDateTime.of(2026, 3, 29, 2, 30).atZone(berlin));
-ZonedDateTime overlap = LocalDateTime.of(2026, 10, 25, 2, 30).atZone(berlin);
-System.out.println("переход на зимнее время, 02:30 -> " + overlap + ", позднее: " + overlap.withLaterOffsetAtOverlap());
-
-ZonedDateTime noon = ZonedDateTime.of(2026, 3, 28, 12, 0, 0, 0, berlin);
-System.out.println("plusDays(1):   " + noon.plusDays(1));
-System.out.println("plusHours(24): " + noon.plusHours(24));
-System.out.println("часов в «сутках» перехода: " + Duration.between(noon, noon.plus(Period.ofDays(1))).toHours());
-
 System.out.println("31 января + 1 месяц = " + LocalDate.of(2026, 1, 31).plusMonths(1)
         + ", 29 февраля 2024 + 1 год = " + LocalDate.of(2024, 2, 29).plusYears(1));
 ```
 ```
-переход на летнее время, 02:30 -> 2026-03-29T03:30+02:00[Europe/Berlin]
-переход на зимнее время, 02:30 -> 2026-10-25T02:30+02:00[Europe/Berlin], позднее: 2026-10-25T02:30+01:00[Europe/Berlin]
-plusDays(1):   2026-03-29T12:00+02:00[Europe/Berlin]
-plusHours(24): 2026-03-29T13:00+02:00[Europe/Berlin]
-часов в «сутках» перехода: 23
 31 января + 1 месяц = 2026-02-28, 29 февраля 2024 + 1 год = 2025-02-28
 ```
-Несуществующее 02:30 стало 03:30. «Плюс сутки» по календарю и «плюс 24 часа»
-дали разное время, потому что сутки перехода длятся 23 часа.
+Исключения нет: несуществующие 31 февраля и 29 февраля 2025 года молча
+заменены последним днём месяца.
 
-Шаблоны форматирования и строгий разбор:
+### Форматирование и конвертация
+
+#### DateTimeFormatter vs SimpleDateFormat
+`SimpleDateFormat` изменяем: внутри хранится рабочий `Calendar`, который меняется
+в процессе разбора и форматирования. Общий экземпляр без синхронизации в
+нескольких потоках даёт непредсказуемые ошибки — неправильные даты или
+исключения при разборе.
+
+`DateTimeFormatter` неизменяем и потокобезопасен: всё нужное зафиксировано при
+создании, и форматирование не трогает общего состояния. Поэтому его хранят в
+`static final` константе. Названия месяцев и дней недели зависят от локали —
+её задают явно через `withLocale` или `ofPattern(pattern, locale)`.
+
+```java
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+System.out.println("formatted: " + dateTime.format(formatter));
+System.out.println("parsed back: " + LocalDateTime.parse("10.09.2026 14:30", formatter));
+```
+```
+formatted: 10.09.2026 14:30
+parsed back: 2026-09-10T14:30
+```
+Один и тот же форматтер работает в обе стороны: форматирует объект в строку и
+разбирает строку обратно. `toString()` при этом всегда выводит ISO-формат.
+
+Общий `SimpleDateFormat` в 20 потоках:
+```java
+// один и тот же SimpleDateFormat, 20 потоков, по 200 форматирований и разборов каждый
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+// ... 4000 параллельных вызовов sdf.format(d) / sdf.parse(...) без синхронизации
+```
+```
+Общих вызовов: 4000, ошибок парсинга/формата: 403
+```
+Около 10% вызовов закончились ошибкой, и их число меняется от запуска к
+запуску — типичный признак гонки данных в общем изменяемом состоянии.
+
+#### Шаблоны: YYYY, hh и uuuu
+Буквы шаблона чувствительны к регистру, и несколько из них — классические
+источники багов. `YYYY` — год недели (week-based year), а не календарный год:
+29–31 декабря часто относятся к первой неделе следующего года, и дата
+`2025-12-29` форматируется как `2026-12-29`. Календарный год — `yyyy` или
+`uuuu`.
+
+`hh` — 12-часовой формат (`15:05` превращается в `03:05`), 24-часовой — `HH`.
+По умолчанию разбор идёт в режиме `SMART` и молча исправляет несуществующую дату
+`2026-02-30` на `2026-02-28`. Строгий режим `ResolverStyle.STRICT` бросает
+исключение, но в нём `yyyy` означает год эры и требует ещё и эру, поэтому со
+`STRICT` используют `uuuu`.
+
 ```java
 LocalDate d = LocalDate.of(2025, 12, 29);
 System.out.println("YYYY-MM-dd: " + DateTimeFormatter.ofPattern("YYYY-MM-dd").format(d) + ", yyyy-MM-dd: " + DateTimeFormatter.ofPattern("yyyy-MM-dd").format(d));
@@ -248,19 +258,21 @@ STRICT + yyyy -> Text '2026-02-10' could not be parsed: Unable to obtain LocalDa
 неделе 2026 года. Режим `SMART` молча исправил 30 февраля, а `STRICT` с `yyyy` не
 смог собрать дату без эры.
 
-Тестируемое время через `Clock`:
-```java
-Clock fixed = Clock.fixed(Instant.parse("2026-01-01T10:00:00Z"), ZoneOffset.UTC);
-System.out.println("Clock.fixed: " + LocalDateTime.now(fixed) + ", Clock.offset(+1h): " + LocalDateTime.now(Clock.offset(fixed, Duration.ofHours(1))));
-```
-```
-Clock.fixed: 2026-01-01T10:00, Clock.offset(+1h): 2026-01-01T11:00
-```
-Сколько бы раз ни запускался тест, «сейчас» будет одним и тем же.
+#### Конвертация с legacy Date и хранение в БД
+Мост между старым и новым API — `Instant`: `Date.toInstant()`,
+`Date.from(instant)`, `Instant.atZone(zoneId)`. Так работают с библиотеками,
+которые всё ещё принимают `java.util.Date`.
 
-Мост к legacy `Date`:
+В JDBC 4.2 драйверы поддерживают `java.time` напрямую через
+`getObject(column, OffsetDateTime.class)` и `setObject`: `LocalDate` ↔ `date`,
+`LocalDateTime` ↔ `timestamp`, `OffsetDateTime` ↔ `timestamp with time zone`.
+`timestamp without time zone` хранит «сырые» дату и время без зоны, а
+`timestamptz` в PostgreSQL хранит момент в UTC и переводит в зону сессии при
+чтении. Смешение подходов в одной системе — частая причина расхождений на
+несколько часов.
+
 ```java
-Date legacyDate = Date.from(instant);
+Date legacyDate = Date.from(instant);   // instant = 2026-09-10T11:30:00Z
 Instant backToInstant = legacyDate.toInstant();
 System.out.println("Date -> Instant round-trip equal: " + instant.equals(backToInstant));
 ```
@@ -271,17 +283,57 @@ Date -> Instant round-trip equal: true
 только миллисекунды, и более точный `Instant` при переводе туда и обратно
 потерял бы наносекунды.
 
-Общий `SimpleDateFormat` в 20 потоках:
+#### Неизменяемость
+Все классы `java.time` неизменяемы: `plusDays`, `withZoneSameInstant`,
+`withDayOfMonth` возвращают новый объект, оставляя исходный без изменений. Это
+даёт потокобезопасность без синхронизации, но требует присваивать результат —
+`date.plusDays(1);` без присваивания ничего не делает.
+
 ```java
-// один и тот же SimpleDateFormat, 20 потоков, по 200 форматирований и разборов каждый
-SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-// ... 4000 параллельных вызовов sdf.format(d) / sdf.parse(...) без синхронизации
+LocalDate original = LocalDate.of(2026, 9, 10);
+LocalDate plusOne = original.plusDays(1);
+System.out.println("original: " + original);
+System.out.println("plusOne (новый объект): " + plusOne);
+
+LocalDate date = LocalDate.of(2026, 9, 10);
+date.plusDays(1);
+System.out.println("date после 'plusDays(1)' без присвоения: " + date);
 ```
 ```
-Общих вызовов: 4000, ошибок парсинга/формата: 403
+original: 2026-09-10
+plusOne (новый объект): 2026-09-11
+date после 'plusDays(1)' без присвоения: 2026-09-10
 ```
-Около 10% вызовов закончились ошибкой, и их число меняется от запуска к
-запуску — типичный признак гонки данных в общем изменяемом состоянии.
+`plusDays` вернул новую дату, а исходная не изменилась. Во втором случае
+результат никуда не сохранён, и строка вообще ничего не сделала.
+
+### Время в коде и тестах
+
+#### Clock
+Код, который вызывает `LocalDate.now()` или `Instant.now()` напрямую, трудно
+тестировать: результат зависит от того, когда запущен тест. Решение — получать
+текущее время через `java.time.Clock`, переданный зависимостью, и вызывать
+`LocalDate.now(clock)`.
+
+В проде используют `Clock.systemUTC()` или `Clock.systemDefaultZone()`, в
+тестах — `Clock.fixed(...)` для неподвижного времени или `Clock.offset(...)`
+для сдвига. В Spring `Clock` обычно объявляют бином и внедряют в сервисы.
+
+```java
+Clock fixed = Clock.fixed(Instant.parse("2026-01-01T10:00:00Z"), ZoneOffset.UTC);
+System.out.println("Clock.fixed: " + LocalDateTime.now(fixed) + ", Clock.offset(+1h): " + LocalDateTime.now(Clock.offset(fixed, Duration.ofHours(1))));
+```
+```
+Clock.fixed: 2026-01-01T10:00, Clock.offset(+1h): 2026-01-01T11:00
+```
+Сколько бы раз ни запускался тест, «сейчас» будет одним и тем же.
+
+#### currentTimeMillis и nanoTime
+`System.currentTimeMillis()` и `Instant.now()` показывают время по системным
+часам, которые могут прыгнуть назад или вперёд при синхронизации NTP. Для
+измерения длительности используют `System.nanoTime()` — монотонный счётчик,
+который не связан с календарём и не идёт назад. Его абсолютное значение
+бессмысленно, имеет смысл только разность двух вызовов.
 
 ## Частые вопросы на собеседовании
 

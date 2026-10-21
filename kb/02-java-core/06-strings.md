@@ -39,6 +39,19 @@ last_reviewed: null
 нельзя испортить гонкой данных. И наконец, неизменяемость делает возможным пул
 строк: одинаковые литералы безопасно разделяют один объект.
 
+```java
+String s1 = "abc";
+String s2 = s1.concat("def");
+System.out.println("s1 после concat: " + s1);
+System.out.println("s2 (новый объект): " + s2);
+```
+```
+s1 после concat: abc
+s2 (новый объект): abcdef
+```
+`concat` не тронул `s1`, а вернул новую строку. Если результат не присвоить,
+он просто потеряется — частая ошибка вида `s.trim();` без присваивания.
+
 #### Пул строк и intern()
 Пул строк (string pool) — таблица уникальных строк в куче (до Java 7 — в
 PermGen). Строковые литералы попадают в пул, поэтому два одинаковых литерала в
@@ -62,6 +75,25 @@ flowchart LR
     d["d = c.intern()"] -.-> P
 ```
 
+```java
+String a = "hello";
+String b = "hello";
+String c = new String("hello");
+String d = c.intern();
+System.out.println("a == b (оба литерала из пула): " + (a == b));
+System.out.println("a == c (c создан через new): " + (a == c));
+System.out.println("a.equals(c): " + a.equals(c));
+System.out.println("a == d (d = c.intern()): " + (a == d));
+```
+```
+a == b (оба литерала из пула): true
+a == c (c создан через new): false
+a.equals(c): true
+a == d (d = c.intern()): true
+```
+Ровно картина со схемы: `a` и `b` — один объект пула, `c` — отдельный объект
+с тем же содержимым, а `intern()` вернул ссылку на строку из пула.
+
 #### Свёртка констант
 Компилятор вычисляет выражения из констант времени компиляции заранее:
 `"hel" + "lo"` превращается в литерал `"hello"` прямо в байткоде, поэтому
@@ -72,6 +104,22 @@ flowchart LR
 рантайме и создаёт новый объект вне пула, и `==` возвращает `false`. Этот
 вопрос часто дают на собеседовании, чтобы проверить понимание разницы между
 константой и переменной.
+
+```java
+String hello = "hello";
+String folded = "hel" + "lo";      // свёртка констант на этапе компиляции
+final String fin = "hel";
+String notFinal = "hel";
+System.out.println("\"hel\" + \"lo\" == \"hello\": " + (folded == hello)
+        + ", final + \"lo\": " + ((fin + "lo") == hello)
+        + ", не final + \"lo\": " + ((notFinal + "lo") == hello)
+        + ", intern(): " + ((notFinal + "lo").intern() == hello));
+```
+```
+"hel" + "lo" == "hello": true, final + "lo": true, не final + "lo": false, intern(): true
+```
+С `final`-переменной выражение осталось константой и было свёрнуто
+компилятором, а с обычной переменной конкатенация произошла в рантайме.
 
 #### Сколько объектов создаёт new String("a")
 Классический вопрос. Литерал `"a"` попадает в пул при первом выполнении кода,
@@ -102,6 +150,17 @@ flowchart LR
 которых `HashMap` с Java 8 защищается превращением длинных цепочек в
 красно-чёрные деревья (раздел 5).
 
+```java
+System.out.println("\"ab\".hashCode() = " + "ab".hashCode() + ", 'a' * 31 + 'b' = " + ('a' * 31 + 'b'));
+System.out.println("\"Aa\".hashCode() == \"BB\".hashCode(): " + ("Aa".hashCode() == "BB".hashCode()));
+```
+```
+"ab".hashCode() = 3105, 'a' * 31 + 'b' = 3105
+"Aa".hashCode() == "BB".hashCode(): true
+```
+Хеш `"ab"` совпал с ручным расчётом по формуле. У `"Aa"` и `"BB"` он тоже
+совпадает: `'A' * 31 + 'a'` и `'B' * 31 + 'B'` дают одно и то же число 2112.
+
 #### substring и утечка памяти
 До Java 7u6 `substring` не копировал символы, а ссылался на массив исходной
 строки со смещением. Маленькая подстрока огромного текста удерживала весь
@@ -118,6 +177,26 @@ flowchart LR
 одного метода и не разделяется между потоками. Поэтому выбор по умолчанию —
 `StringBuilder`, а `StringBuffer` встречается в основном в старом коде.
 
+```java
+StringBuilder sb = new StringBuilder();
+StringBuffer sbuf = new StringBuffer();
+for (int i = 0; i < 3; i++) { sb.append(i).append(","); sbuf.append(i).append(","); }
+System.out.println("StringBuilder: " + sb);
+System.out.println("StringBuffer: " + sbuf);
+var sbAppend = StringBuilder.class.getMethod("append", String.class);
+var sbufAppend = StringBuffer.class.getMethod("append", String.class);
+System.out.println("StringBuilder.append synchronized: " + Modifier.isSynchronized(sbAppend.getModifiers()));
+System.out.println("StringBuffer.append synchronized: " + Modifier.isSynchronized(sbufAppend.getModifiers()));
+```
+```
+StringBuilder: 0,1,2,
+StringBuffer: 0,1,2,
+StringBuilder.append synchronized: false
+StringBuffer.append synchronized: true
+```
+Результат одинаковый, разница только в модификаторе: рефлексия показывает, что
+`append` у `StringBuffer` объявлен `synchronized`, а у `StringBuilder` — нет.
+
 #### Конкатенация через + и invokedynamic
 Конкатенация `+` в одном выражении эффективна. До Java 9 `javac`
 разворачивал её в цепочку `new StringBuilder().append(...).toString()`, а с
@@ -128,129 +207,6 @@ Java 9 (JEP 280) генерирует `invokedynamic` с `StringConcatFactory`, 
 копирует в неё всё накопленное, поэтому общая сложность квадратичная. Явный
 `StringBuilder`, созданный до цикла, решает это: компилятор не умеет сливать
 итерации цикла в одну операцию сам.
-
-### API
-
-#### equals, substring, split, replace, format
-Содержимое строк сравнивают через `equals` или `equalsIgnoreCase`, а не `==`:
-результат `==` зависит от пула и способа создания объекта. Для сравнения с
-константой удобно писать `"ok".equals(status)` — так нет риска
-`NullPointerException`.
-
-`substring(from, to)` возвращает полуоткрытый диапазон, `split(regex)`
-разбивает по регулярному выражению (тема «Регулярные выражения»), `replace`
-заменяет буквальную подстроку, а `replaceAll` — по регулярному выражению.
-`String.format` и метод `formatted` (Java 15) форматируют по спецификаторам в
-стиле `printf`.
-
-#### Методы Java 11 и склейка
-В Java 11 появились `isBlank()`, `strip()`, `stripLeading()`, `stripTrailing()`,
-`repeat(n)` и `lines()`. `strip` отличается от старого `trim`: `trim` убирает
-только символы с кодом не больше пробела (ASCII), а `strip` — любые пробельные
-символы Unicode.
-
-Для склейки коллекции строк через разделитель есть `String.join` и
-`StringJoiner` (с префиксом и суффиксом), а в стримах —
-`Collectors.joining`.
-
-#### Регистр и локаль
-`toLowerCase()` и `toUpperCase()` без аргументов используют локаль по умолчанию.
-В турецкой локали заглавная `I` превращается в `ı` без точки, поэтому
-`"TITLE".toLowerCase()` на машине с турецкой локалью даёт `"tıtle"`, и
-сравнение с `"title"` ломается.
-
-Для технических строк — ключей, имён заголовков, enum — используют
-`toLowerCase(Locale.ROOT)`. Локаль по умолчанию нужна только там, где строка
-показывается пользователю.
-
-#### Text blocks (Java 15)
-Text block — многострочный литерал в тройных кавычках `"""` для JSON, SQL и
-HTML-шаблонов. Он сохраняет форматирование, автоматически убирает общий
-отступ строк и остаётся обычным `String` после компиляции. Поддерживает
-экранирование `\` в конце строки (склейка без перевода строки) и `\s`
-(значимый пробел).
-
-#### Строки и секреты
-Пароли рекомендуют хранить в `char[]`, а не в `String`. Строку нельзя
-очистить — она живёт в куче до сборки мусора, может попасть в пул и в дамп
-памяти. Массив `char[]` можно затереть сразу после использования, поэтому
-`JPasswordField.getPassword()` и `Console.readPassword()` возвращают именно его.
-
-## Примеры
-
-Пул строк, `new` и `intern`:
-```java
-String a = "hello";
-String b = "hello";
-String c = new String("hello");
-String d = c.intern();
-System.out.println("a == b (оба литерала из пула): " + (a == b));
-System.out.println("a == c (c создан через new): " + (a == c));
-System.out.println("a.equals(c): " + a.equals(c));
-System.out.println("a == d (d = c.intern()): " + (a == d));
-```
-```
-a == b (оба литерала из пула): true
-a == c (c создан через new): false
-a.equals(c): true
-a == d (d = c.intern()): true
-```
-
-Свёртка констант, `hashCode` и коллизии:
-```java
-String hello = "hello";
-String folded = "hel" + "lo";      // свёртка констант на этапе компиляции
-final String fin = "hel";
-String notFinal = "hel";
-System.out.println("\"hel\" + \"lo\" == \"hello\": " + (folded == hello)
-        + ", final + \"lo\": " + ((fin + "lo") == hello)
-        + ", не final + \"lo\": " + ((notFinal + "lo") == hello)
-        + ", intern(): " + ((notFinal + "lo").intern() == hello));
-System.out.println("\"ab\".hashCode() = " + "ab".hashCode() + ", 'a' * 31 + 'b' = " + ('a' * 31 + 'b'));
-System.out.println("\"Aa\".hashCode() == \"BB\".hashCode(): " + ("Aa".hashCode() == "BB".hashCode()));
-```
-```
-"hel" + "lo" == "hello": true, final + "lo": true, не final + "lo": false, intern(): true
-"ab".hashCode() = 3105, 'a' * 31 + 'b' = 3105
-"Aa".hashCode() == "BB".hashCode(): true
-```
-С `final`-переменной выражение осталось константой и было свёрнуто
-компилятором, а с обычной переменной конкатенация произошла в рантайме.
-
-Методы Java 11, локаль и склейка:
-```java
-String spaced = "  text  ";  // em space — пробел Unicode, но не ASCII
-System.out.println("trim(): [" + spaced.trim() + "], strip(): [" + spaced.strip() + "]");
-System.out.println("isBlank(): " + "  \t".isBlank() + ", repeat(3): " + "ab".repeat(3) + ", lines().count(): " + "a\nb\r\nc".lines().count());
-System.out.println("\"TITLE\".toLowerCase(tr) = " + "TITLE".toLowerCase(Locale.forLanguageTag("tr"))
-        + ", ROOT = " + "TITLE".toLowerCase(Locale.ROOT)
-        + ", equals(\"title\"): " + "TITLE".toLowerCase(Locale.forLanguageTag("tr")).equals("title"));
-System.out.println("String.join: " + String.join(", ", List.of("a", "b", "c")));
-StringJoiner sj = new StringJoiner(", ", "[", "]");
-sj.add("x").add("y");
-System.out.println("StringJoiner: " + sj);
-```
-```
-trim(): [  text  ], strip(): [text]
-isBlank(): true, repeat(3): ababab, lines().count(): 3
-"TITLE".toLowerCase(tr) = tıtle, ROOT = title, equals("title"): false
-String.join: a, b, c
-StringJoiner: [x, y]
-```
-`trim` не тронул em space (U+2003), потому что его код больше пробела, а
-`strip` его убрал. В турецкой локали `I` превратилась в `ı`.
-
-Неизменяемость:
-```java
-String s1 = "abc";
-String s2 = s1.concat("def");
-System.out.println("s1 после concat: " + s1);
-System.out.println("s2 (новый объект): " + s2);
-```
-```
-s1 после concat: abc
-s2 (новый объект): abcdef
-```
 
 Конкатенация в байткоде (`javap -c`, Java 21):
 ```java
@@ -269,7 +225,20 @@ static java.lang.String plusConcat(java.lang.String, java.lang.String);
 Явных вызовов `StringBuilder` нет: одна инструкция `invokedynamic` делегирует
 склейку `StringConcatFactory`.
 
-`split`, `substring`, `replace`, `formatted`:
+### API
+
+#### equals, substring, split, replace, format
+Содержимое строк сравнивают через `equals` или `equalsIgnoreCase`, а не `==`:
+результат `==` зависит от пула и способа создания объекта. Для сравнения с
+константой удобно писать `"ok".equals(status)` — так нет риска
+`NullPointerException`.
+
+`substring(from, to)` возвращает полуоткрытый диапазон, `split(regex)`
+разбивает по регулярному выражению (тема «Регулярные выражения»), `replace`
+заменяет буквальную подстроку, а `replaceAll` — по регулярному выражению.
+`String.format` и метод `formatted` (Java 15) форматируют по спецификаторам в
+стиле `printf`.
+
 ```java
 String text = "2026-09-10";
 String[] parts = text.split("-");
@@ -288,7 +257,62 @@ formatted: Итого: 1,234.50 руб.
 Разделители в `%,.2f` зависят от локали: здесь JVM работала в английской
 локали, поэтому тысячи отделены запятой, а дробная часть — точкой.
 
-Text block:
+#### Методы Java 11 и склейка
+В Java 11 появились `isBlank()`, `strip()`, `stripLeading()`, `stripTrailing()`,
+`repeat(n)` и `lines()`. `strip` отличается от старого `trim`: `trim` убирает
+только символы с кодом не больше пробела (ASCII), а `strip` — любые пробельные
+символы Unicode.
+
+Для склейки коллекции строк через разделитель есть `String.join` и
+`StringJoiner` (с префиксом и суффиксом), а в стримах —
+`Collectors.joining`.
+
+```java
+String spaced = "  text  ";  // em space — пробел Unicode, но не ASCII
+System.out.println("trim(): [" + spaced.trim() + "], strip(): [" + spaced.strip() + "]");
+System.out.println("isBlank(): " + "  \t".isBlank() + ", repeat(3): " + "ab".repeat(3) + ", lines().count(): " + "a\nb\r\nc".lines().count());
+System.out.println("String.join: " + String.join(", ", List.of("a", "b", "c")));
+StringJoiner sj = new StringJoiner(", ", "[", "]");
+sj.add("x").add("y");
+System.out.println("StringJoiner: " + sj);
+```
+```
+trim(): [  text  ], strip(): [text]
+isBlank(): true, repeat(3): ababab, lines().count(): 3
+String.join: a, b, c
+StringJoiner: [x, y]
+```
+`trim` не тронул em space (U+2003), потому что его код больше пробела, а
+`strip` его убрал. `lines()` одинаково понял и `\n`, и `\r\n`.
+
+#### Регистр и локаль
+`toLowerCase()` и `toUpperCase()` без аргументов используют локаль по умолчанию.
+В турецкой локали заглавная `I` превращается в `ı` без точки, поэтому
+`"TITLE".toLowerCase()` на машине с турецкой локалью даёт `"tıtle"`, и
+сравнение с `"title"` ломается.
+
+Для технических строк — ключей, имён заголовков, enum — используют
+`toLowerCase(Locale.ROOT)`. Локаль по умолчанию нужна только там, где строка
+показывается пользователю.
+
+```java
+System.out.println("\"TITLE\".toLowerCase(tr) = " + "TITLE".toLowerCase(Locale.forLanguageTag("tr"))
+        + ", ROOT = " + "TITLE".toLowerCase(Locale.ROOT)
+        + ", equals(\"title\"): " + "TITLE".toLowerCase(Locale.forLanguageTag("tr")).equals("title"));
+```
+```
+"TITLE".toLowerCase(tr) = tıtle, ROOT = title, equals("title"): false
+```
+В турецкой локали `I` превратилась в `ı`, и строка перестала совпадать с
+`"title"`. С `Locale.ROOT` результат не зависит от настроек машины.
+
+#### Text blocks (Java 15)
+Text block — многострочный литерал в тройных кавычках `"""` для JSON, SQL и
+HTML-шаблонов. Он сохраняет форматирование, автоматически убирает общий
+отступ строк и остаётся обычным `String` после компиляции. Поддерживает
+экранирование `\` в конце строки (склейка без перевода строки) и `\s`
+(значимый пробел).
+
 ```java
 String json = """
         {
@@ -304,6 +328,12 @@ System.out.println(json);
 }
 ```
 Общий отступ, появившийся из-за вложенности в метод, убран автоматически.
+
+#### Строки и секреты
+Пароли рекомендуют хранить в `char[]`, а не в `String`. Строку нельзя
+очистить — она живёт в куче до сборки мусора, может попасть в пул и в дамп
+памяти. Массив `char[]` можно затереть сразу после использования, поэтому
+`JPasswordField.getPassword()` и `Console.readPassword()` возвращают именно его.
 
 ## Частые вопросы на собеседовании
 
@@ -361,6 +391,18 @@ A: Оптимизация Java 9 (JEP 254): строка хранится в `by
 выражение. `"1.0.5".replaceAll(".", "-")` заменит каждый символ, потому что
 точка в regex означает «любой символ», а в строке замены особый смысл имеет
 `$`.
+```java
+String version = "1.0.5";
+System.out.println("replace:    " + version.replace(".", "-"));
+System.out.println("replaceAll: " + version.replaceAll(".", "-"));
+```
+```
+replace:    1-0-5
+replaceAll: -----
+```
+Имя `replaceAll` наводит на мысль «`replace`, но для всех вхождений», хотя
+`replace` и так заменяет все. Если regex не нужен — `replace`; если нужен
+буквальный шаблон в `replaceAll` — `Pattern.quote`.
 
 ## Связанные темы
 - [Переменные и типы данных](02-variables-and-types.md) — неизменяемые обёртки устроены по тому же принципу.

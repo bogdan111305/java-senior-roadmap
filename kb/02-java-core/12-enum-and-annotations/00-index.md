@@ -36,98 +36,6 @@ Enum может реализовывать интерфейсы, но не мо�
 и переопределять методы — так реализуют паттерн «стратегия» прямо в enum. Как
 всё это устроено в байткоде, разобрано в файле «Enum под капотом» этой темы.
 
-#### values(), valueOf(), ordinal(), name()
-У каждого enum автоматически есть несколько методов. `values()` возвращает
-массив констант в порядке объявления. `valueOf(String)` возвращает константу по
-точному имени, а для несуществующего — бросает `IllegalArgumentException`.
-
-`ordinal()` — порядковый номер константы с нуля, `name()` — её имя в точности
-как в исходнике. В отличие от `toString()`, который можно переопределить ради
-красивого вывода, `name()` `final` и всегда возвращает настоящее имя.
-
-#### Конструктор enum и статические поля
-Константы enum создаются в его статическом инициализаторе первыми — раньше,
-чем остальные статические поля. Поэтому конструктор enum не может обращаться к
-статическим полям, кроме констант времени компиляции: компилятор сообщает
-`illegal reference to static field from initializer`.
-
-Типичный случай — желание зарегистрировать константу в статической `Map` прямо
-из конструктора. Правильный способ — заполнить `Map` в `static`-блоке после
-объявления констант, перебрав `values()`.
-
-#### EnumMap и EnumSet
-Для коллекций с enum-ключами есть специализированные структуры, заметно
-эффективнее `HashMap` и `HashSet`. `EnumMap` хранит значения в массиве,
-индексированном по `ordinal()`: доступ без вычисления хеша, а итерация всегда
-идёт в порядке объявления констант.
-
-`EnumSet` — битовый вектор: для enum до 64 констант это один `long`
-(`RegularEnumSet`), для больших — массив `long` (`JumboEnumSet`). Объединение,
-пересечение и дополнение (`complementOf`) сводятся к битовым операциям.
-`EnumSet` — идиоматичная замена битовых флагов вида `int flags = READ | WRITE`.
-
-#### Enum в switch и в базе данных
-`switch` по enum работает по `ordinal()` через таблицу переходов, а switch
-expression по enum проверяет исчерпываемость: если обработаны все константы,
-`default` не нужен. Добавление новой константы ломает компиляцию таких
-`switch`, напоминая обработать новый случай.
-
-Сохранять enum во внешних системах по `ordinal()` опасно: перестановка констант
-меняет номера. В JPA для этого используют `@Enumerated(EnumType.STRING)`
-(раздел 17), а для явных кодов — отдельное поле с кодом и `AttributeConverter`.
-
-### Аннотации
-
-#### Что такое аннотация
-Аннотация — метаданные, прикреплённые к элементу кода: классу, методу, полю,
-параметру, а с Java 8 и к использованию типа. Сами по себе они поведение не
-меняют — их читает компилятор, annotation processor или код через
-рефлексию.
-
-Из встроенных чаще всего встречаются четыре. `@Override` просит компилятор
-проверить, что метод действительно переопределяет родительский — без неё
-опечатка в сигнатуре создала бы новый метод. `@Deprecated` (с параметрами
-`since` и `forRemoval`) помечает устаревший элемент. `@FunctionalInterface`
-проверяет, что в интерфейсе ровно один абстрактный метод, а
-`@SuppressWarnings` отключает конкретные предупреждения компилятора.
-
-#### Мета-аннотации
-Поведение аннотации задают мета-аннотации — аннотации на её объявлении.
-`@Retention` определяет, как долго она живёт: `SOURCE` — только в исходнике
-(как `@Override`), `CLASS` — в `.class`-файле, но недоступна рефлексии (значение
-по умолчанию), `RUNTIME` — доступна через рефлексию во время работы.
-
-`@Target` ограничивает, к чему аннотацию можно применить: `TYPE`, `METHOD`,
-`FIELD`, `PARAMETER`, `TYPE_USE` и так далее. `@Documented` включает её в
-javadoc, `@Repeatable` позволяет ставить её на один элемент несколько раз.
-`@Inherited` делает аннотацию класса видимой у подклассов — но только при
-наследовании классов: от интерфейсов и на методах она не наследуется.
-
-#### Своя аннотация
-Объявление аннотации похоже на интерфейс: `@interface Todo { String value();
-String author() default "unknown"; }`. Методы без тела задают элементы, а
-`default` — значение по умолчанию. Элемент с именем `value` можно указывать без
-имени: `@Todo("написать тесты")`.
-
-Типы элементов ограничены: примитивы, `String`, `Class`, enum, другие аннотации
-и одномерные массивы из этих типов. `Object`, коллекции или произвольные
-классы в аннотации положить нельзя, а значения должны быть константами
-времени компиляции.
-
-#### Обработка: рефлексия или annotation processor
-Есть два принципиально разных способа обработать аннотацию. Рефлексия в
-рантайме: код вызывает `getAnnotation`/`isAnnotationPresent` и действует по
-результату — так работают Spring, Hibernate и JUnit. Это требует
-`RetentionPolicy.RUNTIME`.
-
-Annotation processor подключается к компилятору и обрабатывает аннотации при
-компиляции, в том числе с `SOURCE`. Он может проверять код и генерировать новые
-исходники — так работают MapStruct, Dagger и `jpamodelgen`. Lombok идёт дальше
-и через внутренние API компилятора меняет уже существующие классы.
-
-## Примеры
-
-Enum с полями, конструктором и методом:
 ```java
 enum Planet {
     MERCURY(3.303e+23, 2.4397e6),
@@ -158,7 +66,75 @@ EARTH: ordinal=2 gravity=9.80
 ```
 Каждая константа — заранее созданный объект со своими значениями полей.
 
-`EnumMap` и `EnumSet`:
+#### values(), valueOf(), ordinal(), name()
+У каждого enum автоматически есть несколько методов. `values()` возвращает
+массив констант в порядке объявления. `valueOf(String)` возвращает константу по
+точному имени, а для несуществующего — бросает `IllegalArgumentException`.
+
+`ordinal()` — порядковый номер константы с нуля, `name()` — её имя в точности
+как в исходнике. В отличие от `toString()`, который можно переопределить ради
+красивого вывода, `name()` `final` и всегда возвращает настоящее имя.
+
+```java
+public class EnumDemo {
+    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
+
+    public static void main(String[] args) {
+        for (Day d : Day.values()) System.out.print(d.name() + "=" + d.ordinal() + " ");
+        System.out.println();
+        System.out.println("valueOf(\"WED\") = " + Day.valueOf("WED"));
+        Day.valueOf("Wednesday");   // перехвачено
+    }
+}
+```
+```
+MON=0 TUE=1 WED=2 THU=3 FRI=4 SAT=5 SUN=6 
+valueOf("WED") = WED
+valueOf("Wednesday") -> IllegalArgumentException: No enum constant EnumDemo.Day.Wednesday
+```
+`valueOf` ищет точное совпадение с `name()`: ни «человеческое» имя, ни другой
+регистр не подойдут. Строки из внешнего ввода поэтому разбирают с обработкой
+`IllegalArgumentException` или через свою `Map` по коду.
+
+#### Конструктор enum и статические поля
+Константы enum создаются в его статическом инициализаторе первыми — раньше,
+чем остальные статические поля. Поэтому конструктор enum не может обращаться к
+статическим полям, кроме констант времени компиляции: компилятор сообщает
+`illegal reference to static field from initializer`.
+
+Типичный случай — желание зарегистрировать константу в статической `Map` прямо
+из конструктора. Правильный способ — заполнить `Map` в `static`-блоке после
+объявления констант, перебрав `values()`.
+
+```java
+enum Color {
+    RED, GREEN;
+    private static final Map<String, Color> BY_NAME = new HashMap<>();
+    Color() {
+        BY_NAME.put(name(), this);   // статическое поле ещё не инициализировано
+    }
+}
+```
+```
+EnumFail.java:10: error: illegal reference to static field from initializer
+        BY_NAME.put(name(), this);
+        ^
+```
+Компилятор не дал прочитать `BY_NAME` из конструктора: в момент создания `RED`
+и `GREEN` поле ещё `null`, и без запрета код упал бы с
+`NullPointerException`.
+
+#### EnumMap и EnumSet
+Для коллекций с enum-ключами есть специализированные структуры, заметно
+эффективнее `HashMap` и `HashSet`. `EnumMap` хранит значения в массиве,
+индексированном по `ordinal()`: доступ без вычисления хеша, а итерация всегда
+идёт в порядке объявления констант.
+
+`EnumSet` — битовый вектор: для enum до 64 констант это один `long`
+(`RegularEnumSet`), для больших — массив `long` (`JumboEnumSet`). Объединение,
+пересечение и дополнение (`complementOf`) сводятся к битовым операциям.
+`EnumSet` — идиоматичная замена битовых флагов вида `int flags = READ | WRITE`.
+
 ```java
 enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
 
@@ -178,7 +154,135 @@ weekdays (complementOf): [MON, TUE, WED, THU, FRI]
 Элементы добавлялись в порядке `WED, MON, FRI`, а `EnumMap` вывел их в порядке
 `ordinal`.
 
-Своя аннотация и рефлексия:
+Реализация `EnumSet` выбирается по числу констант:
+```java
+enum Small { A, B }
+// enum Big — 70 констант
+System.out.println("EnumSet для 2 констант: " + EnumSet.noneOf(Small.class).getClass().getSimpleName()
+        + ", для 70 констант: " + EnumSet.noneOf(Big.class).getClass().getSimpleName());
+```
+```
+EnumSet для 2 констант: RegularEnumSet, для 70 констант: JumboEnumSet
+```
+70 констант не помещаются в 64 бита одного `long`, поэтому фабрика выбрала
+вариант с массивом.
+
+#### Enum в switch и в базе данных
+`switch` по enum работает по `ordinal()` через таблицу переходов, а switch
+expression по enum проверяет исчерпываемость: если обработаны все константы,
+`default` не нужен. Добавление новой константы ломает компиляцию таких
+`switch`, напоминая обработать новый случай.
+
+Сохранять enum во внешних системах по `ordinal()` опасно: перестановка констант
+меняет номера. В JPA для этого используют `@Enumerated(EnumType.STRING)`
+(раздел 17), а для явных кодов — отдельное поле с кодом и `AttributeConverter`.
+
+### Аннотации
+
+#### Что такое аннотация
+Аннотация — метаданные, прикреплённые к элементу кода: классу, методу, полю,
+параметру, а с Java 8 и к использованию типа. Сами по себе они поведение не
+меняют — их читает компилятор, annotation processor или код через
+рефлексию.
+
+Из встроенных чаще всего встречаются четыре. `@Override` просит компилятор
+проверить, что метод действительно переопределяет родительский — без неё
+опечатка в сигнатуре создала бы новый метод. `@Deprecated` (с параметрами
+`since` и `forRemoval`) помечает устаревший элемент. `@FunctionalInterface`
+проверяет, что в интерфейсе ровно один абстрактный метод, а
+`@SuppressWarnings` отключает конкретные предупреждения компилятора.
+
+```java
+@FunctionalInterface
+interface Validator {
+    boolean validate(String s);
+    boolean validateAll(String... s);   // второй абстрактный метод
+}
+```
+```
+FiFail.java:1: error: Unexpected @FunctionalInterface annotation
+@FunctionalInterface
+^
+  Validator is not a functional interface
+    multiple non-overriding abstract methods found in interface Validator
+1 error
+```
+Без аннотации интерфейс скомпилировался бы, и ошибка всплыла бы позже — в
+месте, где его пытаются реализовать лямбдой. Аннотация переносит проверку в
+объявление интерфейса.
+
+#### Мета-аннотации
+Поведение аннотации задают мета-аннотации — аннотации на её объявлении.
+`@Retention` определяет, как долго она живёт: `SOURCE` — только в исходнике
+(как `@Override`), `CLASS` — в `.class`-файле, но недоступна рефлексии (значение
+по умолчанию), `RUNTIME` — доступна через рефлексию во время работы.
+
+`@Target` ограничивает, к чему аннотацию можно применить: `TYPE`, `METHOD`,
+`FIELD`, `PARAMETER`, `TYPE_USE` и так далее. `@Documented` включает её в
+javadoc, `@Repeatable` позволяет ставить её на один элемент несколько раз.
+`@Inherited` делает аннотацию класса видимой у подклассов — но только при
+наследовании классов: от интерфейсов и на методах она не наследуется.
+
+```java
+@Retention(RetentionPolicy.RUNTIME) @Repeatable(Roles.class) @interface Role { String value(); }
+@Retention(RetentionPolicy.RUNTIME) @interface Roles { Role[] value(); }
+
+@Role("admin") @Role("auditor")
+static class Service {}
+
+@Retention(RetentionPolicy.RUNTIME) @Inherited @interface Tracked {}
+@Tracked static class Base {}
+static class Child extends Base {}
+@Tracked interface Api {}
+static class Impl implements Api {}
+// main:
+System.out.println("@Repeatable: " + Arrays.toString(Service.class.getAnnotationsByType(Role.class)));
+System.out.println("@Inherited — от класса: " + Child.class.isAnnotationPresent(Tracked.class)
+        + ", от интерфейса: " + Impl.class.isAnnotationPresent(Tracked.class));
+```
+```
+@Repeatable: [@Ann.Role("admin"), @Ann.Role("auditor")]
+@Inherited — от класса: true, от интерфейса: false
+```
+Повторяющаяся аннотация хранится внутри контейнера `Roles`, а
+`getAnnotationsByType` достаёт её экземпляры. Аннотация с `@Inherited` перешла
+от родительского класса, но не от интерфейса.
+
+#### Своя аннотация
+Объявление аннотации похоже на интерфейс: `@interface Todo { String value();
+String author() default "unknown"; }`. Методы без тела задают элементы, а
+`default` — значение по умолчанию. Элемент с именем `value` можно указывать без
+имени: `@Todo("написать тесты")`.
+
+Типы элементов ограничены: примитивы, `String`, `Class`, enum, другие аннотации
+и одномерные массивы из этих типов. `Object`, коллекции или произвольные
+классы в аннотации положить нельзя, а значения должны быть константами
+времени компиляции.
+
+```java
+@interface Bad {
+    Object value();                  // недопустимый тип элемента аннотации
+}
+```
+```
+EnumFail.java:15: error: invalid type for annotation interface element
+    Object value();
+    ^
+```
+Значения аннотаций записываются в `.class`-файл, поэтому допустимы только
+типы, которые можно сохранить там как константы.
+
+#### Обработка: рефлексия или annotation processor
+Есть два принципиально разных способа обработать аннотацию. Рефлексия в
+рантайме: код вызывает `getAnnotation`/`isAnnotationPresent` и действует по
+результату — так работают Spring, Hibernate и JUnit. Это требует
+`RetentionPolicy.RUNTIME`.
+
+Annotation processor подключается к компилятору и обрабатывает аннотации при
+компиляции, в том числе с `SOURCE`. Он может проверять код и генерировать новые
+исходники — так работают MapStruct, Dagger и `jpamodelgen`. Lombok идёт дальше
+и через внутренние API компилятора меняет уже существующие классы.
+
 ```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -199,62 +303,8 @@ public void legacyMethod() {}
 value=написать тесты author=Isla
 isAnnotationPresent(Deprecated): true
 ```
-
-`@Repeatable`, границы `@Inherited` и реализации `EnumSet`:
-```java
-@Retention(RetentionPolicy.RUNTIME) @Repeatable(Roles.class) @interface Role { String value(); }
-@Retention(RetentionPolicy.RUNTIME) @interface Roles { Role[] value(); }
-
-@Role("admin") @Role("auditor")
-static class Service {}
-
-@Retention(RetentionPolicy.RUNTIME) @Inherited @interface Tracked {}
-@Tracked static class Base {}
-static class Child extends Base {}
-@Tracked interface Api {}
-static class Impl implements Api {}
-
-enum Small { A, B }
-// enum Big — 70 констант
-// main:
-System.out.println("@Repeatable: " + Arrays.toString(Service.class.getAnnotationsByType(Role.class)));
-System.out.println("@Inherited — от класса: " + Child.class.isAnnotationPresent(Tracked.class)
-        + ", от интерфейса: " + Impl.class.isAnnotationPresent(Tracked.class));
-System.out.println("EnumSet для 2 констант: " + EnumSet.noneOf(Small.class).getClass().getSimpleName()
-        + ", для 70 констант: " + EnumSet.noneOf(Big.class).getClass().getSimpleName());
-```
-```
-@Repeatable: [@Ann.Role("admin"), @Ann.Role("auditor")]
-@Inherited — от класса: true, от интерфейса: false
-EnumSet для 2 констант: RegularEnumSet, для 70 констант: JumboEnumSet
-```
-Повторяющаяся аннотация хранится внутри контейнера `Roles`, а
-`getAnnotationsByType` достаёт её экземпляры. Аннотация с `@Inherited` перешла
-от родительского класса, но не от интерфейса.
-
-Ошибки, которые ловит компилятор:
-```java
-enum Color {
-    RED, GREEN;
-    private static final Map<String, Color> BY_NAME = new HashMap<>();
-    Color() {
-        BY_NAME.put(name(), this);   // статическое поле ещё не инициализировано
-    }
-}
-
-@interface Bad {
-    Object value();                  // недопустимый тип элемента аннотации
-}
-```
-```
-EnumFail.java:10: error: illegal reference to static field from initializer
-        BY_NAME.put(name(), this);
-        ^
-EnumFail.java:15: error: invalid type for annotation interface element
-    Object value();
-    ^
-2 errors
-```
+Код прочитал значения элементов аннотации через рефлексию — ровно так
+фреймворки узнают, что делать с аннотированным методом.
 
 ## Частые вопросы на собеседовании
 
@@ -290,6 +340,19 @@ A: Аннотация с `@Inherited`, поставленная на класс,
 Enum-константа — единственный экземпляр на загрузчик классов, поэтому `==` для
 enum корректен и идиоматичен. Он быстрее и не бросает `NullPointerException`,
 если слева `null`, в отличие от `equals()`.
+```java
+enum Status { ACTIVE, INACTIVE }
+// ...
+Status s = null;
+System.out.println("s == Status.ACTIVE: " + (s == Status.ACTIVE));
+s.equals(Status.ACTIVE);   // перехвачено
+```
+```
+s == Status.ACTIVE: false
+s.equals(Status.ACTIVE) -> NullPointerException
+```
+`==` просто сравнил ссылки и вернул `false`, а `equals` упал, потому что метод
+вызывается на `null`.
 
 #### Аннотация сама по себе ничего не делает
 Аннотация — только метаданные. Поведение обеспечивает инструмент, который её
@@ -300,6 +363,19 @@ enum корректен и идиоматичен. Он быстрее и не �
 Retention по умолчанию — `CLASS`, и такая аннотация не видна через рефлексию:
 `getAnnotation` вернёт `null`. Это частая причина того, что «самописная
 аннотация не работает».
+```java
+@interface NoRetention {}   // @Retention не указан — значит CLASS
+
+@NoRetention
+static class Marked {}
+// ...
+System.out.println("getAnnotation(NoRetention): " + Marked.class.getAnnotation(NoRetention.class));
+```
+```
+getAnnotation(NoRetention): null
+```
+Аннотация есть в исходнике и даже в `.class`-файле, но рефлексия её не видит.
+Достаточно добавить `@Retention(RetentionPolicy.RUNTIME)`.
 
 #### Хранение enum по ordinal
 Перестановка или вставка константы в середину меняет `ordinal()` у остальных,

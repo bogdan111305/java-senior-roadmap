@@ -142,6 +142,20 @@ enum-типа константы используют `getDeclaringClass()`, а 
 рефлексивное создание экземпляров enum, и `newInstance` бросает исключение
 независимо от `setAccessible`.
 
+```java
+enum Singleton { INSTANCE }
+// ...
+Constructor<Singleton> ctor = Singleton.class.getDeclaredConstructor(String.class, int.class);
+ctor.setAccessible(true);
+ctor.newInstance("FAKE", 99);   // перехвачено
+```
+```
+newInstance -> IllegalArgumentException: Cannot reflectively create enum objects
+```
+Сам приватный конструктор нашёлся — у enum он неявно принимает имя и
+`ordinal`, поэтому параметры `(String, int)`. Но `Constructor.newInstance`
+проверяет, что класс — enum, и отказывается создавать объект.
+
 #### Иммунитет к сериализации
 Обычная сериализация создаёт при каждой десериализации новый объект в обход
 конструктора, что тоже ломает singleton. Enum сериализуется особым образом:
@@ -228,11 +242,37 @@ A: Компилятор вызывает `ordinal()` у константы и д
 сохранённые во внешних системах значения начнут указывать не на те константы.
 Для хранения подходят `name()` (если имена не переименовывают) или явное поле с
 кодом.
+```java
+enum StatusV1 { NEW, ACTIVE, DONE }
+enum StatusV2 { NEW, PENDING, ACTIVE, DONE }   // PENDING вставили в середину
+// ...
+int stored = StatusV1.ACTIVE.ordinal();   // в базе сохранили ordinal
+System.out.println("сохранили ordinal ACTIVE в V1: " + stored);
+System.out.println("прочитали тот же ordinal в V2: " + StatusV2.values()[stored]);
+```
+```
+сохранили ordinal ACTIVE в V1: 1
+прочитали тот же ordinal в V2: PENDING
+```
+Ни ошибки, ни предупреждения: старая запись «активен» после релиза тихо стала
+«в ожидании».
 
 #### values() клонирует массив, но не константы
 Каждый вызов `values()` возвращает новый массив, поэтому сравнивать два таких
 массива через `==` бессмысленно. Но элементы внутри — те же единственные
 объекты констант: `values()[0] == Direction.NORTH` истинно при любом вызове.
+```java
+Direction[] v1 = Direction.values();
+Direction[] v2 = Direction.values();
+System.out.println("v1 == v2: " + (v1 == v2));
+System.out.println("v1[0] == v2[0]: " + (v1[0] == v2[0]) + ", v1[0] == NORTH: " + (v1[0] == Direction.NORTH));
+```
+```
+v1 == v2: false
+v1[0] == v2[0]: true, v1[0] == NORTH: true
+```
+Массивы разные — это работа `$VALUES.clone()`, а константы в них одни и те же:
+клонируется только массив ссылок.
 
 #### getClass() у константы с телом
 `Op.PLUS.getClass() == Op.class` ложно: класс константы с телом — анонимный

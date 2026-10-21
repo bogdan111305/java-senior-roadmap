@@ -33,6 +33,29 @@ Java — «объекты передаются по ссылке». На сам�
 переопределения (overriding), которое выбирается в рантайме по реальному типу
 объекта (тема «Полиморфизм» раздела 3).
 
+```java
+static void show(int x) { System.out.println("show(int): " + x); }
+static void show(long x) { System.out.println("show(long): " + x); }
+static void show(double x) { System.out.println("show(double): " + x); }
+static void show(Object x) { System.out.println("show(Object): " + x); }
+// ...
+byte b = 5;
+show(b);      // byte -> ближайшее расширение
+show(5);      // int
+show(5L);     // long
+show(5.0);    // double
+show("str");  // Object
+```
+```
+show(int): 5
+show(int): 5
+show(long): 5
+show(double): 5.0
+show(Object): str
+```
+`byte` расширился до ближайшего подходящего `int`, а не до `long` или
+`double`. Для строки подошёл только `show(Object)`.
+
 #### Три фазы выбора перегрузки
 Компилятор ищет подходящий метод в три фазы, и переходит к следующей только
 если на текущей ничего не нашлось. Первая фаза — без упаковки и без varargs:
@@ -45,6 +68,35 @@ varargs.
 `Integer` кажется «ближе». Расширение примитива находится на первой фазе,
 упаковка — только на второй.
 
+```java
+static void g(long x) { System.out.println("g(long) — расширение"); }
+static void g(Integer x) { System.out.println("g(Integer) — упаковка"); }
+static void g(int... xs) { System.out.println("g(int...) — varargs"); }
+// ...
+g(5);
+```
+```
+g(long) — расширение
+```
+`g(5)` выбрал расширение до `long` на первой фазе — до упаковки и varargs дело
+не дошло.
+
+На тех же фазах держится ловушка с `List.remove`:
+```java
+List<Integer> list = new ArrayList<>(List.of(10, 20, 30));
+list.remove(1);                     // remove(int index)
+System.out.println("list.remove(1): " + list);
+list.remove(Integer.valueOf(10));   // remove(Object o)
+System.out.println("list.remove(Integer.valueOf(10)): " + list);
+```
+```
+list.remove(1): [10, 30]
+list.remove(Integer.valueOf(10)): [30]
+```
+`remove(1)` удалил элемент по индексу 1 (число 20), а не число 1: аргумент `int`
+подходит к `remove(int)` на первой фазе, без упаковки. Чтобы удалить значение,
+нужно явно передать объект.
+
 #### Наиболее специфичный метод
 Если на одной фазе подходит несколько методов, выбирается наиболее
 специфичный — тот, чьи параметры можно передать в любой другой кандидат.
@@ -55,6 +107,32 @@ varargs.
 is ambiguous`. Так происходит с `p(null)` при перегрузках `p(String)` и
 `p(Integer)`: ни один тип не является подтипом другого. Решение — явное
 приведение: `p((String) null)`.
+
+```java
+static void f(Object o) { System.out.println("f(Object)"); }
+static void f(String s) { System.out.println("f(String)"); }
+// ...
+f(null);
+```
+```
+f(String)
+```
+`null` подходит к обоим методам, и компилятор выбрал более специфичный
+`f(String)`. Если же типы не связаны наследованием, выбрать не из чего:
+```java
+static void p(String s) {}
+static void p(Integer i) {}
+// ...
+p(null);
+```
+```
+error: reference to p is ambiguous
+        p(null);
+        ^
+  both method p(String) in OverloadFail and method p(Integer) in OverloadFail match
+```
+`String` и `Integer` не подтипы друг друга, поэтому наиболее специфичного
+метода нет, и это ошибка компиляции, а не выбор «первого попавшегося».
 
 ### Передача параметров и рекурсия
 
@@ -88,115 +166,6 @@ flowchart LR
 `sb` и `param` сначала указывают на один объект, поэтому мутация через `param`
 видна через `sb`. `reassign` перевешивает только собственную копию ссылки.
 
-#### Varargs
-Varargs (`Type... args`) — синтаксический сахар для переменного числа
-аргументов. Компилятор превращает такой параметр в массив `Type[]`, а в месте
-вызова создаёт массив нужной длины: `sum(1, 2, 3)` становится
-`sum(new int[]{1, 2, 3})`.
-
-Отсюда правила: varargs-параметр может быть только последним, метод можно
-вызвать с готовым массивом, а вызов без аргументов передаёт пустой массив, а не
-`null`. С `null` нужно быть внимательным: `h((Object[]) null)` передаёт сам
-`null` вместо массива, а `h((Object) null)` — массив из одного элемента `null`.
-
-#### Рекурсия и StackOverflowError
-Рекурсия — вызов метода самим собой напрямую или через цепочку других методов.
-Она работает потому, что каждый вызов получает собственный кадр стека
-(stack frame) со своими локальными переменными и параметрами.
-
-Стек потока ограничен (флаг `-Xss`, обычно около 1 МБ на поток), и каждый
-рекурсивный вызов добавляет кадр. Без корректного базового случая стек
-заканчивается, и JVM бросает `StackOverflowError` — это `Error`, а не
-`Exception` (раздел 4). Хвостовую рекурсию Java не оптимизирует, поэтому
-глубокую рекурсию по большим данным переписывают в цикл с явным стеком.
-
-## Примеры
-
-Выбор перегрузки по объявленному типу:
-```java
-static void show(int x) { System.out.println("show(int): " + x); }
-static void show(long x) { System.out.println("show(long): " + x); }
-static void show(double x) { System.out.println("show(double): " + x); }
-static void show(Object x) { System.out.println("show(Object): " + x); }
-// ...
-byte b = 5;
-show(b);      // byte -> ближайшее расширение
-show(5);      // int
-show(5L);     // long
-show(5.0);    // double
-show("str");  // Object
-```
-```
-show(int): 5
-show(int): 5
-show(long): 5
-show(double): 5.0
-show(Object): str
-```
-`byte` расширился до ближайшего подходящего `int`, а не до `long` или
-`double`. Для строки подошёл только `show(Object)`.
-
-Фазы выбора, `null` и varargs:
-```java
-static void f(Object o) { System.out.println("f(Object)"); }
-static void f(String s) { System.out.println("f(String)"); }
-
-static void g(long x) { System.out.println("g(long) — расширение"); }
-static void g(Integer x) { System.out.println("g(Integer) — упаковка"); }
-static void g(int... xs) { System.out.println("g(int...) — varargs"); }
-
-static void h(Object... xs) {
-    System.out.println("h: " + (xs == null ? "xs == null" : "length = " + xs.length));
-}
-// ...
-f(null);
-g(5);
-h();
-h((Object[]) null);
-h((Object) null);
-```
-```
-f(String)
-g(long) — расширение
-h: length = 0
-h: xs == null
-h: length = 1
-```
-`g(5)` выбрал расширение до `long` на первой фазе — до упаковки и varargs дело
-не дошло. Три вызова `h` дали три разных результата: пустой массив, `null`
-вместо массива и массив из одного `null`.
-
-Неоднозначная перегрузка:
-```java
-static void p(String s) {}
-static void p(Integer i) {}
-// ...
-p(null);
-```
-```
-error: reference to p is ambiguous
-        p(null);
-        ^
-  both method p(String) in OverloadFail and method p(Integer) in OverloadFail match
-```
-
-Перегрузка `List.remove`:
-```java
-List<Integer> list = new ArrayList<>(List.of(10, 20, 30));
-list.remove(1);                     // remove(int index)
-System.out.println("list.remove(1): " + list);
-list.remove(Integer.valueOf(10));   // remove(Object o)
-System.out.println("list.remove(Integer.valueOf(10)): " + list);
-```
-```
-list.remove(1): [10, 30]
-list.remove(Integer.valueOf(10)): [30]
-```
-`remove(1)` удалил элемент по индексу 1 (число 20), а не число 1: аргумент `int`
-подходит к `remove(int)` на первой фазе, без упаковки. Чтобы удалить значение,
-нужно явно передать объект.
-
-Pass-by-value для ссылок:
 ```java
 static void mutate(StringBuilder sb) { sb.append("-mutated"); }
 static void reassign(StringBuilder sb) { sb = new StringBuilder("new object"); }
@@ -214,7 +183,17 @@ after reassign: original-mutated
 Изменение через `append` видно снаружи, а переприсваивание параметра — нет.
 Это и есть передача ссылки по значению.
 
-Varargs как массив:
+#### Varargs
+Varargs (`Type... args`) — синтаксический сахар для переменного числа
+аргументов. Компилятор превращает такой параметр в массив `Type[]`, а в месте
+вызова создаёт массив нужной длины: `sum(1, 2, 3)` становится
+`sum(new int[]{1, 2, 3})`.
+
+Отсюда правила: varargs-параметр может быть только последним, метод можно
+вызвать с готовым массивом, а вызов без аргументов передаёт пустой массив, а не
+`null`. С `null` нужно быть внимательным: `h((Object[]) null)` передаёт сам
+`null` вместо массива, а `h((Object) null)` — массив из одного элемента `null`.
+
 ```java
 static int sum(int... nums) {
     int total = 0;
@@ -231,8 +210,37 @@ sum() = 0
 sum(1,2,3) = 6
 sum(array) = 30
 ```
+Вызов без аргументов получил пустой массив, а готовый массив передался как есть.
 
-Рекурсия без базового случая:
+Varargs и `null`:
+```java
+static void h(Object... xs) {
+    System.out.println("h: " + (xs == null ? "xs == null" : "length = " + xs.length));
+}
+// ...
+h();
+h((Object[]) null);
+h((Object) null);
+```
+```
+h: length = 0
+h: xs == null
+h: length = 1
+```
+Три вызова `h` дали три разных результата: пустой массив, `null` вместо
+массива и массив из одного `null`.
+
+#### Рекурсия и StackOverflowError
+Рекурсия — вызов метода самим собой напрямую или через цепочку других методов.
+Она работает потому, что каждый вызов получает собственный кадр стека
+(stack frame) со своими локальными переменными и параметрами.
+
+Стек потока ограничен (флаг `-Xss`, обычно около 1 МБ на поток), и каждый
+рекурсивный вызов добавляет кадр. Без корректного базового случая стек
+заканчивается, и JVM бросает `StackOverflowError` — это `Error`, а не
+`Exception` (раздел 4). Хвостовую рекурсию Java не оптимизирует, поэтому
+глубокую рекурсию по большим данным переписывают в цикл с явным стеком.
+
 ```java
 static long factorial(long n) {
     return n * factorial(n - 1); // нет базового случая
@@ -309,6 +317,21 @@ A: Каждый вызов добавляет кадр в стек потока 
 метода пойдёт в вариант для `Object`. Компилятор смотрит на объявленный тип, а
 не на реальный. Выбор по реальному типу — это переопределение, и он работает
 только для объекта, у которого вызывается метод.
+```java
+static void show(String s) { System.out.println("show(String): " + s); }
+static void show(Object o) { System.out.println("show(Object): " + o); }
+// ...
+Object obj = "hello";
+show(obj);
+show((String) obj);
+```
+```
+show(Object): hello
+show(String): hello
+```
+В обоих вызовах в переменной лежит одна и та же строка, но выбор сделан по
+объявленному типу выражения: `Object` в первом вызове и `String` после
+приведения во втором.
 
 #### Перегрузки с упаковкой и примитивами
 Пары методов вроде `remove(int)` и `remove(Object)` или `add(long)` и
@@ -321,6 +344,23 @@ A: Каждый вызов добавляет кадр в стек потока 
 программы после переполнения стека ненадёжно: исключение могло прервать любой
 код посередине. Правильный подход — не допускать неограниченной рекурсии:
 корректный базовый случай или итеративный алгоритм.
+```java
+static void recurse(int depth) { recurse(depth + 1); }
+// ...
+try {
+    recurse(0);
+} catch (StackOverflowError e) {
+    System.out.println("поймали StackOverflowError, но состояние потока уже ненадёжно");
+}
+System.out.println("программа продолжила работу дальше");
+```
+```
+поймали StackOverflowError, но состояние потока уже ненадёжно
+программа продолжила работу дальше
+```
+Здесь всё обошлось, потому что `recurse` ничего не меняет. В реальном коде
+переполнение могло случиться внутри захвата блокировки, записи в коллекцию или
+инициализации класса — и такая «починка» оставит их в полусостоянии.
 
 ## Связанные темы
 - [Массивы](04-arrays.md) — во что компилятор превращает varargs.

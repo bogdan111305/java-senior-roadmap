@@ -50,6 +50,70 @@
   --danger:#ff8079;
   --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 30px -14px rgba(0,0,0,0.55);
 }
+
+/* ---------- Цветовые темы (акценты) ----------
+   Отдельная ручка от светлая/тёмная: [data-color] задаёт только --accent/
+   --accent-soft/--accent-2/--accent-2-soft (нейтральные --bg/--surface/--text
+   остаются под управлением [data-theme] как раньше), поэтому любой цвет
+   комбинируется с любым режимом. "mint" — исходная палитра по умолчанию,
+   для неё оверрайдов нет: она и так уже задана в :root/[data-theme="dark"]
+   выше. Формула у каждой новой палитры одна и та же (H — свой оттенок,
+   H2 — дополнительный оттенок для --accent-2, вторичного акцента):
+   светлый accent = hsl(H,62%,33%), тёмный = hsl(H,62%,70%); "slate" —
+   исключение, у неё нарочно снижена насыщенность под нейтральный вид. */
+:root[data-color="ocean"]{ --accent:hsl(205,62%,33%); --accent-soft:hsl(205,55%,94%); --accent-2:hsl(355,58%,36%); --accent-2-soft:hsl(355,50%,94%); }
+:root[data-color="indigo"]{ --accent:hsl(235,58%,40%); --accent-soft:hsl(235,55%,95%); --accent-2:hsl(25,60%,38%); --accent-2-soft:hsl(25,55%,94%); }
+:root[data-color="violet"]{ --accent:hsl(268,50%,42%); --accent-soft:hsl(268,50%,95%); --accent-2:hsl(48,68%,32%); --accent-2-soft:hsl(48,60%,92%); }
+:root[data-color="rose"]{ --accent:hsl(322,55%,40%); --accent-soft:hsl(322,55%,95%); --accent-2:hsl(152,45%,30%); --accent-2-soft:hsl(152,45%,93%); }
+:root[data-color="crimson"]{ --accent:hsl(350,62%,38%); --accent-soft:hsl(350,60%,95%); --accent-2:hsl(160,45%,28%); --accent-2-soft:hsl(160,40%,93%); }
+:root[data-color="sunset"]{ --accent:hsl(18,72%,38%); --accent-soft:hsl(18,65%,94%); --accent-2:hsl(178,45%,27%); --accent-2-soft:hsl(178,40%,93%); }
+:root[data-color="amber"]{ --accent:hsl(38,75%,32%); --accent-soft:hsl(38,70%,92%); --accent-2:hsl(202,55%,33%); --accent-2-soft:hsl(202,50%,94%); }
+:root[data-color="forest"]{ --accent:hsl(128,42%,29%); --accent-soft:hsl(128,42%,93%); --accent-2:hsl(278,42%,38%); --accent-2-soft:hsl(278,42%,95%); }
+:root[data-color="slate"]{ --accent:hsl(210,22%,35%); --accent-soft:hsl(210,20%,94%); --accent-2:hsl(0,30%,40%); --accent-2-soft:hsl(0,25%,94%); }
+
+@media (prefers-color-scheme: dark){
+  :root[data-color="ocean"]:not([data-theme="light"]){ --accent:hsl(205,70%,68%); --accent-soft:hsl(205,42%,16%); --accent-2:hsl(355,58%,68%); --accent-2-soft:hsl(355,32%,16%); }
+  :root[data-color="indigo"]:not([data-theme="light"]){ --accent:hsl(235,75%,76%); --accent-soft:hsl(235,40%,17%); --accent-2:hsl(25,65%,66%); --accent-2-soft:hsl(25,35%,16%); }
+  :root[data-color="violet"]:not([data-theme="light"]){ --accent:hsl(268,72%,76%); --accent-soft:hsl(268,38%,18%); --accent-2:hsl(48,70%,62%); --accent-2-soft:hsl(48,42%,15%); }
+  :root[data-color="rose"]:not([data-theme="light"]){ --accent:hsl(322,68%,72%); --accent-soft:hsl(322,38%,17%); --accent-2:hsl(152,48%,60%); --accent-2-soft:hsl(152,30%,14%); }
+  :root[data-color="crimson"]:not([data-theme="light"]){ --accent:hsl(350,72%,72%); --accent-soft:hsl(350,40%,17%); --accent-2:hsl(160,48%,58%); --accent-2-soft:hsl(160,32%,14%); }
+  :root[data-color="sunset"]:not([data-theme="light"]){ --accent:hsl(18,80%,66%); --accent-soft:hsl(18,45%,16%); --accent-2:hsl(178,48%,58%); --accent-2-soft:hsl(178,32%,14%); }
+  :root[data-color="amber"]:not([data-theme="light"]){ --accent:hsl(42,80%,62%); --accent-soft:hsl(38,45%,15%); --accent-2:hsl(202,60%,68%); --accent-2-soft:hsl(202,35%,16%); }
+  :root[data-color="forest"]:not([data-theme="light"]){ --accent:hsl(128,50%,64%); --accent-soft:hsl(128,32%,14%); --accent-2:hsl(278,55%,74%); --accent-2-soft:hsl(278,35%,17%); }
+  :root[data-color="slate"]:not([data-theme="light"]){ --accent:hsl(210,32%,72%); --accent-soft:hsl(210,20%,17%); --accent-2:hsl(0,32%,66%); --accent-2-soft:hsl(0,22%,16%); }
+}
+:root[data-color="ocean"][data-theme="dark"]{ --accent:hsl(205,70%,68%); --accent-soft:hsl(205,42%,16%); --accent-2:hsl(355,58%,68%); --accent-2-soft:hsl(355,32%,16%); }
+:root[data-color="indigo"][data-theme="dark"]{ --accent:hsl(235,75%,76%); --accent-soft:hsl(235,40%,17%); --accent-2:hsl(25,65%,66%); --accent-2-soft:hsl(25,35%,16%); }
+:root[data-color="violet"][data-theme="dark"]{ --accent:hsl(268,72%,76%); --accent-soft:hsl(268,38%,18%); --accent-2:hsl(48,70%,62%); --accent-2-soft:hsl(48,42%,15%); }
+:root[data-color="rose"][data-theme="dark"]{ --accent:hsl(322,68%,72%); --accent-soft:hsl(322,38%,17%); --accent-2:hsl(152,48%,60%); --accent-2-soft:hsl(152,30%,14%); }
+:root[data-color="crimson"][data-theme="dark"]{ --accent:hsl(350,72%,72%); --accent-soft:hsl(350,40%,17%); --accent-2:hsl(160,48%,58%); --accent-2-soft:hsl(160,32%,14%); }
+:root[data-color="sunset"][data-theme="dark"]{ --accent:hsl(18,80%,66%); --accent-soft:hsl(18,45%,16%); --accent-2:hsl(178,48%,58%); --accent-2-soft:hsl(178,32%,14%); }
+:root[data-color="amber"][data-theme="dark"]{ --accent:hsl(42,80%,62%); --accent-soft:hsl(38,45%,15%); --accent-2:hsl(202,60%,68%); --accent-2-soft:hsl(202,35%,16%); }
+:root[data-color="forest"][data-theme="dark"]{ --accent:hsl(128,50%,64%); --accent-soft:hsl(128,32%,14%); --accent-2:hsl(278,55%,74%); --accent-2-soft:hsl(278,35%,17%); }
+:root[data-color="slate"][data-theme="dark"]{ --accent:hsl(210,32%,72%); --accent-soft:hsl(210,20%,17%); --accent-2:hsl(0,32%,66%); --accent-2-soft:hsl(0,22%,16%); }
+
+/* Ряд цветовых свотчей в сайдбаре (см. .theme-row выше по смыслу, но для
+   цвета — не текстовые кнопки, а кружки, залитые собственным --swatch-color,
+   чтобы было видно сам цвет ещё до применения). */
+.color-row{margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+.color-row-label{font-size:11.5px; color:var(--text-soft); margin-bottom:8px;}
+.color-swatches{display:flex; flex-wrap:wrap; gap:8px;}
+.color-swatch{
+  width:26px; height:26px; border-radius:50%; border:2px solid var(--surface); cursor:pointer;
+  background:var(--swatch-color); box-shadow:0 0 0 1px var(--border); flex:0 0 auto; padding:0; position:relative;
+}
+.color-swatch.active{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--swatch-color);}
+.color-swatch[data-color-btn="mint"]{ --swatch-color:#177a5c; }
+.color-swatch[data-color-btn="ocean"]{ --swatch-color:hsl(205,62%,33%); }
+.color-swatch[data-color-btn="indigo"]{ --swatch-color:hsl(235,58%,40%); }
+.color-swatch[data-color-btn="violet"]{ --swatch-color:hsl(268,50%,42%); }
+.color-swatch[data-color-btn="rose"]{ --swatch-color:hsl(322,55%,40%); }
+.color-swatch[data-color-btn="crimson"]{ --swatch-color:hsl(350,62%,38%); }
+.color-swatch[data-color-btn="sunset"]{ --swatch-color:hsl(18,72%,38%); }
+.color-swatch[data-color-btn="amber"]{ --swatch-color:hsl(38,75%,32%); }
+.color-swatch[data-color-btn="forest"]{ --swatch-color:hsl(128,42%,29%); }
+.color-swatch[data-color-btn="slate"]{ --swatch-color:hsl(210,22%,35%); }
+
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
