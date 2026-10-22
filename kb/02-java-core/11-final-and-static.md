@@ -389,7 +389,7 @@ System.out.println("реально:   " + RaceCounter.total);
 - [Классы и объекты](09-classes-and-objects.md) — модификаторы и структура класса.
 - [Порядок инициализации при наследовании](10-initialization-order.md) — когда выполняется static-блок и почему константы не запускают инициализацию.
 - [Инкапсуляция](../03-oop/01-encapsulation.md) — неизменяемые объекты и защитное копирование.
-- Java Memory Model и volatile (раздел 8) — гарантии видимости `final`-полей.
+- [Java Memory Model и volatile](../08-concurrency/01-threads-and-memory-model/03-jmm-and-volatile.md) — гарантии видимости `final`-полей.
 - GC Roots, типы ссылок и утечки памяти (раздел 9) — почему статические ссылки удерживают объекты.
 
 ## Источники

@@ -391,7 +391,7 @@ copyOf(copy) is same object: true
 - [Дата и время: java.time](../02-java-core/08-date-time.md) — неизменяемые типы времени, которые убирают нужду в защитном копировании Date.
 - Наследование (раздел 3) — как глубокая иерархия и protected-поля размывают инкапсуляцию.
 - [Неизменяемые и утилитарные коллекции](../05-collections/07-immutable-collections.md) — List.of, List.copyOf, unmodifiable-обёртки подробнее.
-- Java Memory Model и volatile (раздел 8) — гарантии видимости final-полей и безопасная публикация неизменяемых объектов.
+- [Java Memory Model и volatile](../08-concurrency/01-threads-and-memory-model/03-jmm-and-volatile.md) — гарантии видимости final-полей и безопасная публикация неизменяемых объектов.
 
 ## Источники
 - Joshua Bloch, «Effective Java», 3rd ed.: Item 15 «Minimize the accessibility of classes and members», Item 17 «Minimize mutability», Item 50 «Make defensive copies when needed».

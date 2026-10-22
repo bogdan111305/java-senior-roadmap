@@ -241,7 +241,7 @@ i++ после remove(i): [2, 3] — вторая двойка пропущен�
 - [List: ArrayList, LinkedList, Vector](02-list-implementations.md) — `ListIterator` и вставка в `LinkedList`.
 - [Map: HashMap изнутри](04-hashmap-internals.md) — `ConcurrentModificationException` в `computeIfAbsent`.
 - [Неизменяемые и утилитарные коллекции](07-immutable-collections.md) — `synchronizedList` и его обход.
-- Concurrent-коллекции и атомарные переменные (раздел 8) — `CopyOnWriteArrayList` и `ConcurrentHashMap`.
+- [Concurrent-коллекции и атомарные переменные](../08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md) — `CopyOnWriteArrayList` и `ConcurrentHashMap`.
 - [Stream API](../07-streams-functional/03-stream-api.md) — фильтрация без изменения исходной коллекции.
 
 ## Источники

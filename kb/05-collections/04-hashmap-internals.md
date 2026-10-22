@@ -442,7 +442,7 @@ A: 96. Ёмкость округлится до 128, порог при load fact
 - [Строки](../02-java-core/06-strings.md) — формула `String.hashCode` и коллизии вроде `"Aa"`/`"BB"`.
 - [Операторы и управляющие конструкции](../02-java-core/03-operators-and-control-flow.md) — битовые операции `&`, `^` и `>>>`.
 - [Выбор правильной коллекции](08-choosing-collection.md) — когда `HashMap`, `LinkedHashMap` или `TreeMap`.
-- Concurrent-коллекции и атомарные переменные (раздел 8) — устройство `ConcurrentHashMap`.
+- [Concurrent-коллекции и атомарные переменные](../08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md) — устройство `ConcurrentHashMap`.
 
 ## Источники
 - Исходный код `java.util.HashMap` в OpenJDK — комментарий «Implementation notes» о treeify и распределении Пуассона.

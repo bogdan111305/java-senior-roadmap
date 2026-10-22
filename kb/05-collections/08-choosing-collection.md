@@ -187,7 +187,7 @@ O(n), после чего каждая проверка O(1).
 - [Queue и Deque](05-queue-and-deque.md) — `ArrayDeque` и `PriorityQueue`.
 - [Enum и аннотации](../02-java-core/12-enum-and-annotations/00-index.md) — `EnumMap` и `EnumSet`.
 - [Алгоритмическое мышление: введение](../01-fundamentals/05-algorithmic-thinking-intro.md) — O-нотация и амортизированная сложность.
-- Concurrent-коллекции и атомарные переменные (раздел 8) — выбор коллекции для многопоточного доступа.
+- [Concurrent-коллекции и атомарные переменные](../08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md) — выбор коллекции для многопоточного доступа.
 - Оптимизация на разных уровнях (раздел 33) — когда структура данных — узкое место.
 
 ## Источники

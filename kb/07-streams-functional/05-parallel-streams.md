@@ -223,8 +223,8 @@ identity (`reduce(10, Integer::sum)` прибавит 10 к каждой час�
 ## Связанные темы
 - [Stream API](03-stream-api.md) — `Spliterator`, конвейер и stateful-операции.
 - [Collectors](04-collectors.md) — `combiner` и объединение частичных результатов.
-- ThreadLocal и Fork/Join (раздел 8) — устройство `ForkJoinPool` и work stealing.
-- Future и CompletableFuture (раздел 8) — общий пул у асинхронных задач.
+- [ThreadLocal и Fork/Join](../08-concurrency/03-concurrency-utilities/09-threadlocal-and-forkjoin.md) — устройство `ForkJoinPool` и work stealing.
+- [Future и CompletableFuture](../08-concurrency/02-executors-and-async/06-future-and-completablefuture.md) — общий пул у асинхронных задач.
 - Профилирование приложения (раздел 33) — как измерять, а не угадывать.
 
 ## Источники

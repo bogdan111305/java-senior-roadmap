@@ -308,5 +308,77 @@
     "section": 7,
     "status": "not-started",
     "title": "Optional"
+  },
+  "08-01-thread-basics": {
+    "path": "08-concurrency/01-threads-and-memory-model/01-thread-basics.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Основы потоков"
+  },
+  "08-02-synchronized": {
+    "path": "08-concurrency/01-threads-and-memory-model/02-synchronized.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Синхронизация: synchronized"
+  },
+  "08-03-jmm-and-volatile": {
+    "path": "08-concurrency/01-threads-and-memory-model/03-jmm-and-volatile.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Java Memory Model и volatile"
+  },
+  "08-04-thread-interaction-and-deadlock": {
+    "path": "08-concurrency/01-threads-and-memory-model/04-thread-interaction-and-deadlock.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Взаимодействие потоков и deadlock"
+  },
+  "08-05-thread-pools": {
+    "path": "08-concurrency/02-executors-and-async/05-thread-pools.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Пулы потоков: java.util.concurrent"
+  },
+  "08-06-future-and-completablefuture": {
+    "path": "08-concurrency/02-executors-and-async/06-future-and-completablefuture.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Future и CompletableFuture"
+  },
+  "08-07-concurrent-collections-and-atomics": {
+    "path": "08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Concurrent-коллекции и атомарные переменные"
+  },
+  "08-08-locks-and-synchronizers": {
+    "path": "08-concurrency/03-concurrency-utilities/08-locks-and-synchronizers.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Явные блокировки и примитивы синхронизации"
+  },
+  "08-09-threadlocal-and-forkjoin": {
+    "path": "08-concurrency/03-concurrency-utilities/09-threadlocal-and-forkjoin.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "ThreadLocal и Fork/Join"
+  },
+  "08-10-virtual-threads": {
+    "path": "08-concurrency/04-project-loom/10-virtual-threads.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Виртуальные потоки (Project Loom, Java 21)"
+  },
+  "08-11-structured-concurrency-and-scoped-values": {
+    "path": "08-concurrency/04-project-loom/11-structured-concurrency-and-scoped-values.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Structured Concurrency и Scoped Values"
+  },
+  "08-12-practical-tasks": {
+    "path": "08-concurrency/05-interview-practice/12-practical-tasks.md",
+    "section": 8,
+    "status": "not-started",
+    "title": "Практические задачи на собеседовании"
   }
 }

@@ -305,9 +305,9 @@ task.get(): cause = java.lang.IllegalStateException: сбой на запуск�
 ## Связанные темы
 - [Свои исключения и best practices](03-custom-exceptions.md) — пустой `catch`, логирование и цепочки причин.
 - [Иерархия исключений](01-exception-hierarchy.md) — checked `ExecutionException` и unchecked `CompletionException`.
-- Основы потоков (раздел 8) — жизненный цикл потока и прерывание.
-- Пулы потоков: java.util.concurrent (раздел 8) — устройство `ThreadPoolExecutor` и `afterExecute`.
-- Future и CompletableFuture (раздел 8) — композиция асинхронных вычислений.
+- [Основы потоков](../08-concurrency/01-threads-and-memory-model/01-thread-basics.md) — жизненный цикл потока и прерывание.
+- [Пулы потоков: java.util.concurrent](../08-concurrency/02-executors-and-async/05-thread-pools.md) — устройство `ThreadPoolExecutor` и `afterExecute`.
+- [Future и CompletableFuture](../08-concurrency/02-executors-and-async/06-future-and-completablefuture.md) — композиция асинхронных вычислений.
 - Планирование задач: @Scheduled и Quartz (раздел 18) — периодические задачи в Spring и обработка их ошибок.
 
 ## Источники

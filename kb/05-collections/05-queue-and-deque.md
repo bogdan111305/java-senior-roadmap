@@ -212,7 +212,7 @@ k, выбрасывать минимум через `poll`. В конце в к�
 - [List: ArrayList, LinkedList, Vector](02-list-implementations.md) — `LinkedList` как `Deque` и устаревший `Stack`.
 - [Выбор правильной коллекции](08-choosing-collection.md) — сводная таблица сложностей.
 - [Comparable и Comparator](../03-oop/07-comparable-comparator.md) — порядок элементов в `PriorityQueue`.
-- Concurrent-коллекции и атомарные переменные (раздел 8) — `BlockingQueue` и producer-consumer.
+- [Concurrent-коллекции и атомарные переменные](../08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md) — `BlockingQueue` и producer-consumer.
 - Алгоритмы (раздел 34) — куча и задачи top-K.
 
 ## Источники

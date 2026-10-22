@@ -401,7 +401,7 @@ A: `timestamp without time zone` хранит дату и время без ин
 ## Связанные темы
 - [Строки](06-strings.md) — тот же принцип неизменяемости и та же ошибка с неприсвоенным результатом.
 - Реляционная модель: ключи, ограничения и нормализация (раздел 15) — типы `timestamp` и `timestamptz` в PostgreSQL.
-- Основы потоков (раздел 8) — гонка данных в общем `SimpleDateFormat`.
+- [Основы потоков](../08-concurrency/01-threads-and-memory-model/01-thread-basics.md) — гонка данных в общем `SimpleDateFormat`.
 - JUnit 5 (раздел 13) — тесты с подменённым `Clock`.
 
 ## Источники

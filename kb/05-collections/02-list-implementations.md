@@ -236,7 +236,7 @@ A: `Vector` синхронизирует каждый метод, что лиш�
 - [Выбор правильной коллекции](08-choosing-collection.md) — сводная таблица сложностей и замер памяти.
 - [Массивы](../02-java-core/04-arrays.md) — `System.arraycopy` и `Arrays.copyOf`, на которых держится `ArrayList`.
 - [Композиция vs наследование](../03-oop/05-composition-vs-inheritance.md) — почему `Stack extends Vector` — ошибка дизайна.
-- Concurrent-коллекции и атомарные переменные (раздел 8) — `CopyOnWriteArrayList`.
+- [Concurrent-коллекции и атомарные переменные](../08-concurrency/03-concurrency-utilities/07-concurrent-collections-and-atomics.md) — `CopyOnWriteArrayList`.
 - Области памяти JVM (раздел 9) — заголовки объектов и compressed oops.
 
 ## Источники
